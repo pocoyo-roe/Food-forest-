@@ -1,0 +1,1132 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Guild Orchard</title>
+<meta name="description" content="Growing a food forest in the UK: tree guilds, companion plants, harvest and pruning calendars, yields and an interactive guild builder.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a field guide. Short hero over a live forest cross-section, then a tabbed guild atlas
+   (facts left, plan view right), then a two-pane builder (plant lists left, sticky results right). */
+:root {
+  --bg: #eef1e8;          /* sage-washed paper */
+  --surface: #f8faf4;
+  --surface-2: #e3e8db;
+  --ink: #1c2920;
+  --muted: #586758;
+  --line: #ccd5c4;
+  --accent: #5d2a51;      /* damson */
+  --accent-soft: #eadbe5;
+  --on-accent: #fbf6fa;
+  --soil: #d9cdb8;
+  --bark: #6b4a33;
+  --blossom: #e7a9c6;
+  --harvest: #5d2a51;
+  --prune: #8f7a5c;
+  --gap: #c9b7a1;
+
+  --l-canopy: #2e5e3e;
+  --l-subcanopy: #6a8b33;
+  --l-shrub: #8a3f74;
+  --l-herb: #a87a1f;
+  --l-ground: #2f8178;
+  --l-root: #84553a;
+  --l-climber: #4660a6;
+  --on-layer: #ffffff;
+
+  --f-display: "Young Serif", "Iowan Old Style", Georgia, serif;
+  --f-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --r: 10px;
+  --step--1: 0.8125rem;
+  --step-0: 1rem;
+  --step-1: 1.25rem;
+  --step-2: 1.625rem;
+  --step-3: clamp(2rem, 1.4rem + 2.6vw, 3.25rem);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131a15; --surface: #1a231d; --surface-2: #222d25; --ink: #e2e8dc; --muted: #9aa898;
+    --line: #2f3b32; --accent: #d9a2cb; --accent-soft: #3b2536; --on-accent: #21121d;
+    --soil: #3a3125; --bark: #a07a5a; --blossom: #b8668f; --harvest: #d9a2cb; --prune: #a99372; --gap: #4a3d30;
+    --l-canopy: #5f9b6c; --l-subcanopy: #93b25a; --l-shrub: #c27aad; --l-herb: #d1a64a;
+    --l-ground: #4fb0a5; --l-root: #b9845f; --l-climber: #7f97d9; --on-layer: #10160f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131a15; --surface: #1a231d; --surface-2: #222d25; --ink: #e2e8dc; --muted: #9aa898;
+  --line: #2f3b32; --accent: #d9a2cb; --accent-soft: #3b2536; --on-accent: #21121d;
+  --soil: #3a3125; --bark: #a07a5a; --blossom: #b8668f; --harvest: #d9a2cb; --prune: #a99372; --gap: #4a3d30;
+  --l-canopy: #5f9b6c; --l-subcanopy: #93b25a; --l-shrub: #c27aad; --l-herb: #d1a64a;
+  --l-ground: #4fb0a5; --l-root: #b9845f; --l-climber: #7f97d9; --on-layer: #10160f;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--f-body); font-size: var(--step-0); line-height: 1.55;
+}
+img, svg { max-width: 100%; }
+a { color: var(--accent); }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 400; line-height: 1.15; text-wrap: balance; margin: 0; }
+h2 { font-size: var(--step-2); }
+h3 { font-size: var(--step-1); }
+p { margin: 0; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wrap { max-width: 1180px; margin-inline: auto; padding-inline: clamp(16px, 4vw, 40px); }
+.eyebrow { font-family: var(--f-data); font-size: var(--step--1); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.lede { color: var(--muted); max-width: 62ch; }
+.mono { font-family: var(--f-data); font-variant-numeric: tabular-nums; }
+
+/* Nav */
+.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.nav .wrap { display: flex; align-items: center; gap: 1rem; padding-block: .6rem; flex-wrap: wrap; }
+.brand { font-family: var(--f-display); font-size: 1.1rem; text-decoration: none; color: var(--ink); margin-right: auto; }
+.nav nav { display: flex; gap: .25rem; flex-wrap: wrap; }
+.nav nav a { text-decoration: none; color: var(--muted); padding: .3rem .6rem; border-radius: 999px; font-size: .95rem; }
+.nav nav a:hover { color: var(--ink); background: var(--surface-2); }
+
+section { padding-block: clamp(2.5rem, 6vw, 4.5rem); }
+section + section { border-top: 1px solid var(--line); }
+.sec-head { display: grid; gap: .5rem; margin-bottom: 1.75rem; }
+
+/* Hero */
+.hero { padding-block: clamp(2rem, 5vw, 3.5rem) 1rem; }
+.hero h1 { font-size: var(--step-3); max-width: 18ch; }
+.hero .lede { margin-top: .9rem; font-size: 1.1rem; }
+.hero-stats { display: flex; flex-wrap: wrap; gap: .5rem 1.75rem; margin-top: 1.25rem; }
+.hero-stats div { display: grid; }
+.hero-stats b { font-family: var(--f-data); font-weight: 500; font-size: 1.15rem; }
+.hero-stats span { color: var(--muted); font-size: var(--step--1); }
+
+/* Profile (layers) */
+.profile { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
+@media (max-width: 860px) { .profile { grid-template-columns: minmax(0, 1fr); } }
+.profile-fig { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: .75rem; overflow: hidden; }
+.profile-fig svg { display: block; width: 100%; height: auto; }
+.profile-fig figcaption { font-size: var(--step--1); color: var(--muted); padding: .5rem .25rem 0; }
+.lyr { cursor: pointer; transition: opacity .2s; }
+svg.has-hi .lyr:not(.hi) { opacity: .25; }
+.layer-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.layer-list button { width: 100%; text-align: left; display: grid; grid-template-columns: 14px 1fr auto; gap: .65rem; align-items: center; padding: .55rem .7rem; border: 0; background: transparent; border-radius: 8px; cursor: pointer; }
+.layer-list button:hover, .layer-list button.hi { background: var(--surface-2); }
+.layer-list .sw { width: 14px; height: 14px; border-radius: 4px; }
+.layer-list .nm { font-weight: 700; }
+.layer-list .ht { font-family: var(--f-data); font-size: var(--step--1); color: var(--muted); }
+.layer-detail { margin-top: .75rem; padding: .9rem 1rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); min-height: 8.5rem; }
+.layer-detail p { color: var(--muted); font-size: .95rem; margin-top: .3rem; }
+.layer-detail .ex { margin-top: .5rem; font-size: .9rem; }
+
+/* Tabs */
+.tabs { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1.5rem; }
+.tab { border: 1px solid var(--line); background: var(--surface); padding: .45rem .9rem; border-radius: 999px; cursor: pointer; font-size: .95rem; }
+.tab:hover { border-color: var(--muted); }
+.tab[aria-selected="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+
+/* Guild atlas */
+.guild { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(1.25rem, 3vw, 2.5rem); align-items: start; }
+@media (max-width: 900px) { .guild { grid-template-columns: minmax(0, 1fr); } }
+.guild-info { display: grid; gap: 1.4rem; min-width: 0; }
+.guild-info > *, .b-results > *, .plan-wrap > * { min-width: 0; }
+.tree-head h3 { font-size: var(--step-2); }
+.tree-head .latin { font-style: italic; color: var(--muted); }
+.tree-head p { margin-top: .6rem; max-width: 60ch; }
+.facts { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: .35rem 1rem; font-size: .95rem; margin: 0; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; }
+.block-title { font-family: var(--f-data); font-size: var(--step--1); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: .55rem; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+select { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: .4rem .6rem; max-width: 100%; }
+
+/* Calendar */
+.cal { display: grid; grid-template-columns: minmax(7rem, max-content) repeat(12, minmax(0, 1fr)); gap: 2px; font-size: var(--step--1); align-items: center; }
+.cal .mh { font-family: var(--f-data); color: var(--muted); text-align: center; padding-bottom: 2px; }
+.cal .rl { padding-right: .6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cal .c { height: 18px; border-radius: 3px; background: var(--surface-2); }
+.cal .c.blossom { background: var(--blossom); }
+.cal .c.harvest { background: var(--harvest); }
+.cal .c.prune { background: var(--prune); }
+.cal .c.gap { background: repeating-linear-gradient(45deg, var(--gap) 0 3px, transparent 3px 6px); }
+.cal .rl.total { font-weight: 700; }
+.cal .c.count { display: grid; place-items: center; font-family: var(--f-data); font-size: .7rem; background: var(--accent-soft); color: var(--ink); }
+.cal .c.count.zero { background: repeating-linear-gradient(45deg, var(--gap) 0 3px, transparent 3px 6px); }
+.cal-key { display: flex; flex-wrap: wrap; gap: .3rem 1rem; font-size: var(--step--1); color: var(--muted); margin-top: .5rem; }
+.cal-key i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: .35rem; vertical-align: -1px; }
+.cal-scroll { overflow-x: auto; }
+.cal-scroll .cal { min-width: 420px; }
+
+.prune-note { font-size: .95rem; padding: .75rem .9rem; border-left: 3px solid var(--prune); background: var(--surface); border-radius: 0 8px 8px 0; }
+.prune-note b { display: block; margin-bottom: .2rem; }
+
+/* Yield */
+.yield { display: grid; gap: .8rem; }
+.y-row { display: grid; gap: .3rem; }
+.y-top { display: flex; justify-content: space-between; gap: 1rem; font-size: .95rem; flex-wrap: wrap; }
+.y-top .mono { font-weight: 500; }
+.y-bar { position: relative; height: 22px; border-radius: 5px; background: var(--surface-2); overflow: hidden; display: flex; }
+.y-bar span { height: 100%; }
+.y-bar .t-lo { background: var(--l-canopy); }
+.y-bar .t-hi { background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--l-canopy) 45%, transparent) 0 4px, color-mix(in srgb, var(--l-canopy) 25%, transparent) 4px 8px); }
+.y-bar .u { background: var(--l-shrub); }
+.y-sub { font-size: var(--step--1); color: var(--muted); }
+.y-note { font-size: var(--step--1); color: var(--muted); }
+
+/* Plan view */
+.plan-wrap { display: grid; gap: .75rem; min-width: 0; }
+.plan { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: .5rem; }
+.plan svg { display: block; width: 100%; height: auto; max-height: 560px; margin-inline: auto; }
+.mk { cursor: pointer; }
+.mk circle.dot { stroke: var(--surface); stroke-width: 2; transition: transform .15s; }
+.mk:hover circle.dot, .mk:focus circle.dot, .mk.hi circle.dot { stroke: var(--ink); stroke-width: 2.5; }
+.mk text { pointer-events: none; }
+.mk:focus { outline: none; }
+.legend { display: flex; flex-wrap: wrap; gap: .3rem .9rem; font-size: var(--step--1); color: var(--muted); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: .35rem; vertical-align: -1px; }
+
+.members { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.members li { background: var(--surface); padding: .65rem .85rem; display: grid; grid-template-columns: 26px 1fr; gap: .2rem .7rem; cursor: default; }
+.members li:hover, .members li.hi { background: var(--surface-2); }
+.members .dot { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-family: var(--f-data); font-size: .7rem; color: var(--on-layer); grid-row: span 2; }
+.members .nm { font-weight: 700; }
+.members .nm .n { font-family: var(--f-data); font-weight: 400; color: var(--muted); font-size: var(--step--1); margin-left: .35rem; }
+.members .why { font-size: .9rem; color: var(--muted); }
+
+/* Notes */
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 1rem 2rem; }
+.note h3 { font-size: 1.1rem; margin-bottom: .35rem; }
+.note p { color: var(--muted); font-size: .95rem; }
+
+/* Builder */
+.builder { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(1.25rem, 3vw, 2.5rem); align-items: start; }
+@media (max-width: 960px) { .builder { grid-template-columns: minmax(0, 1fr); } }
+.b-controls { display: flex; flex-wrap: wrap; gap: .75rem; align-items: end; margin-bottom: 1rem; }
+.b-controls label { display: grid; gap: .25rem; font-size: var(--step--1); color: var(--muted); }
+.btn { border: 1px solid var(--line); background: var(--surface); padding: .45rem .8rem; border-radius: 8px; cursor: pointer; font-size: .95rem; }
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.filters { display: flex; flex-wrap: wrap; gap: .35rem; margin-bottom: 1rem; }
+.filter { border: 1px dashed var(--line); background: transparent; padding: .25rem .65rem; border-radius: 999px; font-size: var(--step--1); cursor: pointer; color: var(--muted); }
+.filter[aria-pressed="true"] { border-style: solid; border-color: var(--ink); color: var(--ink); background: var(--surface); }
+.layer-pick { display: grid; gap: 1.1rem; }
+.lp-head { display: flex; align-items: baseline; gap: .6rem; margin-bottom: .45rem; flex-wrap: wrap; }
+.lp-head .sw { width: 12px; height: 12px; border-radius: 3px; align-self: center; }
+.lp-head h3 { font-size: 1.05rem; }
+.lp-head span { font-size: var(--step--1); color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: .35rem; }
+.chip { display: inline-flex; align-items: center; gap: .4rem; border: 1px solid var(--line); background: var(--surface); padding: .3rem .65rem .3rem .4rem; border-radius: 999px; cursor: pointer; font-size: .9rem; }
+.chip:hover { border-color: var(--muted); }
+.chip .ab { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-family: var(--f-data); font-size: .62rem; color: var(--on-layer); flex: none; }
+.chip.on { border-color: var(--ink); background: var(--surface-2); }
+.chip .cnt { font-family: var(--f-data); font-size: var(--step--1); color: var(--muted); }
+.b-results { display: grid; gap: 1.4rem; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 4rem); min-width: 0; }
+@media (max-width: 960px) { .b-results { position: static; } }
+.mine { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.mine li { display: grid; grid-template-columns: 22px 1fr auto; gap: .6rem; align-items: center; font-size: .92rem; }
+.mine .dot { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-family: var(--f-data); font-size: .6rem; color: var(--on-layer); }
+.stepper { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); }
+.stepper button { border: 0; background: transparent; width: 28px; height: 26px; cursor: pointer; }
+.stepper button:hover { background: var(--surface-2); }
+.stepper span { min-width: 2ch; text-align: center; font-family: var(--f-data); font-size: var(--step--1); }
+.empty { color: var(--muted); font-size: .92rem; }
+.checks { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: .35rem 1rem; font-size: .92rem; }
+.checks li { display: grid; grid-template-columns: 1.1rem 1fr; gap: .4rem; }
+.checks .mark { font-family: var(--f-data); }
+.checks .ok .mark { color: var(--l-canopy); }
+.checks .no { color: var(--muted); }
+.warns { list-style: none; margin: 0; padding: 0; display: grid; gap: .4rem; font-size: .9rem; }
+.warns li { padding: .5rem .7rem; border-radius: 8px; background: var(--accent-soft); }
+
+/* Tooltip */
+#tip { position: fixed; z-index: 50; max-width: min(320px, calc(100vw - 24px)); background: var(--ink); color: var(--bg); border-radius: 10px; padding: .75rem .85rem; font-size: .875rem; line-height: 1.45; pointer-events: none; box-shadow: 0 8px 28px rgba(0,0,0,.25); opacity: 0; transform: translateY(4px); transition: opacity .12s, transform .12s; }
+#tip.show { opacity: 1; transform: none; }
+#tip h4 { font-family: var(--f-display); font-weight: 400; font-size: 1.1rem; margin: 0; }
+#tip .lt { font-style: italic; opacity: .75; }
+#tip .tags { display: flex; flex-wrap: wrap; gap: .25rem; margin: .45rem 0; }
+#tip .tag { font-family: var(--f-data); font-size: .68rem; border: 1px solid color-mix(in srgb, var(--bg) 40%, transparent); border-radius: 999px; padding: .05rem .45rem; }
+#tip .row { display: flex; justify-content: space-between; gap: 1rem; font-family: var(--f-data); font-size: .75rem; opacity: .9; }
+#tip p { margin-top: .4rem; }
+#tip .why { margin-top: .5rem; padding-top: .5rem; border-top: 1px solid color-mix(in srgb, var(--bg) 25%, transparent); }
+#tip .warn { margin-top: .4rem; color: var(--blossom); }
+
+footer { padding-block: 2rem 3rem; border-top: 1px solid var(--line); color: var(--muted); font-size: var(--step--1); }
+footer p + p { margin-top: .4rem; }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top">The Guild Orchard</a>
+    <nav aria-label="Sections">
+      <a href="#layers">Layers</a>
+      <a href="#guilds">Tree guilds</a>
+      <a href="#builder">Guild builder</a>
+      <a href="#notes">UK notes</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap hero">
+    <p class="eyebrow">Forest gardening for British gardens</p>
+    <h1>Plant a guild, not just a tree.</h1>
+    <p class="lede">A tree guild is a fruit tree with a ring of companions that feed the soil, cover the ground, bring in pollinators and give you a second, third and fourth harvest from the same patch. Here are nine guilds that work in the UK climate, with what to pick when, when to prune, and what to expect in year three versus year ten.</p>
+    <div class="hero-stats">
+      <div><b>7</b><span>layers of a food forest</span></div>
+      <div><b>9</b><span>fruit tree guilds</span></div>
+      <div><b>Nov–Mar</b><span>bare-root planting season</span></div>
+      <div><b>~4 m</b><span>a typical guild circle</span></div>
+    </div>
+  </div>
+
+  <section id="layers">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">The structure</p>
+        <h2>Seven layers in one patch of ground</h2>
+        <p class="lede">A woodland edge stacks plants by height and by depth. A food forest copies that so every layer earns its place. Hover or tap a layer to see what lives there.</p>
+      </div>
+      <div class="profile">
+        <figure class="profile-fig" style="margin:0">
+          <svg id="profileSvg" viewBox="0 0 800 340" role="group" aria-label="Cross-section of a mature apple guild showing seven layers"></svg>
+          <figcaption>Cross-section of a mature apple guild, north on the left. Taller plants go on the north side so they don't shade the rest.</figcaption>
+        </figure>
+        <div>
+          <ul class="layer-list" id="layerList"></ul>
+          <div class="layer-detail" id="layerDetail" aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="guilds">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">The guild atlas</p>
+        <h2>Nine fruit trees and what to plant around them</h2>
+        <p class="lede">Each plan is seen from above, north at the top, with the dashed ring marking the mature drip line. Hover over a plant for its details and why it belongs in that guild. Change the rootstock to see how it changes the tree's size and crop.</p>
+      </div>
+      <div class="tabs" role="tablist" id="treeTabs" aria-label="Fruit tree"></div>
+      <div class="guild" id="guildPanel" role="tabpanel"></div>
+    </div>
+  </section>
+
+  <section id="builder">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Design your own</p>
+        <h2>Guild builder</h2>
+        <p class="lede">Pick a centre tree and rootstock, then add plants from each layer. The plan, harvest calendar and yield estimate update as you go, and the checklist shows which jobs your guild still needs doing. Your guild is saved in this browser. It starts with the suggested apple guild as an example.</p>
+      </div>
+      <div class="builder">
+        <div>
+          <div class="b-controls">
+            <label for="bTree">Centre tree
+              <select id="bTree"></select>
+            </label>
+            <label for="bRoot">Rootstock
+              <select id="bRoot"></select>
+            </label>
+            <button class="btn" id="bSuggest" type="button">Load suggested guild</button>
+            <button class="btn" id="bClear" type="button">Clear plants</button>
+          </div>
+          <div class="filters" id="bFilters" aria-label="Filter plants by job"></div>
+          <div class="layer-pick" id="bPick"></div>
+        </div>
+        <div class="b-results">
+          <div class="plan-wrap">
+            <div class="plan" id="bPlan"></div>
+          </div>
+          <div>
+            <div class="block-title"><span>Your guild</span><span id="bCount"></span></div>
+            <ul class="mine" id="bMine"></ul>
+          </div>
+          <div>
+            <div class="block-title"><span>Jobs covered</span></div>
+            <ul class="checks" id="bChecks"></ul>
+          </div>
+          <ul class="warns" id="bWarns"></ul>
+          <div>
+            <div class="block-title"><span>Estimated yield</span></div>
+            <div class="yield" id="bYield"></div>
+          </div>
+          <div>
+            <div class="block-title"><span>Harvest calendar</span><span id="bMonths"></span></div>
+            <div class="cal-scroll"><div class="cal" id="bCal"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="notes">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Before you dig</p>
+        <h2>UK growing notes</h2>
+      </div>
+      <div class="notes">
+        <div class="note"><h3>Plant bare-root in winter</h3><p>Bare-root trees and bushes are cheaper and establish better. Plant from November to March when the ground isn't frozen or waterlogged. Pot-grown plants can go in any time but need watering through their first summer.</p></div>
+        <div class="note"><h3>Prune stone fruit in summer</h3><p>Plums, damsons and cherries get silver leaf and bacterial canker through winter cuts. Prune them on a dry day between June and August. Apples, pears, quince and medlar are pruned in winter while dormant.</p></div>
+        <div class="note"><h3>Watch for late frosts</h3><p>Frost in April and May kills blossom. Avoid planting early-flowering pears and plums at the bottom of slopes, where cold air pools. Medlar and quince flower late and cope with frost pockets better.</p></div>
+        <div class="note"><h3>Check pollination groups</h3><p>Most apples and pears need a partner of a different variety flowering at the same time, within about 20 m. Nurseries list varieties by flowering group (1 to 7). A neighbour's tree or a crab apple often does the job.</p></div>
+        <div class="note"><h3>Mulch, then plant into it</h3><p>Kill the grass with cardboard and 10 cm of woodchip a season before planting. Grass is the main competitor of young trees. Top up the woodchip each winter; the fungi it feeds are what woodland soils run on.</p></div>
+        <div class="note"><h3>Plan for shade to arrive</h3><p>In years one to four the guild is sunny and the understory produces most of the food. As the canopy closes, swap sun-lovers like strawberries and lavender for shade-tolerant currants, wild garlic and sweet cicely.</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Yields are typical fresh-weight ranges for UK gardens with reasonable care. Good years can double them; a frosty April can halve them. Treat them as a planning guide, not a promise.</p>
+    <p>"Young guild" means years 3–4 after planting. "Mature guild" means year 8 onwards (year 12 onwards for mulberry).</p>
+  </div>
+</footer>
+
+<div id="tip" role="tooltip" aria-hidden="true"></div>
+
+<script>
+(() => {
+'use strict';
+
+/* ---------- Helpers ---------- */
+const MONTH = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MI = ['J','F','M','A','M','J','J','A','S','O','N','D'];
+const r = (a, b) => { const o = []; let m = a; for (;;) { o.push(m); if (m === b) break; m = m % 12 + 1; } return o; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const $ = (s, el = document) => el.querySelector(s);
+function monthsText(arr) {
+  if (!arr || !arr.length) return '—';
+  const s = new Set(arr);
+  if (s.size === 12) return 'All year';
+  const runs = [];
+  for (let m = 1; m <= 12; m++) {
+    if (s.has(m) && !s.has(m === 1 ? 12 : m - 1)) {
+      let e = m;
+      while (s.has(e % 12 + 1) && e % 12 + 1 !== m) e = e % 12 + 1;
+      runs.push(e === m ? MONTH[m - 1] : MONTH[m - 1] + '–' + MONTH[e - 1]);
+    }
+  }
+  return runs.join(', ');
+}
+const kg = v => v >= 10 ? Math.round(v) : (Math.round(v * 10) / 10);
+
+/* ---------- Layers ---------- */
+const LAYERS = [
+  { id: 'canopy', name: 'Canopy', ht: '4–8 m', desc: 'The fruit tree at the centre of the guild. In a garden this is usually a semi-vigorous apple, pear or plum of 4–6 m, not a forest giant. Its rootstock decides how big it gets.', ex: 'Apple on MM106, pear on Quince A, plum on St Julien A, sweet chestnut or walnut on large sites only' },
+  { id: 'subcanopy', name: 'Low tree', ht: '2–5 m', desc: 'Smaller trees and large shrubs on the north side of the guild. Many are nitrogen fixers or nut bushes you can coppice for mulch and poles.', ex: 'Cobnut, elder, sea buckthorn, Siberian pea shrub, coppiced Italian alder' },
+  { id: 'shrub', name: 'Shrub', ht: '1–2.5 m', desc: 'Soft fruit at the canopy edge. Currants and gooseberries fruit well in dappled shade, which makes them the backbone of the UK shrub layer.', ex: 'Blackcurrant, gooseberry, jostaberry, honeyberry, Elaeagnus × ebbingei' },
+  { id: 'herb', name: 'Herbaceous', ht: '0.3–1.5 m', desc: 'Perennial vegetables, herbs and nutrient miners that die back in winter. Comfrey is the workhorse: cut it four times a year and leave the leaves as mulch.', ex: 'Comfrey, rhubarb, sorrel, sweet cicely, chives, perennial kale, fennel' },
+  { id: 'ground', name: 'Ground cover', ht: '< 30 cm', desc: 'Low, spreading plants that keep soil covered, hold in moisture and stop grass competing with tree roots. Wine cap mushrooms in woodchip count here too.', ex: 'Alpine strawberry, white clover, creeping thyme, sweet woodruff, nasturtium' },
+  { id: 'root', name: 'Root & bulb', ht: 'below ground', desc: 'Bulbs and tubers. A ring of daffodils at the drip line holds back grass roots and deters voles. Edible roots fill the gaps.', ex: 'Daffodil, wild garlic, camassia, skirret, oca, perennial leek' },
+  { id: 'climber', name: 'Climber', ht: 'vertical', desc: 'Vines that use a tree, post or wall. Only send a climber up a mature, vigorous tree, never a young or dwarf one, or it will smother it.', ex: 'Hardy kiwi, outdoor grape, hops, thornless blackberry, runner beans' },
+];
+const LAYER = Object.fromEntries(LAYERS.map(l => [l.id, l]));
+
+const ROLES = {
+  food:   { label: 'Food', check: 'Gives you food beyond the tree' },
+  nfix:   { label: 'Fixes nitrogen', check: 'Fixes nitrogen' },
+  accum:  { label: 'Mines nutrients', check: 'Mines nutrients from deep down' },
+  insect: { label: 'Feeds insects', check: 'Feeds pollinators and pest predators' },
+  pest:   { label: 'Deters pests', check: 'Deters, traps or confuses pests' },
+  cover:  { label: 'Covers soil', check: 'Keeps the soil covered' },
+  mulch:  { label: 'Mulch maker', check: 'Makes chop-and-drop mulch' },
+};
+const LIGHT = { sun: 'Full sun', part: 'Sun or part shade', shade: 'Copes with shade' };
+
+/* ---------- Plants ---------- */
+// y: [young, mature] kg per plant (null = not grown for yield)
+const PLANTS = [
+  // Low trees
+  { id: 'hazel', name: 'Cobnut', latin: 'Corylus avellana', layer: 'subcanopy', ab: 'Cn', roles: ['food','mulch','insect'], harvest: [8,9], y: [0, 4], light: 'part', note: 'Coppice every 7–10 years for bean poles and to let light back in. Catkins in February feed early bees.', warn: 'Grey squirrels take most nuts unless you pick in late August.' },
+  { id: 'elder', name: 'Elder', latin: 'Sambucus nigra', layer: 'subcanopy', ab: 'El', roles: ['food','insect'], harvest: [6,8,9], y: [1, 6], light: 'part', note: 'Flowers in June for cordial, berries in September for syrup. Grows almost anywhere and stands hard pruning.' },
+  { id: 'seabuck', name: 'Sea buckthorn', latin: 'Hippophae rhamnoides', layer: 'subcanopy', ab: 'Sb', roles: ['food','nfix'], harvest: [9,10], y: [0.5, 5], light: 'sun', note: 'Wind- and salt-hardy nitrogen fixer with sharp orange berries very high in vitamin C. Good on exposed and coastal sites.', warn: 'Sea buckthorn needs a male plant within about 15 m to fruit, and it suckers.' },
+  { id: 'siberianpea', name: 'Siberian pea shrub', latin: 'Caragana arborescens', layer: 'subcanopy', ab: 'Sp', roles: ['nfix','mulch','insect'], harvest: [], y: null, light: 'sun', note: 'Tough, drought-hardy nitrogen fixer. Cut a few branches each summer and drop them under the tree as mulch.' },
+  { id: 'alder', name: 'Italian alder', latin: 'Alnus cordata', layer: 'subcanopy', ab: 'Al', roles: ['nfix','mulch'], harvest: [], y: null, light: 'sun', note: 'Fast nitrogen-fixing windbreak. Coppice it every few years to keep it in the low-tree layer and feed the guild with the prunings.' },
+
+  // Shrubs
+  { id: 'blackcurrant', name: 'Blackcurrant', latin: "Ribes nigrum 'Ben Connan'", layer: 'shrub', ab: 'Bc', roles: ['food','insect'], harvest: [7], y: [1, 4.5], light: 'part', note: 'The most reliable UK soft fruit in dappled shade. Prune out a third of the oldest stems each winter.' },
+  { id: 'redcurrant', name: 'Redcurrant', latin: "Ribes rubrum 'Rovada'", layer: 'shrub', ab: 'Rc', roles: ['food','insect'], harvest: [7], y: [1, 4], light: 'part', note: 'Long strings of fruit in July. Can be trained as a cordon against a fence to save space.' },
+  { id: 'gooseberry', name: 'Gooseberry', latin: "Ribes uva-crispa 'Invicta'", layer: 'shrub', ab: 'Gb', roles: ['food','insect'], harvest: [6,7], y: [1, 4], light: 'part', note: "Pick the first berries green in June for cooking and leave the rest to sweeten. 'Invicta' resists mildew." },
+  { id: 'jostaberry', name: 'Jostaberry', latin: 'Ribes × nidigrolaria', layer: 'shrub', ab: 'Jb', roles: ['food','insect'], harvest: [7], y: [1, 5], light: 'part', note: 'A thornless blackcurrant and gooseberry cross. Big, vigorous and resistant to big bud mite.' },
+  { id: 'blueberry', name: 'Blueberry', latin: 'Vaccinium corymbosum', layer: 'shrub', ab: 'Bb', roles: ['food','insect'], harvest: [7,8], y: [0.5, 3], light: 'sun', note: 'Plant two varieties for a better crop. Water with rainwater, not tap water.', warn: 'Blueberries need acid soil (pH 4.5–5.5). On normal garden soil, grow them in a raised bed of ericaceous compost.' },
+  { id: 'honeyberry', name: 'Honeyberry', latin: 'Lonicera caerulea', layer: 'shrub', ab: 'Hb', roles: ['food','insect'], harvest: [5,6], y: [0.3, 2], light: 'part', note: 'The first fruit of the year, ripening in late May. Fully hardy and flowers shrug off frost.', warn: 'Honeyberry needs a second variety nearby to set fruit.' },
+  { id: 'raspberry', name: 'Autumn raspberry', latin: "Rubus idaeus 'Autumn Bliss'", layer: 'shrub', ab: 'Ra', roles: ['food','insect'], harvest: [8,9,10], y: [0.5, 1.5], light: 'sun', note: 'Cut all canes to the ground in February. No supports needed. Yield given per clump of canes.', warn: 'Raspberries spread by suckers. Keep them at the outer edge of the guild.' },
+  { id: 'wineberry', name: 'Japanese wineberry', latin: 'Rubus phoenicolasius', layer: 'shrub', ab: 'Wb', roles: ['food','insect'], harvest: [7,8], y: [0.5, 2], light: 'part', note: 'Sticky red berries in late summer and handsome red bristly canes in winter. Copes with part shade.' },
+  { id: 'aronia', name: 'Aronia', latin: 'Aronia melanocarpa', layer: 'shrub', ab: 'Ar', roles: ['food','insect'], harvest: [8,9], y: [0.5, 4], light: 'part', note: 'Hardy, copes with wet ground and gives brilliant autumn colour. Berries are astringent raw; good in juice and jam.' },
+  { id: 'elaeagnus', name: 'Elaeagnus × ebbingei', latin: 'Elaeagnus × ebbingei', layer: 'shrub', ab: 'Ee', roles: ['food','nfix','insect'], harvest: [4], y: [0.2, 1], light: 'part', note: 'Evergreen nitrogen-fixing windbreak. Scented flowers in October feed late bees, and the fruit ripens in April when little else does.' },
+  { id: 'goumi', name: 'Goumi', latin: 'Elaeagnus multiflora', layer: 'shrub', ab: 'Go', roles: ['food','nfix','insect'], harvest: [6,7], y: [0.5, 2], light: 'part', note: 'Deciduous nitrogen fixer with tart red berries in early summer. Self-fertile.' },
+  { id: 'ugni', name: 'Chilean guava', latin: 'Ugni molinae', layer: 'shrub', ab: 'Cg', roles: ['food','insect'], harvest: [10,11], y: [0.1, 0.5], light: 'sun', note: 'Small evergreen with strawberry-scented berries in autumn. Best in the milder south and west.' },
+  { id: 'lavender', name: 'Lavender', latin: 'Lavandula angustifolia', layer: 'shrub', ab: 'Lv', roles: ['insect','pest'], harvest: [7], y: null, light: 'sun', note: 'Bees love it. Trim after flowering, never into old wood. Needs sun and sharp drainage.' },
+  { id: 'rosemary', name: 'Rosemary', latin: 'Salvia rosmarinus', layer: 'shrub', ab: 'Rm', roles: ['food','insect','pest'], harvest: r(1,12), y: [0.1, 0.3], light: 'sun', note: 'Flowers from February, one of the earliest bee plants. Evergreen herb to pick all year.' },
+
+  // Herbaceous
+  { id: 'comfrey', name: 'Comfrey', latin: "Symphytum × uplandicum 'Bocking 14'", layer: 'herb', ab: 'Cf', roles: ['accum','mulch','insect'], harvest: [], y: null, light: 'part', note: "Deep roots pull up potassium. Cut 3–5 times a year and leave the leaves round the tree as mulch. 'Bocking 14' is sterile and won't self-seed.", warn: 'Comfrey is almost impossible to remove once planted. Choose its spot for good.' },
+  { id: 'rhubarb', name: 'Rhubarb', latin: 'Rheum × hybridum', layer: 'herb', ab: 'Rh', roles: ['food','cover'], harvest: [4,5,6,7], y: [0.5, 3], light: 'part', note: "Don't pull stems in the first year. Huge leaves shade out weeds. Feed it with compost each winter." },
+  { id: 'sorrel', name: 'Sorrel', latin: 'Rumex acetosa', layer: 'herb', ab: 'So', roles: ['food','accum'], harvest: r(3,10), y: [0.2, 1], light: 'part', note: 'Lemony leaves from March, before most salads. Cut back flower stems to keep leaves coming.' },
+  { id: 'sweetcicely', name: 'Sweet cicely', latin: 'Myrrhis odorata', layer: 'herb', ab: 'Sc', roles: ['food','insect'], harvest: [4,5,6], y: [0.1, 0.5], light: 'shade', note: 'Aniseed leaves that sweeten rhubarb. White umbels in April feed early hoverflies. Thrives in shade.' },
+  { id: 'lovage', name: 'Lovage', latin: 'Levisticum officinale', layer: 'herb', ab: 'Lo', roles: ['food','insect','accum'], harvest: r(4,9), y: [0.2, 1], light: 'part', note: 'Celery-flavoured leaves for soups and stocks. Tall umbels attract parasitic wasps.' },
+  { id: 'yarrow', name: 'Yarrow', latin: 'Achillea millefolium', layer: 'herb', ab: 'Ya', roles: ['accum','insect'], harvest: [], y: null, light: 'sun', note: 'Flat flower heads draw in hoverflies, ladybirds and parasitic wasps that eat aphids and codling moth eggs.' },
+  { id: 'fennel', name: 'Fennel', latin: 'Foeniculum vulgare', layer: 'herb', ab: 'Fn', roles: ['food','insect'], harvest: r(6,10), y: [0.2, 0.5], light: 'sun', note: 'Perennial herb fennel (not Florence). Yellow umbels bring in hoverflies all summer.', warn: 'Fennel cross-pollinates with dill. Grow one or the other.' },
+  { id: 'chives', name: 'Chives', latin: 'Allium schoenoprasum', layer: 'herb', ab: 'Ch', roles: ['food','pest','insect'], harvest: r(3,10), y: [0.1, 0.3], light: 'part', note: 'A ring of chives round the trunk is the traditional orchard guard against apple scab and aphids. Purple flowers feed bees in May.' },
+  { id: 'tansy', name: 'Tansy', latin: 'Tanacetum vulgare', layer: 'herb', ab: 'Ta', roles: ['insect','pest','accum'], harvest: [], y: null, light: 'sun', note: 'Strong-smelling yellow buttons that attract ladybirds and lacewings.', warn: 'Tansy is poisonous and spreads. Keep it to a corner.' },
+  { id: 'borage', name: 'Borage', latin: 'Borago officinalis', layer: 'herb', ab: 'Bo', roles: ['insect','accum','food'], harvest: r(6,9), y: null, light: 'sun', note: 'Annual that self-seeds every year. Blue flowers refill with nectar every few minutes and are edible.' },
+  { id: 'calendula', name: 'Calendula', latin: 'Calendula officinalis', layer: 'herb', ab: 'Ca', roles: ['insect','food'], harvest: r(6,10), y: null, light: 'sun', note: 'Self-seeding pot marigold. Flowers from June to frost and attracts hoverflies whose larvae eat aphids.' },
+  { id: 'phacelia', name: 'Phacelia', latin: 'Phacelia tanacetifolia', layer: 'herb', ab: 'Ph', roles: ['insect','mulch','cover'], harvest: [], y: null, light: 'sun', note: 'Annual green manure. Sow in bare gaps in spring; it flowers in 8 weeks and covers soil while perennials fill in.' },
+  { id: 'perkale', name: 'Perennial kale', latin: "Brassica oleracea 'Daubenton'", layer: 'herb', ab: 'Pk', roles: ['food','cover'], harvest: r(1,12), y: [0.5, 2], light: 'part', note: 'Picks all year, including through the hungry gap. Take cuttings every 5 years to keep plants vigorous.' },
+  { id: 'artichoke', name: 'Globe artichoke', latin: 'Cynara cardunculus', layer: 'herb', ab: 'Ga', roles: ['food','insect'], harvest: [6,7,8], y: [0.3, 1.5], light: 'sun', note: 'Sculptural silver plant. Flowers left uncut are bumblebee magnets. Needs sun and good drainage.' },
+  { id: 'goodkinghenry', name: 'Good King Henry', latin: 'Blitum bonus-henricus', layer: 'herb', ab: 'Gk', roles: ['food','accum'], harvest: r(3,8), y: [0.1, 0.5], light: 'shade', note: 'Spinach-like leaves and asparagus-like spring shoots. Happy in shade under the canopy.' },
+  { id: 'lupin', name: 'Lupin', latin: 'Lupinus polyphyllus', layer: 'herb', ab: 'Lu', roles: ['nfix','insect'], harvest: [], y: null, light: 'sun', note: 'Herbaceous nitrogen fixer with spires that bumblebees love. Cut back after flowering for a second flush.', warn: 'Lupin seeds are poisonous.' },
+  { id: 'marjoram', name: 'Wild marjoram', latin: 'Origanum vulgare', layer: 'herb', ab: 'Mj', roles: ['food','insect','cover'], harvest: r(6,9), y: [0.05, 0.2], light: 'sun', note: 'Native oregano. Pink flowers in high summer are among the best plants for butterflies and hoverflies.' },
+
+  // Ground cover
+  { id: 'strawberry', name: 'Strawberry', latin: 'Fragaria × ananassa', layer: 'ground', ab: 'St', roles: ['food','cover'], harvest: [6,7], y: [0.1, 0.4], light: 'sun', note: 'Spreads by runners into a fruiting mat. Needs sun, so use it in young guilds or on the south side.' },
+  { id: 'alpinestrawberry', name: 'Alpine strawberry', latin: 'Fragaria vesca', layer: 'ground', ab: 'As', roles: ['food','cover'], harvest: r(6,10), y: [0.05, 0.15], light: 'shade', note: 'Tiny, intense berries from June to October. Copes with shade and self-seeds into gaps.' },
+  { id: 'whiteclover', name: 'White clover', latin: 'Trifolium repens', layer: 'ground', ab: 'Wc', roles: ['nfix','cover','insect'], harvest: [], y: null, light: 'sun', note: 'Sown as a living mulch between plants. Fixes nitrogen and feeds bees. Counted as one sown patch.' },
+  { id: 'thyme', name: 'Creeping thyme', latin: 'Thymus serpyllum', layer: 'ground', ab: 'Th', roles: ['food','cover','insect'], harvest: r(4,10), y: null, light: 'sun', note: 'Aromatic mat for the hot, dry south side. Flowers in June and July.' },
+  { id: 'mint', name: 'Mint', latin: 'Mentha spp.', layer: 'ground', ab: 'Mt', roles: ['food','cover','insect','pest'], harvest: r(4,10), y: [0.1, 0.5], light: 'part', note: 'Fast ground cover in moist soil. Flowers feed hoverflies; the smell may confuse pests.', warn: 'Mint spreads hard. Sink it in a bottomless bucket or give it a patch of its own.' },
+  { id: 'nasturtium', name: 'Nasturtium', latin: 'Tropaeolum majus', layer: 'ground', ab: 'Na', roles: ['food','cover','pest'], harvest: r(6,10), y: [0.1, 0.1], light: 'sun', note: 'Annual sown each May. Aphids and cabbage whites go for it instead of your crops. Leaves, flowers and seeds are edible.' },
+  { id: 'ajuga', name: 'Bugle', latin: 'Ajuga reptans', layer: 'ground', ab: 'Bu', roles: ['cover','insect'], harvest: [], y: null, light: 'shade', note: 'Native, shade-loving carpet with blue spikes in May for bumblebees.' },
+  { id: 'woodruff', name: 'Sweet woodruff', latin: 'Galium odoratum', layer: 'ground', ab: 'Sw', roles: ['cover','food'], harvest: [4,5], y: null, light: 'shade', note: 'Fine carpet for deep shade under a mature canopy. Dried leaves smell of hay and vanilla.' },
+  { id: 'winecap', name: 'Wine cap mushroom', latin: 'Stropharia rugosoannulata', layer: 'ground', ab: 'Wm', roles: ['food','mulch'], harvest: r(6,10), y: [0.5, 2], light: 'shade', note: 'Inoculate a woodchip path or mulch ring with spawn. Fruits from summer to autumn and turns woodchip into compost. Yield per square metre.' },
+
+  // Root & bulb
+  { id: 'daffodil', name: 'Daffodil', latin: 'Narcissus spp.', layer: 'root', ab: 'Df', roles: ['pest','insect'], harvest: [], y: null, light: 'part', note: 'Plant a ring at the drip line. Dense bulbs stop grass creeping in, and voles and rabbits avoid them. Early flowers feed queen bumblebees.', warn: 'Daffodils are poisonous. Plant them where they won\'t be mistaken for onions.' },
+  { id: 'wildgarlic', name: 'Wild garlic', latin: 'Allium ursinum', layer: 'root', ab: 'Wg', roles: ['food','cover'], harvest: [2,3,4,5], y: [0.1, 0.5], light: 'shade', note: 'Carpets the ground from February to May before the canopy leafs out, then dies back. Perfect under a mature tree.' },
+  { id: 'camassia', name: 'Camassia', latin: 'Camassia quamash', layer: 'root', ab: 'Cm', roles: ['food','insect'], harvest: [7,8], y: [0.05, 0.1], light: 'part', note: 'Blue spires in May feed bees in the gap after fruit blossom. Bulbs are edible after long, slow cooking. Likes damp ground.' },
+  { id: 'perleek', name: "Babington's leek", latin: 'Allium ampeloprasum var. babingtonii', layer: 'root', ab: 'Bl', roles: ['food','pest'], harvest: r(3,6), y: [0.1, 0.3], light: 'part', note: 'Perennial leek that multiplies itself. Use the leaves and bulbs like garlicky leeks in spring.' },
+  { id: 'welshonion', name: 'Welsh onion', latin: 'Allium fistulosum', layer: 'root', ab: 'Wo', roles: ['food','pest','insect'], harvest: r(1,12), y: [0.1, 0.4], light: 'part', note: 'Clump-forming perennial spring onion. Pick a few stems at any time of year.' },
+  { id: 'oca', name: 'Oca', latin: 'Oxalis tuberosa', layer: 'root', ab: 'Oc', roles: ['food','cover'], harvest: [11,12], y: [0.3, 1], light: 'sun', note: 'Andean tuber with lemony, waxy tubers. Tubers only form after September, so lift after the first frosts and replant a few each spring.' },
+  { id: 'skirret', name: 'Skirret', latin: 'Sium sisarum', layer: 'root', ab: 'Sk', roles: ['food','insect'], harvest: [10,11,12,1,2,3], y: [0.2, 0.5], light: 'part', note: 'Tudor root vegetable with sweet, parsnip-like roots. Likes moist soil. Umbels attract hoverflies.' },
+  { id: 'jartichoke', name: 'Jerusalem artichoke', latin: 'Helianthus tuberosus', layer: 'root', ab: 'Ja', roles: ['food','insect'], harvest: [11,12,1,2,3], y: [1, 2], light: 'sun', note: 'Tall sunflower relative with knobbly tubers. Makes a useful summer windbreak on the exposed edge.', warn: 'Jerusalem artichokes spread and are hard to clear. Plant at the outer edge only.' },
+  { id: 'horseradish', name: 'Horseradish', latin: 'Armoracia rusticana', layer: 'root', ab: 'Hr', roles: ['food','accum'], harvest: [10,11,12,1,2,3], y: [0.2, 0.5], light: 'part', note: 'Deep tap root mines nutrients. Dig roots from autumn to spring.', warn: 'Horseradish regrows from any root fragment. Give it a corner you won\'t want back.' },
+
+  // Climbers
+  { id: 'kiwi', name: 'Hardy kiwi', latin: "Actinidia arguta 'Issai'", layer: 'climber', ab: 'Kw', roles: ['food'], harvest: [9,10], y: [0, 8], light: 'sun', note: "Grape-sized smooth kiwis you eat skin and all. 'Issai' is self-fertile. Vigorous, so only for a mature tree or a pergola.", warn: 'Hardy kiwi will smother a small tree. Use a post or pergola beside it instead.' },
+  { id: 'grape', name: 'Outdoor grape', latin: "Vitis 'Phoenix' or 'Solaris'", layer: 'climber', ab: 'Gr', roles: ['food'], harvest: [9,10], y: [0.5, 5], light: 'sun', note: 'Mildew-resistant varieties bred for the UK. Best on a sunny wall or sturdy post in the south.' },
+  { id: 'hops', name: 'Hops', latin: 'Humulus lupulus', layer: 'climber', ab: 'Ho', roles: ['food','mulch'], harvest: [4,9], y: [0.1, 1], light: 'sun', note: 'Spring shoots cook like asparagus; cones in September for brewing. Dies back each winter, so it never smothers.' },
+  { id: 'runnerbean', name: 'Runner bean', latin: 'Phaseolus coccineus', layer: 'climber', ab: 'Rb', roles: ['food','nfix','insect'], harvest: r(7,10), y: [1, 1], light: 'sun', note: 'Annual sown each May up a pole or a young tree\'s stake. Red flowers feed bumblebees.' },
+  { id: 'blackberry', name: 'Thornless blackberry', latin: "Rubus fruticosus 'Loch Ness'", layer: 'climber', ab: 'Bk', roles: ['food','insect'], harvest: [8,9], y: [1, 6], light: 'part', note: 'Train on a fence or wires at the guild edge. Cut out stems that have fruited after harvest.' },
+  { id: 'schisandra', name: 'Schisandra', latin: 'Schisandra chinensis', layer: 'climber', ab: 'Sz', roles: ['food'], harvest: [9,10], y: [0, 1], light: 'shade', note: 'Shade-tolerant twiner with sour, spicy berries. Happy on the north side of a tree.' },
+];
+const PLANT = Object.fromEntries(PLANTS.map(p => [p.id, p]));
+
+/* ---------- Trees and guilds ---------- */
+// Rootstock y: young [lo,hi], mature [lo,hi] kg per tree; spread in metres
+const TREES = [
+  {
+    id: 'apple', name: 'Apple', latin: 'Malus domestica', ab: 'Ap',
+    intro: 'The easiest and most rewarding tree for a UK food forest. Mix early, mid and late varieties and you can be eating apples from August until March from store.',
+    varieties: "'Discovery' (Aug), 'Egremont Russet' (Oct), 'Bramley' (cooker, Oct, stores to March)",
+    pollination: 'Needs a partner variety in the same or next flowering group. Crab apples count.',
+    site: 'Sun or light shade, any decent soil that doesn\'t waterlog.',
+    blossom: [4,5], harvest: [8,9,10], prune: [11,12,1,2,3],
+    pruneNote: 'Winter, November to March, while dormant. Remove dead, diseased and crossing branches and keep an open centre. Trained forms (cordons, espaliers) also get a summer prune in August.',
+    rootstocks: [
+      { name: 'M26 (dwarfing)', ht: '2.5–3 m', spread: 3, young: [4, 8], mature: [20, 30] },
+      { name: 'MM106 (semi-vigorous)', ht: '4–5 m', spread: 4.5, young: [6, 12], mature: [40, 80] },
+      { name: 'MM111 (vigorous)', ht: '5–6 m', spread: 5.5, young: [3, 8], mature: [70, 150] },
+    ], rs: 1,
+    guild: [
+      { p: 'siberianpea', n: 1, why: 'On the north side. Chop a few branches each summer and drop them round the tree to feed it nitrogen.' },
+      { p: 'blackcurrant', n: 2, why: 'Fruits in July, before the apples, and tolerates the dappled shade at the canopy edge.' },
+      { p: 'comfrey', n: 4, why: 'At the drip line, where feeder roots are. Cut and drop it to give the tree potassium for fruiting.' },
+      { p: 'yarrow', n: 3, why: 'Draws in the parasitic wasps and hoverflies that eat aphids and codling moth eggs.' },
+      { p: 'chives', n: 6, why: 'A ring round the trunk: traditional scab and aphid guard, and early flowers for bees.' },
+      { p: 'nasturtium', n: 4, why: 'Sown each May in sunny gaps as an aphid trap crop and quick ground cover.' },
+      { p: 'alpinestrawberry', n: 10, why: 'Fills the shady ground under the canopy with fruit from June to October.' },
+      { p: 'whiteclover', n: 1, why: 'Living mulch between everything else, fixing nitrogen where grass would have competed.' },
+      { p: 'daffodil', n: 20, why: 'A dense ring at the drip line holds back grass roots and keeps voles off the bark.' },
+    ],
+  },
+  {
+    id: 'pear', name: 'Pear', latin: 'Pyrus communis', ab: 'Pr',
+    intro: 'Pears flower early and like a warmer, more sheltered spot than apples, but live for a century and crop heavily once established.',
+    varieties: "'Conference' (Sep–Oct, partly self-fertile), 'Concorde' (Oct), 'Beth' (Aug–Sep)",
+    pollination: "Plant two varieties. 'Conference' sets some fruit on its own.",
+    site: 'Sheltered, sunny, frost-free. Avoid frost pockets: blossom opens in late March.',
+    blossom: [3,4], harvest: [8,9,10], prune: [11,12,1,2],
+    pruneNote: 'Winter, November to February. Pears fruit on spurs, so shorten new growth and thin congested spur systems rather than cutting hard. Pick fruit while still firm and ripen indoors.',
+    rootstocks: [
+      { name: 'Quince C (dwarfing)', ht: '2.5–3 m', spread: 3, young: [3, 6], mature: [15, 25] },
+      { name: 'Quince A (semi-vigorous)', ht: '3.5–4.5 m', spread: 4, young: [4, 8], mature: [30, 50] },
+      { name: 'Pyrus seedling (vigorous)', ht: '6–9 m', spread: 6, young: [1, 4], mature: [60, 120] },
+    ], rs: 1,
+    guild: [
+      { p: 'goumi', n: 1, why: 'Nitrogen fixer on the north side with tart berries in June, a month before the currants.' },
+      { p: 'redcurrant', n: 2, why: 'Fruits in July at the canopy edge and copes with part shade.' },
+      { p: 'comfrey', n: 3, why: 'Drip-line nutrient pump; cut and drop through the summer.' },
+      { p: 'sweetcicely', n: 2, why: 'Flowers in April alongside the pear blossom, feeding early hoverflies. Thrives in shade.' },
+      { p: 'borage', n: 3, why: 'Self-seeds into gaps and keeps bees visiting all summer.' },
+      { p: 'wildgarlic', n: 6, why: 'Carpets the ground in spring before the pear is in full leaf, then dies back by June.' },
+      { p: 'camassia', n: 10, why: 'Blue flowers in May fill the gap for bees after pear blossom ends.' },
+      { p: 'whiteclover', n: 1, why: 'Nitrogen-fixing living mulch in the sunnier gaps.' },
+      { p: 'daffodil', n: 15, why: 'Drip-line ring against grass and voles.' },
+    ],
+  },
+  {
+    id: 'plum', name: 'Plum & gage', latin: 'Prunus domestica', ab: 'Pl',
+    intro: 'Plums crop young and heavily. A good year gives more than you can eat, so plan for jam, freezing and drying.',
+    varieties: "'Victoria' (late Aug, self-fertile), 'Opal' (early Aug), 'Cambridge Gage' (Aug)",
+    pollination: "'Victoria' and 'Opal' are self-fertile. Gages crop better with a partner.",
+    site: 'Sun, shelter from spring wind. Flowers early, so avoid frost pockets.',
+    blossom: [3,4], harvest: [8,9], prune: [6,7,8],
+    pruneNote: 'Summer only, June to August, on a dry day. Winter cuts let in silver leaf and bacterial canker. Thin fruit in June to stop branches snapping in heavy years.',
+    rootstocks: [
+      { name: 'Pixy (dwarfing)', ht: '2.5–3 m', spread: 3, young: [3, 6], mature: [15, 25] },
+      { name: 'St Julien A (semi-vigorous)', ht: '3.5–4.5 m', spread: 4, young: [5, 10], mature: [25, 45] },
+      { name: 'Brompton (vigorous)', ht: '5–6 m', spread: 5, young: [3, 8], mature: [40, 60] },
+    ], rs: 1,
+    guild: [
+      { p: 'elaeagnus', n: 1, why: 'Evergreen windbreak on the north-east side that fixes nitrogen and fruits in April.' },
+      { p: 'gooseberry', n: 2, why: 'Shade-tolerant and harvested in June, well ahead of the plums.' },
+      { p: 'rhubarb', n: 1, why: 'Loves the rich, moist ground at the canopy edge; big leaves smother weeds.' },
+      { p: 'comfrey', n: 3, why: 'Feeds the tree potassium through cut-and-drop mulch.' },
+      { p: 'calendula', n: 6, why: 'Hoverflies on the flowers lay eggs whose larvae eat plum aphid.' },
+      { p: 'welshonion', n: 5, why: 'Allium edging that gives greens all year.' },
+      { p: 'strawberry', n: 8, why: 'Sunny south side of a young guild: a crop in year one while the tree establishes.' },
+      { p: 'phacelia', n: 1, why: 'Sown in bare patches in spring for quick cover and a flush of bee flowers.' },
+      { p: 'whiteclover', n: 1, why: 'Living mulch fixing nitrogen.' },
+    ],
+  },
+  {
+    id: 'cherry', name: 'Sweet cherry', latin: 'Prunus avium', ab: 'Ch',
+    intro: 'The first tree fruit of summer. Modern dwarfing rootstocks keep it small enough to net against birds, which is the only way to get a decent share.',
+    varieties: "'Stella' (Jul, self-fertile), 'Sunburst' (Jul, self-fertile), 'Lapins'",
+    pollination: 'Choose a self-fertile variety unless you have room for two.',
+    site: 'Full sun, deep well-drained soil. Hates waterlogging.',
+    blossom: [4], harvest: [6,7], prune: [6,7,8],
+    pruneNote: 'Summer, straight after harvest in July and August. Like plums, cherries suffer silver leaf and canker from winter pruning. Net the tree as fruit colours.',
+    rootstocks: [
+      { name: 'Gisela 5 (dwarfing)', ht: '2.5–3 m', spread: 3, young: [2, 4], mature: [10, 20] },
+      { name: 'Colt (semi-vigorous)', ht: '5–6 m', spread: 5, young: [2, 5], mature: [20, 40] },
+    ], rs: 0,
+    guild: [
+      { p: 'honeyberry', n: 2, why: 'Fruits in late May, the only thing ripe before the cherries.' },
+      { p: 'lavender', n: 3, why: 'Sunny south edge; bees all July and fine with the dry soil cherries like.' },
+      { p: 'comfrey', n: 2, why: 'Cut-and-drop mulch; just two plants for a small dwarf tree.' },
+      { p: 'borage', n: 3, why: 'Keeps pollinators around and self-seeds.' },
+      { p: 'chives', n: 6, why: 'Trunk ring of alliums, with flowers for bees in May.' },
+      { p: 'thyme', n: 6, why: 'Drought-tolerant mat for the hot side, matching the cherry\'s need for drainage.' },
+      { p: 'whiteclover', n: 1, why: 'Living mulch in the gaps.' },
+      { p: 'daffodil', n: 10, why: 'Drip-line ring against grass.' },
+    ],
+  },
+  {
+    id: 'damson', name: 'Damson', latin: 'Prunus insititia', ab: 'Dm',
+    intro: 'Tough enough for exposed, wet or northern gardens where other plums struggle. Damsons were traditionally planted as hedgerow windbreaks around orchards.',
+    varieties: "'Merryweather' (Sep), 'Farleigh' (Sep–Oct), 'Shropshire Prune' (Sep–Oct)",
+    pollination: "Most are self-fertile. 'Farleigh' is partly self-fertile.",
+    site: 'Copes with wind, heavy soil and cooler districts.',
+    blossom: [3,4], harvest: [9,10], prune: [6,7,8],
+    pruneNote: 'Summer, June to August. Damsons need little pruning: remove dead wood and anything crossing. Never in winter.',
+    rootstocks: [
+      { name: 'St Julien A (semi-vigorous)', ht: '3.5–4.5 m', spread: 4, young: [4, 8], mature: [20, 35] },
+      { name: 'Brompton (vigorous)', ht: '5–6 m', spread: 5, young: [3, 6], mature: [30, 50] },
+    ], rs: 0,
+    guild: [
+      { p: 'seabuck', n: 2, why: 'One male, one female. Wind-proof nitrogen fixers for the exposed side.' },
+      { p: 'elder', n: 1, why: 'Classic hedgerow partner: June flowers for cordial, autumn berries.' },
+      { p: 'jostaberry', n: 1, why: 'Vigorous, mite-resistant soft fruit for July.' },
+      { p: 'comfrey', n: 3, why: 'Nutrient pump at the drip line.' },
+      { p: 'yarrow', n: 3, why: 'Predator magnet for aphids.' },
+      { p: 'ajuga', n: 6, why: 'Shade-tolerant native carpet under the canopy.' },
+      { p: 'wildgarlic', n: 8, why: 'Spring crop in the shade before the canopy closes.' },
+      { p: 'jartichoke', n: 5, why: 'Summer windbreak on the outer, windward edge. Keep it there.' },
+    ],
+  },
+  {
+    id: 'quince', name: 'Quince', latin: 'Cydonia oblonga', ab: 'Qu',
+    intro: 'Golden, perfumed fruit for membrillo and jelly, and large pink-white flowers that open late enough to miss most frosts.',
+    varieties: "'Vranja' (Oct), 'Meech's Prolific' (Oct), 'Serbian Gold'",
+    pollination: 'Self-fertile.',
+    site: 'Warm, sunny, and moist but not waterlogged. Leaf blight can be a problem in wet summers.',
+    blossom: [5], harvest: [10,11], prune: [11,12,1,2],
+    pruneNote: 'Winter, November to February, lightly. Thin crowded branches to let air through, which reduces leaf blight. Quinces fruit on tips, so don\'t shorten every shoot.',
+    rootstocks: [
+      { name: 'Quince C (compact)', ht: '3 m', spread: 3, young: [2, 4], mature: [10, 20] },
+      { name: 'Quince A (standard)', ht: '3.5–4.5 m', spread: 4, young: [2, 5], mature: [15, 30] },
+    ], rs: 1,
+    guild: [
+      { p: 'goumi', n: 1, why: 'Nitrogen-fixing shrub on the north side.' },
+      { p: 'aronia', n: 1, why: 'Shares the quince\'s liking for moist ground; berries in September.' },
+      { p: 'comfrey', n: 3, why: 'Drip-line mulch maker.' },
+      { p: 'sorrel', n: 3, why: 'Early leaves from March in damp soil.' },
+      { p: 'lovage', n: 1, why: 'Tall umbels bring in parasitic wasps; leaves for stock.' },
+      { p: 'mint', n: 2, why: 'Moist-soil ground cover. Keep it in a sunk bucket.' },
+      { p: 'skirret', n: 4, why: 'Moisture-loving perennial root crop.' },
+      { p: 'camassia', n: 10, why: 'Damp-meadow bulb that flowers with the quince in May.' },
+      { p: 'whiteclover', n: 1, why: 'Living mulch.' },
+    ],
+  },
+  {
+    id: 'medlar', name: 'Medlar', latin: 'Mespilus germanica', ab: 'Md',
+    intro: 'A small, characterful tree with wide white flowers and russet fruit that you eat after it softens, or "blets", in storage. Very frost-hardy and trouble-free.',
+    varieties: "'Nottingham' (Nov), 'Royal' (Oct–Nov), 'Iranian'",
+    pollination: 'Self-fertile.',
+    site: 'Sun or part shade, any soil. Flowers late, so frost pockets are fine.',
+    blossom: [5,6], harvest: [10,11], prune: [11,12,1,2],
+    pruneNote: 'Winter, November to February, and only lightly. Remove crossing branches and keep the weeping shape open. Pick fruit in late October or November and leave it 2–3 weeks to blet.',
+    rootstocks: [
+      { name: 'Quince A (compact)', ht: '3–4 m', spread: 3.5, young: [1, 4], mature: [10, 25] },
+      { name: 'Hawthorn (standard)', ht: '5–6 m', spread: 5, young: [1, 3], mature: [20, 35] },
+    ], rs: 0,
+    guild: [
+      { p: 'siberianpea', n: 1, why: 'Nitrogen fixer and mulch source on the north side.' },
+      { p: 'wineberry', n: 1, why: 'Part-shade fruit in July and August; red canes in winter.' },
+      { p: 'comfrey', n: 2, why: 'Cut-and-drop mulch.' },
+      { p: 'goodkinghenry', n: 3, why: 'Shade-happy perennial spinach.' },
+      { p: 'sweetcicely', n: 2, why: 'Early umbels for hoverflies, sweet leaves for stewed fruit.' },
+      { p: 'woodruff', n: 6, why: 'Fine carpet in the shade of the low, spreading canopy.' },
+      { p: 'horseradish', n: 1, why: 'At the outer edge: deep roots mine nutrients. Contain it.' },
+      { p: 'daffodil', n: 12, why: 'Drip-line ring against grass.' },
+    ],
+  },
+  {
+    id: 'mulberry', name: 'Black mulberry', latin: 'Morus nigra', ab: 'Mb',
+    intro: 'A slow, long-lived heirloom tree with fruit too soft to sell, so you only get it by growing it. It becomes the heart of a mature food forest.',
+    varieties: "'Chelsea' (Aug–Sep), 'Wellington', 'Carmen' (fruits young)",
+    pollination: 'Self-fertile.',
+    site: 'Warm, sheltered and sunny. Plant away from paths and patios: dropped fruit stains.',
+    blossom: [5,6], harvest: [8,9], prune: [12,1],
+    pruneNote: 'Only in December or January when fully dormant, and only if necessary. Mulberries bleed sap heavily if cut at any other time. Mostly just remove dead wood.',
+    rootstocks: [
+      { name: 'Grafted (fruits sooner)', ht: '6–8 m in time', spread: 6, young: [0.5, 2], mature: [15, 30] },
+      { name: 'Own roots / cutting', ht: '6–9 m in time', spread: 7, young: [0, 1], mature: [15, 35] },
+    ], rs: 0,
+    guild: [
+      { p: 'elaeagnus', n: 2, why: 'Evergreen nitrogen-fixing shelter, which a young mulberry needs.' },
+      { p: 'blackcurrant', n: 2, why: 'Reliable soft fruit while the mulberry takes its time.' },
+      { p: 'perkale', n: 2, why: 'Greens all year, including the hungry gap.' },
+      { p: 'comfrey', n: 3, why: 'Drip-line mulch maker.' },
+      { p: 'chives', n: 6, why: 'Allium ring near the trunk.' },
+      { p: 'alpinestrawberry', n: 10, why: 'Soft ground cover that can take shade as the canopy spreads.' },
+      { p: 'winecap', n: 2, why: 'Woodchip beds under the canopy for mushrooms. Fallen fruit lands softly too.' },
+      { p: 'kiwi', n: 1, why: 'On a pergola beside the tree, or up the mulberry once it is 15+ years old.' },
+      { p: 'daffodil', n: 15, why: 'Drip-line ring.' },
+    ],
+  },
+  {
+    id: 'fig', name: 'Fig', latin: 'Ficus carica', ab: 'Fg',
+    intro: 'A Mediterranean tree that crops well in southern Britain against a warm wall, with its roots restricted so it fruits instead of making leaves.',
+    varieties: "'Brown Turkey' (Aug–Sep), 'Brunswick', 'White Marseilles'",
+    pollination: 'Self-fertile; no pollinator needed.',
+    site: 'South- or west-facing wall, southern England or sheltered city gardens. Restrict roots in a slab-lined pit.',
+    blossom: [], harvest: [8,9], prune: [3,4,6],
+    pruneNote: 'In March or April, cut out frost-damaged and crossing stems. In June, pinch new shoots back to five leaves. In autumn, rub off any fig larger than a pea: only the tiny embryo figs survive winter to ripen next summer.',
+    rootstocks: [
+      { name: 'Root-restricted pit', ht: '2.5–3 m', spread: 3, young: [1, 3], mature: [5, 12] },
+      { name: 'Unrestricted', ht: '4–5 m', spread: 4.5, young: [0.5, 2], mature: [4, 10] },
+    ], rs: 0,
+    guild: [
+      { p: 'rosemary', n: 2, why: 'Mediterranean partner that loves the same dry, hot wall.' },
+      { p: 'lavender', n: 2, why: 'Bee plant for the sunny front of the bed.' },
+      { p: 'artichoke', n: 2, why: 'Sun-loving perennial vegetable; flowers for bumblebees.' },
+      { p: 'marjoram', n: 3, why: 'Native oregano, superb for butterflies.' },
+      { p: 'thyme', n: 6, why: 'Hot, dry ground cover.' },
+      { p: 'strawberry', n: 6, why: 'Fills the sunny ground in front of the wall.' },
+      { p: 'nasturtium', n: 4, why: 'Annual trap crop and quick cover.' },
+      { p: 'grape', n: 1, why: 'Shares the warm wall; trained on wires beside the fig.' },
+    ],
+  },
+];
+const TREE = Object.fromEntries(TREES.map(t => [t.id, t]));
+
+/* ---------- Tooltip ---------- */
+const tip = $('#tip');
+let tipAnchor = null;
+function tipHTML(key) {
+  const [kind, a, b] = key.split(':');
+  if (kind === 'layer') {
+    const l = LAYER[a];
+    return `<h4>${esc(l.name)}</h4><div class="row"><span>${esc(l.ht)}</span></div><p>${esc(l.desc)}</p>`;
+  }
+  if (kind === 'tree') {
+    const t = TREE[a]; const rs = t.rootstocks[b != null ? +b : t.rs];
+    return `<h4>${esc(t.name)}</h4><div class="lt">${esc(t.latin)}</div>
+      <div class="tags"><span class="tag">Canopy</span><span class="tag">${esc(rs.name)}</span></div>
+      <div class="row"><span>Blossom</span><span>${monthsText(t.blossom)}</span></div>
+      <div class="row"><span>Harvest</span><span>${monthsText(t.harvest)}</span></div>
+      <div class="row"><span>Prune</span><span>${monthsText(t.prune)}</span></div>
+      <div class="row"><span>Size</span><span>${esc(rs.ht)}</span></div>
+      <div class="row"><span>Yield young / mature</span><span>${rs.young[0]}–${rs.young[1]} / ${rs.mature[0]}–${rs.mature[1]} kg</span></div>`;
+  }
+  // plant, optionally in a guild context
+  const p = PLANT[a];
+  let why = '';
+  if (kind === 'gp') {
+    const g = TREE[b].guild.find(x => x.p === a);
+    if (g) why = `<div class="why"><b>In the ${esc(TREE[b].name.toLowerCase())} guild${g.n > 1 ? ` (×${g.n})` : ''}:</b> ${esc(g.why)}</div>`;
+  }
+  const y = p.y ? `<div class="row"><span>Yield young / mature</span><span>${kg(p.y[0])} / ${kg(p.y[1])} kg</span></div>` : '';
+  return `<h4>${esc(p.name)}</h4><div class="lt">${esc(p.latin)}</div>
+    <div class="tags"><span class="tag">${esc(LAYER[p.layer].name)}</span>${p.roles.map(x => `<span class="tag">${esc(ROLES[x].label)}</span>`).join('')}</div>
+    <div class="row"><span>Light</span><span>${esc(LIGHT[p.light])}</span></div>
+    ${p.harvest.length ? `<div class="row"><span>Harvest</span><span>${monthsText(p.harvest)}</span></div>` : ''}
+    ${y}
+    <p>${esc(p.note)}</p>
+    ${p.warn ? `<p class="warn">${esc(p.warn)}</p>` : ''}${why}`;
+}
+function showTip(el) {
+  const key = el.getAttribute('data-tip'); if (!key) return;
+  tipAnchor = el;
+  tip.innerHTML = tipHTML(key);
+  tip.setAttribute('aria-hidden', 'false');
+  const rc = el.getBoundingClientRect();
+  const tw = tip.offsetWidth, th = tip.offsetHeight, vw = innerWidth, vh = innerHeight;
+  let x = rc.left + rc.width / 2 - tw / 2;
+  x = Math.max(12, Math.min(vw - tw - 12, x));
+  let y = rc.bottom + 10;
+  if (y + th > vh - 12) y = Math.max(12, rc.top - th - 10);
+  tip.style.left = x + 'px'; tip.style.top = y + 'px';
+  tip.classList.add('show');
+  linkHighlight(el, true);
+}
+function hideTip() {
+  if (tipAnchor) linkHighlight(tipAnchor, false);
+  tipAnchor = null; tip.classList.remove('show'); tip.setAttribute('aria-hidden', 'true');
+}
+// Highlight the matching marker / list row
+function linkHighlight(el, on) {
+  const id = el.getAttribute('data-link'); if (!id) return;
+  document.querySelectorAll(`[data-link="${id}"]`).forEach(n => n.classList.toggle('hi', on));
+}
+document.addEventListener('pointerover', e => {
+  if (e.pointerType === 'touch') return;
+  const el = e.target.closest('[data-tip]');
+  if (el && el !== tipAnchor) showTip(el);
+});
+document.addEventListener('pointerout', e => {
+  if (e.pointerType === 'touch') return;
+  const el = e.target.closest('[data-tip]');
+  if (el && (el === tipAnchor || (tipAnchor && !tipAnchor.isConnected)) && !el.contains(e.relatedTarget)) hideTip();
+});
+document.addEventListener('focusin', e => { const el = e.target.closest('[data-tip]'); if (el) showTip(el); });
+document.addEventListener('focusout', e => { if (tipAnchor && e.target.closest('[data-tip]') === tipAnchor) hideTip(); });
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-tip]');
+  if (!el) { hideTip(); return; }
+  if (e.pointerType === 'touch' || e.detail === 0) { if (el === tipAnchor && !el.matches('button')) hideTip(); else showTip(el); }
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') hideTip(); });
+addEventListener('scroll', () => { if (tipAnchor) hideTip(); }, { passive: true });
+
+/* ---------- Profile cross-section ---------- */
+function drawProfile() {
+  const svg = $('#profileSvg');
+  const g = (id, inner) => `<g class="lyr" data-layer="${id}" data-tip="layer:${id}" tabindex="0" role="button" aria-label="${LAYER[id].name} layer">${inner}</g>`;
+  const fill = id => `style="fill:var(--l-${id})"`;
+  const G = 248;
+  let leaves = '';
+  for (let i = 0; i < 9; i++) { const y = G - 14 - i * 17; const x = 400 + (i % 2 ? 9 : -9); leaves += `<ellipse cx="${x}" cy="${y}" rx="7" ry="4" ${fill('climber')} transform="rotate(${i % 2 ? 30 : -30} ${x} ${y})"/>`; }
+  let ground = '';
+  for (let x = 90; x <= 720; x += 22) ground += `<ellipse cx="${x}" cy="${G - 3}" rx="14" ry="6" ${fill('ground')}/>`;
+  const herbAt = x => `<path d="M${x} ${G} q-6 -24 -16 -40 M${x} ${G} q0 -30 0 -48 M${x} ${G} q6 -24 16 -40" style="stroke:var(--l-herb);fill:none" stroke-width="4" stroke-linecap="round"/><circle cx="${x - 16}" cy="${G - 42}" r="7" ${fill('herb')}/><circle cx="${x}" cy="${G - 50}" r="8" ${fill('herb')}/><circle cx="${x + 16}" cy="${G - 42}" r="7" ${fill('herb')}/>`;
+  const bulbs = [130, 190, 285, 330, 470, 510, 590, 655, 700].map((x, i) => `<ellipse cx="${x}" cy="${G + 22 + (i % 3) * 10}" rx="${7 + (i % 2) * 3}" ry="9" ${fill('root')}/><path d="M${x} ${G + 13 + (i % 3) * 10} V${G}" style="stroke:var(--l-root)" stroke-width="2"/>`).join('');
+  svg.innerHTML = `
+    <rect x="0" y="0" width="800" height="${G}" style="fill:var(--surface)"/>
+    <rect x="0" y="${G}" width="800" height="${340 - G}" style="fill:var(--soil)"/>
+    <text x="16" y="24" style="fill:var(--muted);font-family:var(--f-data)" font-size="12">N</text>
+    <text x="776" y="24" style="fill:var(--muted);font-family:var(--f-data)" font-size="12">S</text>
+    <text x="400" y="332" text-anchor="middle" style="fill:var(--muted);font-family:var(--f-data)" font-size="11">← mature drip line ≈ 4.5 m across →</text>
+    ${g('root', bulbs)}
+    ${g('subcanopy', `<rect x="166" y="150" width="10" height="${G - 150}" style="fill:var(--bark)"/><circle cx="171" cy="135" r="58" ${fill('subcanopy')}/><circle cx="135" cy="160" r="34" ${fill('subcanopy')}/>`)}
+    ${g('canopy', `<path d="M392 ${G} L394 140 L406 140 L408 ${G} Z" style="fill:var(--bark)"/><ellipse cx="400" cy="98" rx="160" ry="78" ${fill('canopy')}/><circle cx="335" cy="120" r="5" style="fill:var(--blossom)"/><circle cx="455" cy="90" r="5" style="fill:var(--blossom)"/><circle cx="420" cy="130" r="5" style="fill:var(--blossom)"/><circle cx="370" cy="70" r="5" style="fill:var(--blossom)"/><circle cx="500" cy="118" r="5" style="fill:var(--blossom)"/>`)}
+    ${g('climber', `<path d="M400 ${G} C 412 ${G - 40}, 388 ${G - 70}, 400 ${G - 100} S 410 ${G - 140}, 400 ${G - 160}" style="stroke:var(--l-climber);fill:none" stroke-width="3"/>${leaves}`)}
+    ${g('shrub', `<ellipse cx="262" cy="${G - 30}" rx="46" ry="34" ${fill('shrub')}/><ellipse cx="598" cy="${G - 26}" rx="40" ry="30" ${fill('shrub')}/>`)}
+    ${g('herb', herbAt(330) + herbAt(475) + herbAt(670))}
+    ${g('ground', ground)}
+    <line x1="240" y1="${G + 8}" x2="560" y2="${G + 8}" style="stroke:var(--muted)" stroke-dasharray="4 4" stroke-width="1"/>
+  `;
+  const list = $('#layerList');
+  list.innerHTML = LAYERS.map(l => `<li><button type="button" data-layer="${l.id}"><span class="sw" style="background:var(--l-${l.id})"></span><span class="nm">${l.name}</span><span class="ht">${l.ht}</span></button></li>`).join('');
+  const detail = $('#layerDetail');
+  const setLayer = id => {
+    svg.classList.toggle('has-hi', !!id);
+    svg.querySelectorAll('.lyr').forEach(n => n.classList.toggle('hi', n.dataset.layer === id));
+    list.querySelectorAll('button').forEach(n => n.classList.toggle('hi', n.dataset.layer === id));
+    const l = LAYER[id || 'canopy'];
+    detail.innerHTML = `<h3>${l.name} <span class="mono" style="font-size:var(--step--1);color:var(--muted)">${l.ht}</span></h3><p>${esc(l.desc)}</p><div class="ex"><b>Try:</b> ${esc(l.ex)}</div>`;
+  };
+  let pinned = null;
+  const hover = id => setLayer(id || pinned);
+  svg.addEventListener('pointerover', e => { const n = e.target.closest('.lyr'); if (n) hover(n.dataset.layer); });
+  svg.addEventListener('pointerleave', () => hover(null));
+  svg.addEventListener('focusin', e => { const n = e.target.closest('.lyr'); if (n) hover(n.dataset.layer); });
+  svg.addEventListener('click', e => { const n = e.target.closest('.lyr'); if (n) { pinned = n.dataset.layer; setLayer(pinned); } });
+  list.addEventListener('pointerover', e => { const n = e.target.closest('button'); if (n) hover(n.dataset.layer); });
+  list.addEventListener('pointerleave', () => hover(null));
+  list.addEventListener('focusin', e => { const n = e.target.closest('button'); if (n) hover(n.dataset.layer); });
+  list.addEventListener('click', e => { const n = e.target.closest('button'); if (n) { pinned = pinned === n.dataset.layer ? null : n.dataset.layer; setLayer(pinned); } });
+  setLayer(null);
+}
+
+/* ---------- Plan view ---------- */
+const RING = { climber: 26, ground: 58, root: 92, herb: 126, shrub: 160, subcanopy: 186 };
+const ARC = { shrub: [-165, -15], subcanopy: [-150, -30] };   // tall plants on the north arc
+const SINGLE = { subcanopy: -125, shrub: -55 };            // keep lone tall plants apart
+const OFFSET = { climber: 40, ground: 15, root: 0, herb: 30, shrub: 0, subcanopy: 0 };
+function planSVG(tree, rsIndex, items, ctx) {
+  const rs = tree.rootstocks[rsIndex];
+  const byLayer = {};
+  items.forEach(it => { const p = PLANT[it.p]; if (p.layer === 'canopy') return; (byLayer[p.layer] ||= []).push(it); });
+  let marks = '';
+  Object.entries(byLayer).forEach(([layer, list]) => {
+    let [a0, a1] = ARC[layer] || [-90 + OFFSET[layer], 270 + OFFSET[layer]];
+    const full = !ARC[layer];
+    const R = RING[layer];
+    const maxArc = (a1 - a0) * Math.PI / 180 * R;
+    if (!full && list.length * 30 > maxArc) { a0 = -90; a1 = 270; }
+    const isFull = (a1 - a0) >= 360;
+    const step = isFull ? (a1 - a0) / list.length : (list.length > 1 ? (a1 - a0) / (list.length - 1) : 0);
+    const crowded = list.length * 30 > (a1 - a0) * Math.PI / 180 * R;
+    list.forEach((it, i) => {
+      const p = PLANT[it.p];
+      const ang = (list.length === 1 && !isFull ? (SINGLE[layer] ?? (a0 + a1) / 2) : a0 + step * i) * Math.PI / 180;
+      const rr = R + (crowded ? (i % 2 ? 9 : -9) : 0);
+      const x = Math.cos(ang) * rr, y = Math.sin(ang) * rr;
+      const link = `${ctx}-${it.p}`;
+      const tipKey = ctx === 'atlas' ? `gp:${it.p}:${tree.id}` : `p:${it.p}`;
+      marks += `<g class="mk" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})" data-tip="${tipKey}" data-link="${link}" tabindex="0" role="button" aria-label="${esc(p.name)}">
+        <circle class="dot" r="14" style="fill:var(--l-${p.layer})"/>
+        <text text-anchor="middle" dy="4" font-size="10" style="fill:var(--on-layer);font-family:var(--f-data)">${p.ab}</text>
+        ${it.n > 1 ? `<g transform="translate(12 -11)"><circle r="8.5" style="fill:var(--ink)"/><text text-anchor="middle" dy="3.2" font-size="8.5" style="fill:var(--bg);font-family:var(--f-data)">${it.n > 99 ? '99' : it.n}</text></g>` : ''}
+      </g>`;
+    });
+  });
+  return `<svg viewBox="-212 -226 424 440" role="img" aria-label="Plan view of the ${esc(tree.name)} guild">
+    <circle r="206" style="fill:var(--surface-2)"/>
+    <circle r="110" style="fill:var(--l-canopy);opacity:.16"/>
+    <circle r="110" style="fill:none;stroke:var(--l-canopy)" stroke-dasharray="5 5" stroke-width="1.5"/>
+    <text x="0" y="124" text-anchor="middle" font-size="9" style="fill:var(--muted);font-family:var(--f-data)">drip line · ${rs.spread} m</text>
+    <text x="0" y="-212" text-anchor="middle" font-size="11" style="fill:var(--muted);font-family:var(--f-data)">N ↑</text>
+    <g class="mk" data-tip="tree:${tree.id}:${rsIndex}" tabindex="0" role="button" aria-label="${esc(tree.name)}">
+      <circle class="dot" r="13" style="fill:var(--bark)"/>
+      <text text-anchor="middle" dy="4" font-size="10" style="fill:var(--surface);font-family:var(--f-data)">${tree.ab}</text>
+    </g>
+    ${marks}
+  </svg>`;
+}
+const legendHTML = () => `<div class="legend">${LAYERS.filter(l => l.id !== 'canopy').map(l => `<span><i style="background:var(--l-${l.id})"></i>${l.name}</span>`).join('')}<span><i style="background:var(--ink)"></i>Number of plants</span></div>`;
+
+/* ---------- Calendar ---------- */
+function treeCalendar(t) {
+  const rows = [['Blossom', t.blossom, 'blossom'], ['Harvest', t.harvest, 'harvest'], ['Prune', t.prune, 'prune']];
+  let h = '<span></span>' + MI.map(m => `<span class="mh">${m}</span>`).join('');
+  rows.forEach(([label, months, cls]) => {
+    h += `<span class="rl">${label}</span>` + MI.map((_, i) => `<span class="c ${months.includes(i + 1) ? cls : ''}" title="${label}: ${MONTH[i]}"></span>`).join('');
+  });
+  return h;
+}
+function harvestCalendar(tree, items) {
+  const rows = [{ name: tree.name, months: tree.harvest, tip: `tree:${tree.id}` }];
+  items.forEach(it => { const p = PLANT[it.p]; if (p.harvest.length && p.roles.includes('food')) rows.push({ name: p.name, months: p.harvest, tip: `p:${p.id}` }); });
+  const counts = Array.from({ length: 12 }, (_, i) => rows.filter(r => r.months.includes(i + 1)).length);
+  let h = '<span></span>' + MI.map(m => `<span class="mh">${m}</span>`).join('');
+  rows.forEach(r => {
+    h += `<span class="rl" data-tip="${r.tip}" tabindex="0">${esc(r.name)}</span>` + MI.map((_, i) => `<span class="c ${r.months.includes(i + 1) ? 'harvest' : ''}"></span>`).join('');
+  });
+  h += `<span class="rl total">Things to pick</span>` + counts.map(c => `<span class="c count ${c ? '' : 'zero'}">${c || ''}</span>`).join('');
+  return { html: h, months: counts.filter(Boolean).length };
+}
+
+/* ---------- Yield ---------- */
+function yieldHTML(tree, rsIndex, items, maxOverride) {
+  const rs = tree.rootstocks[rsIndex];
+  let uy = 0, um = 0;
+  items.forEach(it => { const p = PLANT[it.p]; if (p.y) { uy += p.y[0] * it.n; um += p.y[1] * it.n; } });
+  const max = maxOverride || (rs.mature[1] + um);
+  const pct = v => (v / max * 100).toFixed(2) + '%';
+  const row = (label, sub, t, u) => `
+    <div class="y-row">
+      <div class="y-top"><span>${label}</span><span class="mono">${kg(t[0] + u)}–${kg(t[1] + u)} kg / yr</span></div>
+      <div class="y-bar" role="img" aria-label="${label}: tree ${t[0]} to ${t[1]} kg, understory ${kg(u)} kg">
+        <span class="t-lo" style="width:${pct(t[0])}"></span><span class="t-hi" style="width:${pct(t[1] - t[0])}"></span><span class="u" style="width:${pct(u)}"></span>
+      </div>
+      <div class="y-sub">${sub}: tree <span class="mono">${t[0]}–${t[1]} kg</span> · understory <span class="mono">${kg(u)} kg</span></div>
+    </div>`;
+  const matureYr = tree.id === 'mulberry' ? 'year 12+' : 'year 8+';
+  const share = um + rs.mature[1] ? Math.round(uy / (uy + (rs.young[0] + rs.young[1]) / 2) * 100) : 0;
+  return row('Young guild', 'Years 3–4', rs.young, uy) + row('Mature guild', matureYr[0].toUpperCase() + matureYr.slice(1), rs.mature, um) +
+    `<div class="cal-key"><span><i style="background:var(--l-canopy)"></i>Tree, low estimate</span><span><i style="background:color-mix(in srgb, var(--l-canopy) 40%, transparent)"></i>Tree, good year</span><span><i style="background:var(--l-shrub)"></i>Understory</span></div>` +
+    (uy > 0 ? `<p class="y-note">In a young guild the understory gives about ${share}% of the food. As the tree matures it takes over, and shade-tolerant plants keep the understory productive.</p>` : '');
+}
+
+/* ---------- Guild atlas ---------- */
+let atlasTree = 'apple';
+const atlasRs = Object.fromEntries(TREES.map(t => [t.id, t.rs]));
+function renderTabs() {
+  $('#treeTabs').innerHTML = TREES.map(t => `<button class="tab" role="tab" id="tab-${t.id}" aria-selected="${t.id === atlasTree}" data-tree="${t.id}" type="button">${esc(t.name)}</button>`).join('');
+}
+function renderAtlas() {
+  const t = TREE[atlasTree]; const rsI = atlasRs[t.id]; const rs = t.rootstocks[rsI];
+  const items = t.guild.map(g => ({ p: g.p, n: g.n }));
+  $('#guildPanel').setAttribute('aria-labelledby', 'tab-' + t.id);
+  $('#guildPanel').innerHTML = `
+    <div class="guild-info">
+      <div class="tree-head">
+        <h3>${esc(t.name)} guild</h3>
+        <div class="latin">${esc(t.latin)}</div>
+        <p>${esc(t.intro)}</p>
+      </div>
+      <dl class="facts">
+        <dt>Varieties</dt><dd>${esc(t.varieties)}</dd>
+        <dt>Pollination</dt><dd>${esc(t.pollination)}</dd>
+        <dt>Site</dt><dd>${esc(t.site)}</dd>
+        <dt>Rootstock</dt><dd><select id="atlasRs" aria-label="Rootstock">${t.rootstocks.map((r, i) => `<option value="${i}" ${i === rsI ? 'selected' : ''}>${esc(r.name)} · ${esc(r.ht)}</option>`).join('')}</select></dd>
+      </dl>
+      <div>
+        <div class="block-title"><span>Tree calendar</span></div>
+        <div class="cal-scroll"><div class="cal">${treeCalendar(t)}</div></div>
+        <div class="cal-key"><span><i style="background:var(--blossom)"></i>Blossom</span><span><i style="background:var(--harvest)"></i>Harvest</span><span><i style="background:var(--prune)"></i>Pruning window</span></div>
+      </div>
+      <div class="prune-note"><b>Pruning</b>${esc(t.pruneNote)}</div>
+      <div>
+        <div class="block-title"><span>How much you'll pick</span><span>${esc(rs.name)}</span></div>
+        <div class="yield">${yieldHTML(t, rsI, items)}</div>
+      </div>
+      <div>
+        <div class="block-title"><span>Whole-guild harvest</span></div>
+        <div class="cal-scroll"><div class="cal">${harvestCalendar(t, items).html}</div></div>
+      </div>
+    </div>
+    <div class="plan-wrap">
+      <div class="plan">${planSVG(t, rsI, items, 'atlas')}</div>
+      ${legendHTML()}
+      <ul class="members">
+        ${t.guild.map(g => { const p = PLANT[g.p]; return `<li data-tip="gp:${p.id}:${t.id}" data-link="atlas-${p.id}" tabindex="0"><span class="dot" style="background:var(--l-${p.layer})">${p.ab}</span><span class="nm">${esc(p.name)}<span class="n">×${g.n} · ${esc(LAYER[p.layer].name)}</span></span><span class="why">${esc(g.why)}</span></li>`; }).join('')}
+      </ul>
+      <button class="btn primary" type="button" id="toBuilder">Open this guild in the builder</button>
+    </div>`;
+}
+$('#treeTabs').addEventListener('click', e => {
+  const b = e.target.closest('.tab'); if (!b) return;
+  atlasTree = b.dataset.tree; renderTabs(); renderAtlas(); $('#tab-' + atlasTree).focus();
+});
+$('#treeTabs').addEventListener('keydown', e => {
+  if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+  const i = TREES.findIndex(t => t.id === atlasTree);
+  atlasTree = TREES[(i + (e.key === 'ArrowRight' ? 1 : TREES.length - 1)) % TREES.length].id;
+  renderTabs(); renderAtlas(); $('#tab-' + atlasTree).focus();
+});
+$('#guildPanel').addEventListener('change', e => {
+  if (e.target.id === 'atlasRs') { atlasRs[atlasTree] = +e.target.value; renderAtlas(); $('#atlasRs').focus(); }
+});
+$('#guildPanel').addEventListener('click', e => {
+  if (e.target.id === 'toBuilder') {
+    const t = TREE[atlasTree];
+    state = { tree: t.id, rs: atlasRs[t.id], items: t.guild.map(g => ({ p: g.p, n: g.n })) };
+    renderBuilder(true); save();
+    document.getElementById('builder').scrollIntoView();
+  }
+});
+
+/* ---------- Builder ---------- */
+const KEY = 'guild-builder-v1';
+const defaultState = () => ({ tree: 'apple', rs: TREE.apple.rs, items: TREE.apple.guild.map(g => ({ p: g.p, n: g.n })) });
+let state = (() => {
+  try {
+    const s = JSON.parse(localStorage.getItem(KEY));
+    if (s && TREE[s.tree] && Array.isArray(s.items)) { s.items = s.items.filter(i => PLANT[i.p] && i.n > 0); s.rs = Math.min(s.rs | 0, TREE[s.tree].rootstocks.length - 1); return s; }
+  } catch (e) { /* storage unavailable */ }
+  return defaultState();
+})();
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* ignore */ } };
+let filter = 'all';
+
+function renderBuilderControls() {
+  $('#bTree').innerHTML = TREES.map(t => `<option value="${t.id}" ${t.id === state.tree ? 'selected' : ''}>${esc(t.name)}</option>`).join('');
+  const t = TREE[state.tree];
+  $('#bRoot').innerHTML = t.rootstocks.map((r, i) => `<option value="${i}" ${i === state.rs ? 'selected' : ''}>${esc(r.name)} · ${esc(r.ht)}</option>`).join('');
+  $('#bFilters').innerHTML = [['all', 'All plants'], ...Object.entries(ROLES).map(([k, v]) => [k, v.label])]
+    .map(([k, l]) => `<button type="button" class="filter" data-f="${k}" aria-pressed="${filter === k}">${esc(l)}</button>`).join('');
+}
+function renderPick() {
+  const count = Object.fromEntries(state.items.map(i => [i.p, i.n]));
+  $('#bPick').innerHTML = LAYERS.filter(l => l.id !== 'canopy').map(l => {
+    const ps = PLANTS.filter(p => p.layer === l.id && (filter === 'all' || p.roles.includes(filter)));
+    if (!ps.length) return '';
+    return `<div>
+      <div class="lp-head"><span class="sw" style="background:var(--l-${l.id})"></span><h3>${l.name}</h3><span>${l.ht}</span></div>
+      <div class="chips">${ps.map(p => `<button type="button" class="chip ${count[p.id] ? 'on' : ''}" data-add="${p.id}" data-tip="p:${p.id}" aria-label="Add ${esc(p.name)}${count[p.id] ? `, ${count[p.id]} in guild` : ''}"><span class="ab" style="background:var(--l-${p.layer})">${p.ab}</span>${esc(p.name)}${count[p.id] ? `<span class="cnt">×${count[p.id]}</span>` : ''}</button>`).join('')}</div>
+    </div>`;
+  }).join('') || '<p class="empty">No plants match that filter.</p>';
+}
+function renderResults() {
+  const t = TREE[state.tree]; const items = state.items;
+  $('#bPlan').innerHTML = planSVG(t, state.rs, items, 'b') + legendHTML();
+  const total = items.reduce((a, i) => a + i.n, 0);
+  $('#bCount').textContent = `${items.length} kinds · ${total} plants`;
+  const order = Object.fromEntries(LAYERS.map((l, i) => [l.id, i]));
+  const sorted = [...items].sort((a, b) => order[PLANT[a.p].layer] - order[PLANT[b.p].layer]);
+  $('#bMine').innerHTML = sorted.length ? sorted.map(i => { const p = PLANT[i.p]; return `<li data-link="b-${p.id}"><span class="dot" style="background:var(--l-${p.layer})">${p.ab}</span><span data-tip="p:${p.id}" data-link="b-${p.id}" tabindex="0">${esc(p.name)}</span><span class="stepper"><button type="button" data-dec="${p.id}" aria-label="One fewer ${esc(p.name)}">−</button><span>${i.n}</span><button type="button" data-inc="${p.id}" aria-label="One more ${esc(p.name)}">+</button></span></li>`; }).join('')
+    : '<li class="empty">No plants yet. Add some from the lists, or load the suggested guild.</li>';
+  // Jobs
+  $('#bChecks').innerHTML = Object.entries(ROLES).map(([k, v]) => {
+    const who = items.filter(i => PLANT[i.p].roles.includes(k)).map(i => PLANT[i.p].name);
+    return `<li class="${who.length ? 'ok' : 'no'}" title="${esc(who.join(', '))}"><span class="mark">${who.length ? '●' : '○'}</span><span>${esc(v.check)}${who.length ? '' : ' (missing)'}</span></li>`;
+  }).join('');
+  // Warnings
+  const warns = items.map(i => PLANT[i.p]).filter(p => p.warn).map(p => p.warn);
+  const rs = t.rootstocks[state.rs];
+  if (items.some(i => PLANT[i.p].layer === 'climber' && ['kiwi', 'grape', 'blackberry'].includes(i.p)) && rs.spread <= 3) warns.unshift(`A ${rs.name.split(' (')[0]} tree is too small to carry a vigorous climber. Give the climber its own post or fence.`);
+  const sun = items.filter(i => PLANT[i.p].light === 'sun' && ['ground', 'herb'].includes(PLANT[i.p].layer)).length;
+  if (sun >= 4) warns.push('Several plants here need full sun. They will crop well in the early years, then fade as the canopy closes. Keep them to the south side or plan to swap them for shade-tolerant plants.');
+  $('#bWarns').innerHTML = warns.map(w => `<li>${esc(w)}</li>`).join('');
+  $('#bWarns').hidden = !warns.length;
+  $('#bYield').innerHTML = yieldHTML(t, state.rs, items);
+  const cal = harvestCalendar(t, items);
+  $('#bCal').innerHTML = cal.html;
+  $('#bMonths').textContent = `${cal.months} of 12 months`;
+}
+function renderBuilder(controls) { if (controls) renderBuilderControls(); renderPick(); renderResults(); }
+function changeCount(id, d) {
+  const it = state.items.find(i => i.p === id);
+  if (it) { it.n += d; if (it.n <= 0) state.items = state.items.filter(i => i !== it); }
+  else if (d > 0) state.items.push({ p: id, n: 1 });
+  save(); renderPick(); renderResults();
+  if (tipAnchor && !tipAnchor.isConnected) hideTip();
+}
+$('#bPick').addEventListener('click', e => {
+  const b = e.target.closest('[data-add]'); if (!b) return;
+  const id = b.dataset.add; changeCount(id, 1);
+  const again = document.querySelector(`[data-add="${id}"]`); if (again && document.activeElement === document.body) again.focus();
+});
+$('#bMine').addEventListener('click', e => {
+  const inc = e.target.closest('[data-inc]'), dec = e.target.closest('[data-dec]');
+  if (inc) changeCount(inc.dataset.inc, 1);
+  if (dec) changeCount(dec.dataset.dec, -1);
+  const id = (inc || dec)?.dataset[inc ? 'inc' : 'dec'];
+  const sel = inc ? `[data-inc="${id}"]` : `[data-dec="${id}"]`;
+  const n = id && document.querySelector(sel); if (n) n.focus();
+});
+$('#bFilters').addEventListener('click', e => {
+  const b = e.target.closest('[data-f]'); if (!b) return;
+  filter = b.dataset.f;
+  $('#bFilters').querySelectorAll('.filter').forEach(n => n.setAttribute('aria-pressed', n.dataset.f === filter));
+  renderPick();
+});
+$('#bTree').addEventListener('change', e => { state.tree = e.target.value; state.rs = TREE[state.tree].rs; save(); renderBuilder(true); });
+$('#bRoot').addEventListener('change', e => { state.rs = +e.target.value; save(); renderResults(); });
+$('#bSuggest').addEventListener('click', () => { state.items = TREE[state.tree].guild.map(g => ({ p: g.p, n: g.n })); save(); renderBuilder(false); });
+$('#bClear').addEventListener('click', () => { state.items = []; save(); renderBuilder(false); });
+
+/* ---------- Boot ---------- */
+drawProfile();
+renderTabs();
+renderAtlas();
+renderBuilder(true);
+})();
+</script>
+</body>
+</html>
