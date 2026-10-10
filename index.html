@@ -210,6 +210,17 @@ select { font: inherit; color: var(--ink); background: var(--surface); border: 1
 .dens .pn i { width: 10px; height: 10px; border-radius: 50%; flex: none; }
 .dens-sum { font-size: .9rem; color: var(--muted); margin-top: .55rem; }
 
+.prune-note .src { display: block; margin-top: .5rem; font-size: var(--step--1); color: var(--muted); }
+/* Sources */
+.sources { columns: 3 300px; column-gap: 2.5rem; }
+.sources > div { break-inside: avoid; padding-bottom: 1.75rem; }
+.sources h3 { font-size: 1.1rem; margin-bottom: .6rem; }
+.sources ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .7rem; }
+.sources li a { font-weight: 700; text-underline-offset: 2px; }
+.sources li span { display: block; color: var(--muted); font-size: .92rem; }
+.caveat { margin-top: 2rem; padding: .9rem 1rem; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); font-size: .95rem; max-width: 75ch; }
+.caveat p + p { margin-top: .5rem; }
+
 /* Notes */
 .notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 1rem 2rem; }
 .note h3 { font-size: 1.1rem; margin-bottom: .35rem; }
@@ -281,6 +292,7 @@ footer p + p { margin-top: .4rem; }
       <a href="#guilds">Tree guilds</a>
       <a href="#builder">Guild builder</a>
       <a href="#notes">UK notes</a>
+      <a href="#sources">Sources</a>
     </nav>
   </div>
 </header>
@@ -395,6 +407,61 @@ footer p + p { margin-top: .4rem; }
         <div class="note"><h3>Check pollination groups</h3><p>Most apples and pears need a partner of a different variety flowering at the same time, within about 20 m. Nurseries list varieties by flowering group (1 to 7). A neighbour's tree or a crab apple often does the job.</p></div>
         <div class="note"><h3>Mulch, then plant into it</h3><p>Kill the grass with cardboard and 10 cm of woodchip a season before planting. Grass is the main competitor of young trees. Top up the woodchip each winter; the fungi it feeds are what woodland soils run on.</p></div>
         <div class="note"><h3>Plan for shade to arrive</h3><p>In years one to four the guild is sunny and the understory produces most of the food. As the canopy closes, swap sun-lovers like strawberries and lavender for shade-tolerant currants, wild garlic and sweet cicely.</p></div>
+      </div>
+    </div>
+  </section>
+  <section id="sources">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Further reading</p>
+        <h2>Sources</h2>
+        <p class="lede">The best places to go deeper, starting with the UK forest gardening pioneers and the Royal Horticultural Society's fruit guides.</p>
+      </div>
+      <div class="sources">
+        <div>
+          <h3>Forest gardening</h3>
+          <ul>
+          <li><a href="https://www.agroforestry.co.uk/about-agroforestry/forest-gardening/" target="_blank" rel="noopener">Agroforestry Research Trust: forest gardening</a><span>Martin Crawford's charity in Devon, running the UK's best-known forest garden since 1994. Covers layers, nitrogen fixers, nutrient-mining plants and pest-predator planting.</span></li>
+          <li><a href="https://www.nhbs.com/en/creating-a-forest-garden-book" target="_blank" rel="noopener">Creating a Forest Garden, Martin Crawford (Green Books)</a><span>The standard UK handbook: design, plant choice, establishing ground cover by mulching, and balancing nutrients with nitrogen fixers and comfrey.</span></li>
+          <li><a href="https://www.permanentpublications.co.uk/port/how-to-make-a-forest-garden-by-patrick-whitefield/" target="_blank" rel="noopener">How to Make a Forest Garden, Patrick Whitefield (Permanent Publications)</a><span>Step-by-step British guide with notes on more than a hundred plants.</span></li>
+          <li><a href="https://www.agroforestry.co.uk/wp-content/uploads/2021/12/The-role-of-forest-gardens-and-forest-gardeners-in-the-UKs-agroecological-transition.pdf" target="_blank" rel="noopener">The role of forest gardens in the UK's agroecological transition (PDF)</a><span>Report hosted by the Agroforestry Research Trust on forest gardens and forest gardeners across the UK.</span></li>
+          <li><a href="https://www.agroforestry.co.uk/about_us/network/" target="_blank" rel="noopener">Agroforestry and Forest Garden Network</a><span>Membership network run by the Trust, with plant and growing information.</span></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Evidence on yields</h3>
+          <ul>
+          <li><a href="https://organicresearchcentre.com/?p=10142" target="_blank" rel="noopener">Forest gardens: an experiment in horticulture (Organic Research Centre)</a><span>Includes a productivity comparison at Schumacher College: forest gardens yielded less than kitchen gardens, but with proportionately less labour.</span></li>
+          <li><a href="https://www.sustainweb.org/news/nov16_permacutlure_association_review_of_forest_gardening/" target="_blank" rel="noopener">Forest gardening under review (Sustain)</a><span>Mid-term findings of the Permaculture Association's 10-year UK forest garden trial: gains in biodiversity, soil quality and yields, with less maintenance.</span></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Fruit trees, rootstocks and pruning</h3>
+          <ul>
+          <li><a href="https://www.rhs.org.uk/fruit/fruit-trees/rootstocks" target="_blank" rel="noopener">RHS: rootstocks for fruit</a><span>Heights, vigour and years to fruiting for apple, pear, plum and cherry rootstocks. The tree sizes on this page follow it.</span></li>
+          <li><a href="https://rhs.org.uk/advice/pdfs/ApplePollinationGroups" target="_blank" rel="noopener">RHS: apple pollination groups (PDF)</a><span>Flowering groups for apple varieties, for choosing pollination partners.</span></li>
+          <li><a href="https://ashridgetrees.co.uk/advice/pollination-checker" target="_blank" rel="noopener">Ashridge Trees: pollination checker</a><span>Enter a variety to find compatible partners.</span></li>
+          <li><a href="https://www.rhs.org.uk/fruit/apples/winter-regulated-pruning" target="_blank" rel="noopener">RHS: winter pruning apples and pears</a><span>Dormant-season pruning, spur thinning and how much to remove.</span></li>
+          <li><a href="https://www.rhs.org.uk/fruit/plums/pruning" target="_blank" rel="noopener">RHS: pruning plums</a><span>Why plums are pruned in spring or summer, not winter.</span></li>
+          <li><a href="https://www.rhs.org.uk/disease/silver-leaf" target="_blank" rel="noopener">RHS: silver leaf</a><span>The disease behind summer pruning of stone fruit.</span></li>
+          <li><a href="https://www.rhs.org.uk/fruit/cherries/grow-your-own" target="_blank" rel="noopener">RHS: how to grow cherries</a><span>Rootstocks, netting against birds and self-fertile varieties.</span></li>
+          <li><a href="https://www.rhs.org.uk/fruit/quince/grow-your-own" target="_blank" rel="noopener">RHS: how to grow quinces</a><span>Rootstocks, leaf blight-tolerant varieties and when trees start cropping.</span></li>
+          <li><a href="https://www.rhs.org.uk/fruit/medlars/grow-your-own" target="_blank" rel="noopener">RHS: how to grow medlars</a><span>Rootstocks, harvest and bletting.</span></li>
+          <li><a href="https://www.rhs.org.uk/fruit/mulberries/grow-your-own" target="_blank" rel="noopener">RHS: how to grow mulberries</a><span>Black mulberry size, soil and planting.</span></li>
+          <li><a href="https://www.rhs.org.uk/advice/grow-your-own/features/how-to-prune-figs" target="_blank" rel="noopener">RHS: how to prune a fig</a><span>Spring pruning, summer pinching and removing unripe figs in autumn.</span></li>
+          </ul>
+        </div>
+        <div>
+          <h3>Plants for the understory</h3>
+          <ul>
+          <li><a href="https://pfaf.org/user/cmspage.aspx?pageid=27" target="_blank" rel="noopener">Plants For A Future database</a><span>Free charity database of over 8,000 edible and useful plants, started from a research site in south-west England. Good for checking hardiness, uses and hazards.</span></li>
+          <li><a href="https://www.rhs.org.uk/advice/grow-your-own/features/making-comfrey-feed" target="_blank" rel="noopener">RHS: three ways to use comfrey</a><span>Why 'Bocking 14' is the comfrey to grow, and how to use it as mulch and liquid feed.</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="caveat">
+        <p><b>About the figures on this page.</b> Tree sizes, pruning times and pollination advice follow the RHS pages above. There is no authoritative UK table of yields per tree by rootstock, so the yield ranges are estimates from typical nursery figures and should be read as a rough guide. Planting densities are typical spacings for each plant, not from a single source.</p>
+        <p>The UK forest garden studies above suggest forest gardens give less food per square metre than an intensive kitchen garden, but for much less work, and that yields keep rising as the trees mature.</p>
       </div>
     </div>
   </section>
@@ -574,13 +641,13 @@ const areaFor = (sp, n) => sp && sp.per ? n / ((sp.per[0] + sp.per[1]) / 2) : 0;
 // Rootstock y: young [lo,hi], mature [lo,hi] kg per tree; spread in metres
 const TREES = [
   {
-    id: 'apple', name: 'Apple', latin: 'Malus domestica', ab: 'Ap',
+    id: 'apple', sources: [['RHS: how to grow apples', 'https://www.rhs.org.uk/fruit/apples/grow-your-own'], ['RHS: winter pruning', 'https://www.rhs.org.uk/fruit/apples/winter-regulated-pruning'], ['RHS: pollination groups (PDF)', 'https://rhs.org.uk/advice/pdfs/ApplePollinationGroups']], name: 'Apple', latin: 'Malus domestica', ab: 'Ap',
     intro: 'The easiest and most rewarding tree for a UK food forest. Mix early, mid and late varieties and you can be eating apples from August until March from store.',
     varieties: "'Discovery' (Aug), 'Egremont Russet' (Oct), 'Bramley' (cooker, Oct, stores to March)",
     pollination: 'Needs a partner variety in the same or next flowering group. Crab apples count.',
     site: 'Sun or light shade, any decent soil that doesn\'t waterlog.',
     blossom: [4,5], harvest: [8,9,10], prune: [11,12,1,2,3],
-    pruneNote: 'Winter, November to March, while dormant. Remove dead, diseased and crossing branches and keep an open centre. Trained forms (cordons, espaliers) also get a summer prune in August.',
+    pruneNote: 'Winter, November to March, while dormant. Remove dead, diseased and crossing branches and keep an open centre. The RHS suggests removing only 10–20% of the canopy a year: harder cuts trigger a mass of upright watershoots. Trained forms (cordons, espaliers) also get a summer prune in August.',
     rootstocks: [
       { name: 'M26 (dwarfing)', ht: '2.5–3 m', spread: 3, young: [4, 8], mature: [20, 30] },
       { name: 'MM106 (semi-vigorous)', ht: '4–5 m', spread: 4.5, young: [6, 12], mature: [40, 80] },
@@ -599,16 +666,16 @@ const TREES = [
     ],
   },
   {
-    id: 'pear', name: 'Pear', latin: 'Pyrus communis', ab: 'Pr',
+    id: 'pear', sources: [['RHS: winter pruning apples and pears', 'https://www.rhs.org.uk/fruit/apples/winter-regulated-pruning'], ['RHS: rootstocks', 'https://www.rhs.org.uk/fruit/fruit-trees/rootstocks']], name: 'Pear', latin: 'Pyrus communis', ab: 'Pr',
     intro: 'Pears flower early and like a warmer, more sheltered spot than apples, but live for a century and crop heavily once established.',
     varieties: "'Conference' (Sep–Oct, partly self-fertile), 'Concorde' (Oct), 'Beth' (Aug–Sep)",
     pollination: "Plant two varieties. 'Conference' sets some fruit on its own.",
     site: 'Sheltered, sunny, frost-free. Avoid frost pockets: blossom opens in late March.',
     blossom: [3,4], harvest: [8,9,10], prune: [11,12,1,2],
-    pruneNote: 'Winter, November to February. Pears fruit on spurs, so shorten new growth and thin congested spur systems rather than cutting hard. Pick fruit while still firm and ripen indoors.',
+    pruneNote: 'Winter, November to February. Pears fruit on spurs: on older trees, thin crowded spurs to 10–15 cm apart rather than shortening every new shoot. Trees on vigorous Quince A take longer to fill out before they need regular pruning. Pick fruit while still firm and ripen indoors.',
     rootstocks: [
       { name: 'Quince C (dwarfing)', ht: '2.5–3 m', spread: 3, young: [3, 6], mature: [15, 25] },
-      { name: 'Quince A (semi-vigorous)', ht: '3.5–4.5 m', spread: 4, young: [4, 8], mature: [30, 50] },
+      { name: 'Quince A (semi-vigorous)', ht: '3–4.5 m', spread: 4, young: [4, 8], mature: [30, 50] },
       { name: 'Pyrus seedling (vigorous)', ht: '6–9 m', spread: 6, young: [1, 4], mature: [60, 120] },
     ], rs: 1,
     guild: [
@@ -624,16 +691,16 @@ const TREES = [
     ],
   },
   {
-    id: 'plum', name: 'Plum & gage', latin: 'Prunus domestica', ab: 'Pl',
+    id: 'plum', sources: [['RHS: pruning plums', 'https://www.rhs.org.uk/fruit/plums/pruning'], ['RHS: silver leaf', 'https://www.rhs.org.uk/disease/silver-leaf']], name: 'Plum & gage', latin: 'Prunus domestica', ab: 'Pl',
     intro: 'Plums crop young and heavily. A good year gives more than you can eat, so plan for jam, freezing and drying.',
     varieties: "'Victoria' (late Aug, self-fertile), 'Opal' (early Aug), 'Cambridge Gage' (Aug)",
     pollination: "'Victoria' and 'Opal' are self-fertile. Gages crop better with a partner.",
     site: 'Sun, shelter from spring wind. Flowers early, so avoid frost pockets.',
     blossom: [3,4], harvest: [8,9], prune: [6,7,8],
-    pruneNote: 'Summer only, June to August, on a dry day. Winter cuts let in silver leaf and bacterial canker. Thin fruit in June to stop branches snapping in heavy years.',
+    pruneNote: 'Never in winter: silver leaf spores are active from September to May and enter through pruning cuts. Prune established trees in summer (June to August) on a dry day; young trees can be shaped in early spring as buds break. Thin fruit in June to stop branches snapping in heavy years.',
     rootstocks: [
-      { name: 'Pixy (dwarfing)', ht: '2.5–3 m', spread: 3, young: [3, 6], mature: [15, 25] },
-      { name: 'St Julien A (semi-vigorous)', ht: '3.5–4.5 m', spread: 4, young: [5, 10], mature: [25, 45] },
+      { name: 'Pixy (semi-dwarfing)', ht: '3–4 m', spread: 3, young: [3, 6], mature: [15, 25] },
+      { name: 'St Julien A (semi-vigorous)', ht: '4.5–5 m', spread: 4.5, young: [5, 10], mature: [25, 45] },
       { name: 'Brompton (vigorous)', ht: '5–6 m', spread: 5, young: [3, 8], mature: [40, 60] },
     ], rs: 1,
     guild: [
@@ -649,7 +716,7 @@ const TREES = [
     ],
   },
   {
-    id: 'cherry', name: 'Sweet cherry', latin: 'Prunus avium', ab: 'Ch',
+    id: 'cherry', sources: [['RHS: how to grow cherries', 'https://www.rhs.org.uk/fruit/cherries/grow-your-own'], ['RHS: rootstocks', 'https://www.rhs.org.uk/fruit/fruit-trees/rootstocks']], name: 'Sweet cherry', latin: 'Prunus avium', ab: 'Ch',
     intro: 'The first tree fruit of summer. Modern dwarfing rootstocks keep it small enough to net against birds, which is the only way to get a decent share.',
     varieties: "'Stella' (Jul, self-fertile), 'Sunburst' (Jul, self-fertile), 'Lapins'",
     pollination: 'Choose a self-fertile variety unless you have room for two.',
@@ -657,8 +724,8 @@ const TREES = [
     blossom: [4], harvest: [6,7], prune: [6,7,8],
     pruneNote: 'Summer, straight after harvest in July and August. Like plums, cherries suffer silver leaf and canker from winter pruning. Net the tree as fruit colours.',
     rootstocks: [
-      { name: 'Gisela 5 (dwarfing)', ht: '2.5–3 m', spread: 3, young: [2, 4], mature: [10, 20] },
-      { name: 'Colt (semi-vigorous)', ht: '5–6 m', spread: 5, young: [2, 5], mature: [20, 40] },
+      { name: 'Gisela 5 (semi-dwarfing)', ht: '2.4–3 m', spread: 3, young: [2, 4], mature: [10, 20] },
+      { name: 'Colt (semi-vigorous)', ht: '6 m', spread: 5, young: [2, 5], mature: [20, 40] },
     ], rs: 0,
     guild: [
       { p: 'honeyberry', n: 2, why: 'Fruits in late May, the only thing ripe before the cherries.' },
@@ -672,7 +739,7 @@ const TREES = [
     ],
   },
   {
-    id: 'damson', name: 'Damson', latin: 'Prunus insititia', ab: 'Dm',
+    id: 'damson', sources: [['RHS: pruning plums and damsons', 'https://www.rhs.org.uk/fruit/plums/pruning'], ['RHS: silver leaf', 'https://www.rhs.org.uk/disease/silver-leaf']], name: 'Damson', latin: 'Prunus insititia', ab: 'Dm',
     intro: 'Tough enough for exposed, wet or northern gardens where other plums struggle. Damsons were traditionally planted as hedgerow windbreaks around orchards.',
     varieties: "'Merryweather' (Sep), 'Farleigh' (Sep–Oct), 'Shropshire Prune' (Sep–Oct)",
     pollination: "Most are self-fertile. 'Farleigh' is partly self-fertile.",
@@ -680,7 +747,7 @@ const TREES = [
     blossom: [3,4], harvest: [9,10], prune: [6,7,8],
     pruneNote: 'Summer, June to August. Damsons need little pruning: remove dead wood and anything crossing. Never in winter.',
     rootstocks: [
-      { name: 'St Julien A (semi-vigorous)', ht: '3.5–4.5 m', spread: 4, young: [4, 8], mature: [20, 35] },
+      { name: 'St Julien A (semi-vigorous)', ht: '4.5–5 m', spread: 4.5, young: [4, 8], mature: [20, 35] },
       { name: 'Brompton (vigorous)', ht: '5–6 m', spread: 5, young: [3, 6], mature: [30, 50] },
     ], rs: 0,
     guild: [
@@ -695,16 +762,16 @@ const TREES = [
     ],
   },
   {
-    id: 'quince', name: 'Quince', latin: 'Cydonia oblonga', ab: 'Qu',
-    intro: 'Golden, perfumed fruit for membrillo and jelly, and large pink-white flowers that open late enough to miss most frosts.',
-    varieties: "'Vranja' (Oct), 'Meech's Prolific' (Oct), 'Serbian Gold'",
+    id: 'quince', sources: [['RHS: how to grow quinces', 'https://www.rhs.org.uk/fruit/quince/grow-your-own']], name: 'Quince', latin: 'Cydonia oblonga', ab: 'Qu',
+    intro: 'Golden, perfumed fruit for membrillo and jelly, and large pink-white flowers that open late enough to miss most frosts. Fruit can\'t be eaten raw but keeps for two or three months.',
+    varieties: "'Vranja' (Oct), 'Meech's Prolific' (Oct), 'Serbian Gold' (better in wet areas)",
     pollination: 'Self-fertile.',
     site: 'Warm, sunny, and moist but not waterlogged. Leaf blight can be a problem in wet summers.',
     blossom: [5], harvest: [10,11], prune: [11,12,1,2],
-    pruneNote: 'Winter, November to February, lightly. Thin crowded branches to let air through, which reduces leaf blight. Quinces fruit on tips, so don\'t shorten every shoot.',
+    pruneNote: 'Winter, November to February, lightly. Thin crowded branches to let air through, which reduces leaf blight. Quinces fruit on tips, so don\'t shorten every shoot. Expect the first real crop at five or six years old.',
     rootstocks: [
-      { name: 'Quince C (compact)', ht: '3 m', spread: 3, young: [2, 4], mature: [10, 20] },
-      { name: 'Quince A (standard)', ht: '3.5–4.5 m', spread: 4, young: [2, 5], mature: [15, 30] },
+      { name: 'Quince C (dwarfing)', ht: '3 m', spread: 3, young: [0.5, 2], mature: [10, 20] },
+      { name: 'Quince A (standard)', ht: '3.5–4.5 m', spread: 4, young: [0.5, 3], mature: [15, 30] },
     ], rs: 1,
     guild: [
       { p: 'goumi', n: 1, why: 'Nitrogen-fixing shrub on the north side.' },
@@ -719,7 +786,7 @@ const TREES = [
     ],
   },
   {
-    id: 'medlar', name: 'Medlar', latin: 'Mespilus germanica', ab: 'Md',
+    id: 'medlar', sources: [['RHS: how to grow medlars', 'https://www.rhs.org.uk/fruit/medlars/grow-your-own']], name: 'Medlar', latin: 'Mespilus germanica', ab: 'Md',
     intro: 'A small, characterful tree with wide white flowers and russet fruit that you eat after it softens, or "blets", in storage. Very frost-hardy and trouble-free.',
     varieties: "'Nottingham' (Nov), 'Royal' (Oct–Nov), 'Iranian'",
     pollination: 'Self-fertile.',
@@ -742,7 +809,7 @@ const TREES = [
     ],
   },
   {
-    id: 'mulberry', name: 'Black mulberry', latin: 'Morus nigra', ab: 'Mb',
+    id: 'mulberry', sources: [['RHS: how to grow mulberries', 'https://www.rhs.org.uk/fruit/mulberries/grow-your-own']], name: 'Black mulberry', latin: 'Morus nigra', ab: 'Mb',
     intro: 'A slow, long-lived heirloom tree with fruit too soft to sell, so you only get it by growing it. It becomes the heart of a mature food forest.',
     varieties: "'Chelsea' (Aug–Sep), 'Wellington', 'Carmen' (fruits young)",
     pollination: 'Self-fertile.',
@@ -766,7 +833,7 @@ const TREES = [
     ],
   },
   {
-    id: 'fig', name: 'Fig', latin: 'Ficus carica', ab: 'Fg',
+    id: 'fig', sources: [['RHS: how to prune a fig', 'https://www.rhs.org.uk/advice/grow-your-own/features/how-to-prune-figs']], name: 'Fig', latin: 'Ficus carica', ab: 'Fg',
     intro: 'A Mediterranean tree that crops well in southern Britain against a warm wall, with its roots restricted so it fruits instead of making leaves.',
     varieties: "'Brown Turkey' (Aug–Sep), 'Brunswick', 'White Marseilles'",
     pollination: 'Self-fertile; no pollinator needed.',
@@ -1070,7 +1137,7 @@ function renderAtlas() {
         <div class="cal-scroll"><div class="cal">${treeCalendar(t)}</div></div>
         <div class="cal-key"><span><i style="background:var(--blossom)"></i>Blossom</span><span><i style="background:var(--harvest)"></i>Harvest</span><span><i style="background:var(--prune)"></i>Pruning window</span></div>
       </div>
-      <div class="prune-note"><b>Pruning</b>${esc(t.pruneNote)}</div>
+      <div class="prune-note"><b>Pruning</b>${esc(t.pruneNote)}<span class="src">Sources: ${t.sources.map(([l, u]) => `<a href="${u}" target="_blank" rel="noopener">${esc(l)}</a>`).join(' · ')}</span></div>
       <div>
         <div class="block-title"><span>How much you'll pick</span><span>${esc(rs.name)}</span></div>
         <div class="yield">${yieldHTML(t, rsI, items)}</div>

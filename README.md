@@ -14,6 +14,7 @@ Open `index.html` in a browser. It is a single self-contained page with no build
   - a whole-guild harvest calendar
 - **Planting densities**: spacing and plants per m² for every herbaceous and ground cover plant, with a table per guild showing how much ground they will cover.
 - **Guild builder**: choose a centre tree and rootstock, add plants from each layer, and see the plan, planting densities, jobs covered (nitrogen fixing, nutrient mining, pollinators, pest control, ground cover, mulch), warnings, yield estimate and harvest calendar update live. Saved in the browser.
+- **Sources**: linked further reading (Agroforestry Research Trust, Martin Crawford and Patrick Whitefield's books, UK forest garden studies, RHS fruit guides, Plants For A Future). Each tree's panel also links its RHS guide.
 - **UK growing notes**: planting season, summer pruning of stone fruit, frost pockets, pollination groups, mulching and planning for shade.
 
 ## Editing the plants
@@ -24,7 +25,7 @@ All data lives in the `<script>` at the bottom of `index.html`:
 - `SPACING`: planting density for herbaceous and ground cover plants (spacing in cm, plants per m², or sowing rate).
 - `TREES`: centre trees, with rootstocks, calendars, pruning notes and the suggested guild.
 
-Yields are typical ranges for UK gardens, not guarantees.
+Tree sizes, pruning times and pollination advice follow the RHS guides linked on the page. Yields are estimates from typical nursery figures, not guarantees.
 
 ## Hosting
 
