@@ -12,7 +12,8 @@ Open `index.html` in a browser. It is a single self-contained page with no build
   - a calendar of blossom, harvest and pruning months, plus pruning notes
   - rootstock options and estimated yields for a young guild (years 3–4) and a mature guild (year 8+)
   - a whole-guild harvest calendar
-- **Guild builder**: choose a centre tree and rootstock, add plants from each layer, and see the plan, jobs covered (nitrogen fixing, nutrient mining, pollinators, pest control, ground cover, mulch), warnings, yield estimate and harvest calendar update live. Saved in the browser.
+- **Planting densities**: spacing and plants per m² for every herbaceous and ground cover plant, with a table per guild showing how much ground they will cover.
+- **Guild builder**: choose a centre tree and rootstock, add plants from each layer, and see the plan, planting densities, jobs covered (nitrogen fixing, nutrient mining, pollinators, pest control, ground cover, mulch), warnings, yield estimate and harvest calendar update live. Saved in the browser.
 - **UK growing notes**: planting season, summer pruning of stone fruit, frost pockets, pollination groups, mulching and planning for shade.
 
 ## Editing the plants
@@ -20,6 +21,7 @@ Open `index.html` in a browser. It is a single self-contained page with no build
 All data lives in the `<script>` at the bottom of `index.html`:
 
 - `PLANTS`: companion plants, with layer, jobs, harvest months and yield per plant (young / mature, kg).
+- `SPACING`: planting density for herbaceous and ground cover plants (spacing in cm, plants per m², or sowing rate).
 - `TREES`: centre trees, with rootstocks, calendars, pruning notes and the suggested guild.
 
 Yields are typical ranges for UK gardens, not guarantees.

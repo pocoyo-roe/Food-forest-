@@ -200,6 +200,16 @@ select { font: inherit; color: var(--ink); background: var(--surface); border: 1
 .members .nm .n { font-family: var(--f-data); font-weight: 400; color: var(--muted); font-size: var(--step--1); margin-left: .35rem; }
 .members .why { font-size: .9rem; color: var(--muted); }
 
+/* Planting density */
+.dens-scroll { overflow-x: auto; }
+.dens { width: 100%; border-collapse: collapse; font-size: .9rem; min-width: 420px; }
+.dens th { text-align: left; font-weight: 400; font-size: var(--step--1); color: var(--muted); padding: 0 .6rem .35rem 0; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.dens td { padding: .4rem .6rem .4rem 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+.dens td.num { font-family: var(--f-data); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dens .pn { display: inline-flex; align-items: center; gap: .45rem; }
+.dens .pn i { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.dens-sum { font-size: .9rem; color: var(--muted); margin-top: .55rem; }
+
 /* Notes */
 .notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 1rem 2rem; }
 .note h3 { font-size: 1.1rem; margin-bottom: .35rem; }
@@ -358,6 +368,10 @@ footer p + p { margin-top: .4rem; }
           <div>
             <div class="block-title"><span>Estimated yield</span></div>
             <div class="yield" id="bYield"></div>
+          </div>
+          <div>
+            <div class="block-title"><span>Planting density</span><span>herbaceous &amp; ground cover</span></div>
+            <div id="bDens"></div>
           </div>
           <div>
             <div class="block-title"><span>Harvest calendar</span><span id="bMonths"></span></div>
@@ -520,6 +534,41 @@ const PLANTS = [
   { id: 'schisandra', name: 'Schisandra', latin: 'Schisandra chinensis', layer: 'climber', ab: 'Sz', roles: ['food'], harvest: [9,10], y: [0, 1], light: 'shade', note: 'Shade-tolerant twiner with sour, spicy berries. Happy on the north side of a tree.' },
 ];
 const PLANT = Object.fromEntries(PLANTS.map(p => [p.id, p]));
+
+// Suggested planting density for the herbaceous and ground cover layers.
+// cm: spacing between plants; per: plants per square metre; sow: for plants sown from seed.
+const SPACING = {
+  comfrey:          { cm: [60, 90], per: [1, 2] },
+  rhubarb:          { cm: [90, 100], per: [1, 1] },
+  sorrel:           { cm: [30, 30], per: [9, 11] },
+  sweetcicely:      { cm: [60, 60], per: [2, 3] },
+  lovage:           { cm: [60, 90], per: [1, 2] },
+  yarrow:           { cm: [30, 45], per: [5, 9] },
+  fennel:           { cm: [45, 60], per: [3, 4] },
+  chives:           { cm: [20, 30], per: [12, 16] },
+  tansy:            { cm: [45, 60], per: [3, 4] },
+  borage:           { cm: [45, 45], per: [4, 5] },
+  calendula:        { cm: [30, 30], per: [9, 11] },
+  phacelia:         { sow: 'Broadcast 2 g of seed per m²' },
+  perkale:          { cm: [60, 75], per: [2, 2] },
+  artichoke:        { cm: [90, 90], per: [1, 1] },
+  goodkinghenry:    { cm: [30, 40], per: [6, 9] },
+  lupin:            { cm: [45, 60], per: [3, 4] },
+  marjoram:         { cm: [30, 40], per: [6, 9] },
+  strawberry:       { cm: [35, 45], per: [6, 8] },
+  alpinestrawberry: { cm: [20, 30], per: [12, 16] },
+  whiteclover:      { sow: 'Broadcast 1–2 g of seed per m²' },
+  thyme:            { cm: [20, 25], per: [16, 20] },
+  mint:             { cm: [30, 45], per: [5, 9] },
+  nasturtium:       { cm: [30, 30], per: [9, 11] },
+  ajuga:            { cm: [25, 30], per: [9, 12] },
+  woodruff:         { cm: [20, 25], per: [16, 20] },
+  winecap:          { sow: 'About 1 litre of spawn per m², in 10–15 cm of fresh hardwood chip' },
+};
+PLANTS.forEach(p => { if (SPACING[p.id]) p.space = SPACING[p.id]; });
+const rangeText = ([a, b]) => a === b ? `${a}` : `${a}–${b}`;
+const spacingText = sp => sp.sow ? sp.sow : `${rangeText(sp.cm)} cm apart · ${rangeText(sp.per)} per m²`;
+const areaFor = (sp, n) => sp && sp.per ? n / ((sp.per[0] + sp.per[1]) / 2) : 0;
 
 /* ---------- Trees and guilds ---------- */
 // Rootstock y: young [lo,hi], mature [lo,hi] kg per tree; spread in metres
@@ -772,8 +821,10 @@ function tipHTML(key) {
   return `<h4>${esc(p.name)}</h4><div class="lt">${esc(p.latin)}</div>
     <div class="tags"><span class="tag">${esc(LAYER[p.layer].name)}</span>${p.roles.map(x => `<span class="tag">${esc(ROLES[x].label)}</span>`).join('')}</div>
     <div class="row"><span>Light</span><span>${esc(LIGHT[p.light])}</span></div>
+    ${p.space ? `<div class="row"><span>Spacing</span><span>${esc(p.space.sow ? 'Sown' : `${rangeText(p.space.cm)} cm · ${rangeText(p.space.per)}/m²`)}</span></div>` : ''}
     ${p.harvest.length ? `<div class="row"><span>Harvest</span><span>${monthsText(p.harvest)}</span></div>` : ''}
     ${y}
+    ${p.space && p.space.sow ? `<p>${esc(p.space.sow)}.</p>` : ''}
     <p>${esc(p.note)}</p>
     ${p.warn ? `<p class="warn">${esc(p.warn)}</p>` : ''}${why}`;
 }
@@ -962,6 +1013,35 @@ function yieldHTML(tree, rsIndex, items, maxOverride) {
     (uy > 0 ? `<p class="y-note">In a young guild the understory gives about ${share}% of the food. As the tree matures it takes over, and shade-tolerant plants keep the understory productive.</p>` : '');
 }
 
+/* ---------- Planting density ---------- */
+function densityHTML(tree, rsIndex, items) {
+  const rows = items.map(it => ({ it, p: PLANT[it.p] })).filter(x => x.p.space);
+  if (!rows.length) return '<p class="empty">Add herbaceous or ground cover plants to see how densely to plant them.</p>';
+  const order = { herb: 0, ground: 1 };
+  rows.sort((a, b) => order[a.p.layer] - order[b.p.layer]);
+  let area = 0; const sown = [];
+  const body = rows.map(({ it, p }) => {
+    const a = areaFor(p.space, it.n); area += a;
+    if (p.space.sow) sown.push(p.name.toLowerCase());
+    return `<tr>
+      <td><span class="pn" data-tip="p:${p.id}" tabindex="0"><i style="background:var(--l-${p.layer})"></i>${esc(p.name)}</span></td>
+      <td class="num">${p.space.sow ? 'sown' : rangeText(p.space.cm) + ' cm'}</td>
+      <td class="num">${p.space.sow ? '—' : rangeText(p.space.per)}</td>
+      <td class="num">${p.space.sow ? 'patch' : '×' + it.n}</td>
+      <td class="num">${p.space.sow ? '—' : '≈' + (Math.round(a * 10) / 10) + ' m²'}</td>
+    </tr>`;
+  }).join('');
+  const canopy = Math.PI * Math.pow(tree.rootstocks[rsIndex].spread / 2, 2);
+  const share = area / canopy;
+  let sum = `These plants fill about <b class="mono">${Math.round(area * 10) / 10} m²</b>. The mature canopy covers about <b class="mono">${Math.round(canopy)} m²</b>.`;
+  sum += share < 0.6
+    ? ` Keep the rest under woodchip${sown.length ? ` or ${sown.join(' and ')}` : ' or sown white clover'} until the plants spread, or add more ground cover.`
+    : share > 1.3 ? ' That is more than the canopy area, so let some plants sit outside the drip line or reduce numbers.' : ' That is about right: the plants will knit together within two seasons.';
+  return `<div class="dens-scroll"><table class="dens">
+    <thead><tr><th>Plant</th><th>Spacing</th><th>Per m²</th><th>In guild</th><th>Covers</th></tr></thead>
+    <tbody>${body}</tbody></table></div><p class="dens-sum">${sum}</p>`;
+}
+
 /* ---------- Guild atlas ---------- */
 let atlasTree = 'apple';
 const atlasRs = Object.fromEntries(TREES.map(t => [t.id, t.rs]));
@@ -994,6 +1074,10 @@ function renderAtlas() {
       <div>
         <div class="block-title"><span>How much you'll pick</span><span>${esc(rs.name)}</span></div>
         <div class="yield">${yieldHTML(t, rsI, items)}</div>
+      </div>
+      <div>
+        <div class="block-title"><span>Planting density</span><span>herbaceous &amp; ground cover</span></div>
+        ${densityHTML(t, rsI, items)}
       </div>
       <div>
         <div class="block-title"><span>Whole-guild harvest</span></div>
@@ -1057,7 +1141,7 @@ function renderPick() {
     const ps = PLANTS.filter(p => p.layer === l.id && (filter === 'all' || p.roles.includes(filter)));
     if (!ps.length) return '';
     return `<div>
-      <div class="lp-head"><span class="sw" style="background:var(--l-${l.id})"></span><h3>${l.name}</h3><span>${l.ht}</span></div>
+      <div class="lp-head"><span class="sw" style="background:var(--l-${l.id})"></span><h3>${l.name}</h3><span>${l.ht}${l.id === 'herb' || l.id === 'ground' ? ' · hover a plant for spacing' : ''}</span></div>
       <div class="chips">${ps.map(p => `<button type="button" class="chip ${count[p.id] ? 'on' : ''}" data-add="${p.id}" data-tip="p:${p.id}" aria-label="Add ${esc(p.name)}${count[p.id] ? `, ${count[p.id]} in guild` : ''}"><span class="ab" style="background:var(--l-${p.layer})">${p.ab}</span>${esc(p.name)}${count[p.id] ? `<span class="cnt">×${count[p.id]}</span>` : ''}</button>`).join('')}</div>
     </div>`;
   }).join('') || '<p class="empty">No plants match that filter.</p>';
@@ -1085,6 +1169,7 @@ function renderResults() {
   $('#bWarns').innerHTML = warns.map(w => `<li>${esc(w)}</li>`).join('');
   $('#bWarns').hidden = !warns.length;
   $('#bYield').innerHTML = yieldHTML(t, state.rs, items);
+  $('#bDens').innerHTML = densityHTML(t, state.rs, items);
   const cal = harvestCalendar(t, items);
   $('#bCal').innerHTML = cal.html;
   $('#bMonths').textContent = `${cal.months} of 12 months`;
