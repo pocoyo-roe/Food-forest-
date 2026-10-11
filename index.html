@@ -487,6 +487,14 @@ svg.editing .mk.moving circle.dot, svg.editing .mk.selected circle.dot { stroke:
 svg.editing .mk.selected circle.dot { filter: drop-shadow(0 0 4px var(--accent)); }
 svg.editing.has-sel { cursor: crosshair; }
 
+/* Switching between saved guilds in the builder */
+.guild-switch { display: flex; flex-wrap: wrap; gap: .5rem .9rem; align-items: end; padding: .7rem .8rem; margin-bottom: 1rem; border-radius: var(--r); background: var(--surface); border: 1px solid var(--line); }
+.guild-switch label { display: grid; gap: .25rem; font-size: var(--step--1); color: var(--muted); flex: 1 1 220px; min-width: 0; }
+.guild-switch select { width: 100%; font-size: 1rem; }
+.dirty { font-family: var(--f-data); font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; padding: .2rem .55rem; border-radius: 999px; background: var(--accent-soft); color: var(--ink); margin-bottom: .45rem; }
+.switch-prompt { display: grid; gap: .6rem; padding: .8rem .9rem; margin-bottom: 1rem; border-radius: var(--r); background: var(--accent-soft); font-size: .95rem; }
+.switch-prompt .sp-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+
 /* Notes */
 .notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 1rem 2rem; }
 .note h3 { font-size: 1.1rem; margin-bottom: .35rem; }
@@ -622,6 +630,13 @@ footer p + p { margin-top: .4rem; }
       <div class="sec-intro"><p class="lede">Pick a centre tree and rootstock, then add plants from each layer. The plan, harvest calendar and yield estimate update as you go, and the checklist shows which jobs your guild still needs doing. Your guild is saved in this browser. It starts with the suggested apple guild as an example.</p></div>
       <div class="builder">
         <div>
+          <div class="guild-switch" id="bSwitch" hidden>
+            <label for="bGuildPick">Your guilds
+              <select id="bGuildPick"></select>
+            </label>
+            <span class="dirty" id="bDirty" hidden>Unsaved changes</span>
+          </div>
+          <div class="switch-prompt" id="bSwitchPrompt" hidden></div>
           <div class="b-controls">
             <label for="bTree">Centre tree
               <select id="bTree"></select>
@@ -1853,6 +1868,7 @@ function renderResults() {
   $('#bWarns').hidden = !warns.length;
   $('#bYield').innerHTML = yieldHTML(t, state.rs, items);
   $('#bDens').innerHTML = densityHTML(t, state.rs, items);
+  updateSaveButton();
   const cal = harvestCalendar(t, items);
   $('#bCal').innerHTML = cal.html;
   $('#bMonths').textContent = `${cal.months} of 12 months`;
@@ -3187,6 +3203,7 @@ function renderMine() {
   </div>`;
   body.innerHTML = picker + monthPanel(g ? [g] : store.guilds) + (g ? guildDetail(g) : allView());
   mount3D(view3dMine, $('#mine3dSlot'));
+  updateSaveButton();
   if ($('#siteSvg')) renderSite();
 }
 $('#mineBody').addEventListener('change', e => {
@@ -3217,22 +3234,59 @@ $('#mineBody').addEventListener('click', e => {
   if (b.hasAttribute('data-delno')) { pendingDelete = null; renderMine(); return; }
   if (b.dataset.delyes) { store.remove(b.dataset.delyes); pendingDelete = null; if (state.editId === b.dataset.delyes) { delete state.editId; save(); updateSaveButton(); } renderMine(); return; }
   if (b.dataset.edit) {
-    const g = store.get(b.dataset.edit); if (!g) return;
-    state = { tree: g.tree, rs: g.rs, items: clone(g.items), editId: g.id };
-    save(); closeSavePanel(); renderBuilder(true);
+    if (!store.get(b.dataset.edit)) return;
+    requestSwitch(b.dataset.edit);
     goTo('builder');
   }
 });
 
 /* Builder: save to my guilds */
 function editing() { return state.editId ? store.get(state.editId) : null; }
+function guildSnapshot(x) { return JSON.stringify([x.tree, x.rs, x.items.map(i => [i.p, i.n, i.pos ? i.pos.x : null, i.pos ? i.pos.y : null])]); }
+function builderDirty() { const g = editing(); return !!g && guildSnapshot(g) !== guildSnapshot(state); }
 function updateSaveButton() {
-  const g = editing();
+  const g = editing(), dirty = builderDirty();
   $('#bSaveOpen').textContent = g ? `Save changes to “${g.name}”` : 'Save as a new guild';
   const b = $('#bEditing');
   b.hidden = !g;
-  if (g) b.innerHTML = `<span>Editing your guild <b>“${esc(g.name)}”</b>.</span><button type="button" class="btn" id="bNewGuild">Start a new guild instead</button>`;
+  if (g) b.innerHTML = `<span>Editing your guild <b>“${esc(g.name)}”</b>${dirty ? ' · not saved yet' : ''}.</span><button type="button" class="btn" id="bNewGuild">Start a new guild instead</button>`;
+  // "Your guilds" picker
+  const wrap = $('#bSwitch'), pick = $('#bGuildPick');
+  wrap.hidden = !store.guilds.length;
+  pick.innerHTML = `<option value="">New guild (not saved yet)</option>` + store.guilds.map(x => `<option value="${x.id}">${esc(x.name)} · ${esc(TREE[x.tree].name)}</option>`).join('');
+  pick.value = g ? g.id : '';
+  $('#bDirty').hidden = !dirty;
 }
+function loadIntoBuilder(id) {
+  const g = id && store.get(id);
+  if (!g) { startNewGuild(); return; }
+  state = { tree: g.tree, rs: g.rs, items: clone(g.items), editId: g.id };
+  layoutSel = null; save(); closeSavePanel(); $('#bSaved').hidden = true; $('#bSwitchPrompt').hidden = true;
+  renderBuilder(true);
+}
+// Switch guilds, asking first if the current one has unsaved changes.
+function requestSwitch(id) {
+  const g = editing();
+  if (!builderDirty() || (g && g.id === id)) { loadIntoBuilder(id); return; }
+  const target = id ? `“${esc(store.get(id).name)}”` : 'a new guild';
+  const box = $('#bSwitchPrompt');
+  box.innerHTML = `<span>You've changed <b>“${esc(g.name)}”</b> since you last saved it. Save the changes before opening ${target}?</span>
+    <div class="sp-actions"><button type="button" class="btn primary" data-switch="save" data-to="${id}">Save and switch</button><button type="button" class="btn" data-switch="discard" data-to="${id}">Switch without saving</button><button type="button" class="btn" data-switch="cancel">Stay here</button></div>`;
+  box.hidden = false;
+  $('#bGuildPick').value = g.id;
+  box.querySelector('button').focus();
+}
+$('#bGuildPick').addEventListener('change', e => requestSwitch(e.target.value));
+$('#bSwitchPrompt').addEventListener('click', e => {
+  const b = e.target.closest('[data-switch]'); if (!b) return;
+  const act = b.dataset.switch, to = b.dataset.to || '';
+  if (act === 'cancel') { $('#bSwitchPrompt').hidden = true; updateSaveButton(); return; }
+  if (act === 'save') {
+    const g = editing();
+    if (g) { store.save(cleanGuild({ ...g, tree: state.tree, rs: state.rs, items: clone(state.items), updated: Date.now() })); renderMine(); }
+  }
+  loadIntoBuilder(to);
+});
 function startNewGuild(treeId) {
   const t = TREE[treeId || state.tree];
   state = { tree: t.id, rs: t.rs, items: t.guild.map(g => ({ p: g.p, n: g.n })) };
