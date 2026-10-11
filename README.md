@@ -15,6 +15,7 @@ Open `index.html` in a browser. It is a single self-contained page with no build
 - **Planting densities**: spacing and plants per m² for every herbaceous and ground cover plant, with a table per guild showing how much ground they will cover.
 - **Guild builder**: choose a centre tree and rootstock, add plants from each layer, and see the plan, planting densities, jobs covered (nitrogen fixing, nutrient mining, pollinators, pest control, ground cover, mulch), warnings, yield estimate and harvest calendar update live. Saved in the browser.
 - **Sources**: linked further reading (Agroforestry Research Trust, Martin Crawford and Patrick Whitefield's books, UK forest garden studies, RHS fruit guides, Plants For A Future). Each tree's panel also links its RHS guide.
+- **My guilds**: save guilds from the builder with a name, the year you planted them and notes. Each one shows its age and stage, this month's jobs (with tick boxes that reset monthly) and harvests across all your guilds, a month-by-month planner, a yearly upkeep list and an estimated harvest for this year. Saved in your browser; when the page is opened in Claude, guilds are stored privately to your account instead.
 - **UK growing notes**: planting season, summer pruning of stone fruit, frost pockets, pollination groups, mulching and planning for shade.
 
 ## Editing the plants

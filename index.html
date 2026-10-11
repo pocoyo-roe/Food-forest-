@@ -221,6 +221,64 @@ select { font: inherit; color: var(--ink); background: var(--surface); border: 1
 .caveat { margin-top: 2rem; padding: .9rem 1rem; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); font-size: .95rem; max-width: 75ch; }
 .caveat p + p { margin-top: .5rem; }
 
+/* Builder save panel */
+.save-panel { display: grid; gap: .75rem; padding: 1rem; margin-bottom: 1rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+.save-panel label { display: grid; gap: .25rem; font-size: var(--step--1); color: var(--muted); }
+.sp-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: .75rem; }
+@media (max-width: 520px) { .sp-grid { grid-template-columns: minmax(0, 1fr); } }
+input[type="text"], textarea { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: .45rem .6rem; width: 100%; }
+textarea { resize: vertical; }
+.sp-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+.sp-err { color: var(--accent); font-size: .9rem; }
+.b-saved { font-size: .9rem; color: var(--muted); margin: -.25rem 0 1rem; }
+
+/* My guilds */
+.mine-status { font-size: var(--step--1); color: var(--muted); display: flex; align-items: center; gap: .45rem; }
+.mine-status i { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+.mine-status.cloud i { background: var(--l-ground); }
+.mine-empty { padding: 1.5rem; border: 1px dashed var(--line); border-radius: var(--r); display: grid; gap: .8rem; justify-items: start; max-width: 62ch; }
+.mine-empty p { color: var(--muted); }
+.month-panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 1.1rem 1.2rem; display: grid; gap: 1rem; margin-bottom: 2rem; }
+.mp-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
+.mp-head h3 { font-size: var(--step-1); }
+.mp-guilds { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 1rem 2rem; }
+.mp-guild { display: grid; gap: .5rem; align-content: start; min-width: 0; }
+.mp-guild h4 { margin: 0; font-size: 1rem; display: flex; justify-content: space-between; gap: .5rem; }
+.mp-guild h4 span { font-family: var(--f-data); font-weight: 400; font-size: var(--step--1); color: var(--muted); }
+.jobs { list-style: none; margin: 0; padding: 0; display: grid; gap: .35rem; font-size: .92rem; }
+.jobs li { display: grid; grid-template-columns: auto auto 1fr; gap: .5rem; align-items: start; }
+.jobs input { margin: .2rem 0 0; accent-color: var(--accent); width: 1rem; height: 1rem; }
+.jobs li.done label { text-decoration: line-through; color: var(--muted); }
+.kind { font-family: var(--f-data); font-size: .66rem; text-transform: uppercase; letter-spacing: .05em; padding: .1rem .4rem; border-radius: 999px; margin-top: .15rem; white-space: nowrap; color: var(--ink); }
+.kind.prune { background: color-mix(in srgb, var(--prune) 30%, transparent); }
+.kind.care { background: color-mix(in srgb, var(--l-ground) 25%, transparent); }
+.kind.sow { background: color-mix(in srgb, var(--l-herb) 30%, transparent); }
+.kind.harvest { background: color-mix(in srgb, var(--harvest) 25%, transparent); }
+.picks { display: flex; flex-wrap: wrap; gap: .3rem; }
+.pick { font-size: .85rem; padding: .15rem .55rem; border-radius: 999px; background: var(--accent-soft); }
+.next-up { font-size: var(--step--1); color: var(--muted); }
+.mg-detail { display: grid; gap: 1.75rem; }
+.mg-head { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; align-items: start; }
+.mg-head h3 { font-size: var(--step-2); }
+.mg-meta { color: var(--muted); margin-top: .25rem; }
+.mg-notes { margin-top: .5rem; max-width: 62ch; white-space: pre-line; }
+.stage { display: inline-block; font-family: var(--f-data); font-size: var(--step--1); padding: .1rem .55rem; border-radius: 999px; background: var(--accent); color: var(--on-accent); margin-left: .4rem; vertical-align: 2px; }
+.mg-actions { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+.mg-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: clamp(1.25rem, 3vw, 2.5rem); align-items: start; }
+@media (max-width: 900px) { .mg-cols { grid-template-columns: minmax(0, 1fr); } }
+.mg-cols > * { min-width: 0; display: grid; gap: 1.4rem; align-content: start; }
+.upkeep { list-style: none; margin: 0; padding: 0; display: grid; gap: .45rem; font-size: .92rem; }
+.upkeep li { display: grid; grid-template-columns: 4.6rem 1fr; gap: .6rem; align-items: baseline; }
+.upkeep .when { font-family: var(--f-data); font-size: var(--step--1); color: var(--muted); }
+.planner { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: .6rem; }
+.mcard { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: .7rem .8rem; display: grid; gap: .45rem; align-content: start; font-size: .88rem; }
+.mcard.now { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.mcard h4 { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: 1.05rem; display: flex; justify-content: space-between; align-items: baseline; }
+.mcard h4 span { font-family: var(--f-data); font-size: .7rem; color: var(--accent); text-transform: uppercase; letter-spacing: .06em; }
+.mcard ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .3rem; }
+.mcard li { display: grid; grid-template-columns: auto 1fr; gap: .4rem; align-items: start; }
+.mcard .quiet { color: var(--muted); }
+
 /* Notes */
 .notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 1rem 2rem; }
 .note h3 { font-size: 1.1rem; margin-bottom: .35rem; }
@@ -291,6 +349,7 @@ footer p + p { margin-top: .4rem; }
       <a href="#layers">Layers</a>
       <a href="#guilds">Tree guilds</a>
       <a href="#builder">Guild builder</a>
+      <a href="#mine">My guilds</a>
       <a href="#notes">UK notes</a>
       <a href="#sources">Sources</a>
     </nav>
@@ -360,7 +419,28 @@ footer p + p { margin-top: .4rem; }
             </label>
             <button class="btn" id="bSuggest" type="button">Load suggested guild</button>
             <button class="btn" id="bClear" type="button">Clear plants</button>
+            <button class="btn primary" id="bSaveOpen" type="button">Save to my guilds</button>
           </div>
+          <p class="b-saved" id="bSaved" hidden></p>
+          <form class="save-panel" id="bSavePanel" hidden>
+            <div class="sp-grid">
+              <label for="mgName">Guild name
+                <input id="mgName" type="text" maxlength="60" placeholder="e.g. Back garden apple" autocomplete="off">
+              </label>
+              <label for="mgYear">Year planted
+                <select id="mgYear"></select>
+              </label>
+            </div>
+            <label for="mgNotes">Notes (optional)
+              <textarea id="mgNotes" rows="2" maxlength="500" placeholder="Variety, soil, where it is in the garden"></textarea>
+            </label>
+            <p class="sp-err" id="mgErr" hidden></p>
+            <div class="sp-actions">
+              <button class="btn primary" id="mgSave" type="submit">Save guild</button>
+              <button class="btn" id="mgSaveNew" type="button" hidden>Save as a new guild</button>
+              <button class="btn" id="mgCancel" type="button">Cancel</button>
+            </div>
+          </form>
           <div class="filters" id="bFilters" aria-label="Filter plants by job"></div>
           <div class="layer-pick" id="bPick"></div>
         </div>
@@ -391,6 +471,18 @@ footer p + p { margin-top: .4rem; }
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section id="mine">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Your forest garden</p>
+        <h2>My guilds</h2>
+        <p class="lede">Guilds you save from the builder appear here with this month's jobs and harvests, a year planner, regular upkeep and what to expect from them at their age. Tick jobs off as you do them.</p>
+        <p class="mine-status" id="mineStatus"><i></i><span>Saved in this browser.</span></p>
+      </div>
+      <div id="mineBody"></div>
     </div>
   </section>
 
@@ -1177,6 +1269,7 @@ $('#guildPanel').addEventListener('click', e => {
   if (e.target.id === 'toBuilder') {
     const t = TREE[atlasTree];
     state = { tree: t.id, rs: atlasRs[t.id], items: t.guild.map(g => ({ p: g.p, n: g.n })) };
+    closeSavePanel();
     renderBuilder(true); save();
     document.getElementById('builder').scrollIntoView();
   }
@@ -1241,7 +1334,7 @@ function renderResults() {
   $('#bCal').innerHTML = cal.html;
   $('#bMonths').textContent = `${cal.months} of 12 months`;
 }
-function renderBuilder(controls) { if (controls) renderBuilderControls(); renderPick(); renderResults(); }
+function renderBuilder(controls) { if (controls) renderBuilderControls(); renderPick(); renderResults(); updateSaveButton(); }
 function changeCount(id, d) {
   const it = state.items.find(i => i.p === id);
   if (it) { it.n += d; if (it.n <= 0) state.items = state.items.filter(i => i !== it); }
@@ -1273,11 +1366,356 @@ $('#bRoot').addEventListener('change', e => { state.rs = +e.target.value; save()
 $('#bSuggest').addEventListener('click', () => { state.items = TREE[state.tree].guild.map(g => ({ p: g.p, n: g.n })); save(); renderBuilder(false); });
 $('#bClear').addEventListener('click', () => { state.items = []; save(); renderBuilder(false); });
 
+/* ---------- My guilds ---------- */
+const NOW = new Date(), CUR_M = NOW.getMonth() + 1, CUR_Y = NOW.getFullYear();
+const LS_MINE = 'my-guilds-v1', LS_SEL = 'my-guilds-sel';
+const clone = o => JSON.parse(JSON.stringify(o));
+const hash = str => { let h = 5381; for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) | 0; return (h >>> 0).toString(36); };
+function cleanGuild(g) {
+  if (!g || typeof g.id !== 'string' || !TREE[g.tree] || !Array.isArray(g.items)) return null;
+  const c = clone(g);
+  c.items = c.items.filter(i => i && PLANT[i.p] && i.n > 0);
+  c.rs = Math.min(Math.max(c.rs | 0, 0), TREE[c.tree].rootstocks.length - 1);
+  c.name = String(c.name || 'Untitled guild').slice(0, 60);
+  c.notes = String(c.notes || '').slice(0, 500);
+  c.planted = Number(c.planted) || CUR_Y;
+  c.done = c.done && typeof c.done === 'object' ? c.done : {};
+  return c;
+}
+
+const store = {
+  mode: 'local', col: null, guilds: [], queue: {},
+  load() {
+    try { const a = JSON.parse(localStorage.getItem(LS_MINE)); if (Array.isArray(a)) this.guilds = a.map(cleanGuild).filter(Boolean); } catch (e) { /* storage unavailable */ }
+  },
+  cache() { try { localStorage.setItem(LS_MINE, JSON.stringify(this.guilds)); } catch (e) { /* ignore */ } },
+  // When the page is opened in Claude, keep guilds in the viewer's private store so they follow their account.
+  async connect() {
+    if (!window.claude || typeof window.claude.use !== 'function') return;
+    try {
+      const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+      if (!db || !user) return;
+      const uid = await user.id();
+      if (!uid) return;
+      const col = db.collection('data/users/' + uid);
+      const snap = await col.get();
+      const remote = snap.docs.map(d => cleanGuild(d.data())).filter(Boolean);
+      const ids = new Set(remote.map(g => g.id));
+      const localOnly = this.guilds.filter(g => !ids.has(g.id));
+      for (const g of localOnly) await col.doc(g.id).set(clone(g));
+      this.col = col; this.mode = 'cloud';
+      this.guilds = [...remote, ...localOnly].sort((a, b) => (a.created || 0) - (b.created || 0));
+      this.cache();
+      renderMine();
+    } catch (e) { /* stay with browser storage */ }
+  },
+  enqueue(id, fn) {
+    const prev = this.queue[id] || Promise.resolve();
+    this.queue[id] = prev.then(fn).catch(() => { this.col = null; this.mode = 'local'; renderMineStatus(); });
+  },
+  save(g) {
+    const i = this.guilds.findIndex(x => x.id === g.id);
+    if (i >= 0) this.guilds[i] = g; else this.guilds.push(g);
+    this.cache();
+    if (this.col) { const col = this.col, body = clone(g); this.enqueue(g.id, () => col.doc(g.id).set(body)); }
+  },
+  remove(id) {
+    this.guilds = this.guilds.filter(g => g.id !== id);
+    this.cache();
+    if (this.col) { const col = this.col; this.enqueue(id, () => col.doc(id).delete()); }
+  },
+  get(id) { return this.guilds.find(g => g.id === id); },
+};
+
+/* Jobs: [months, kind, text] */
+const GREASE = [[10], 'care', 'Fit grease bands round the trunk and stake against winter moth'];
+const TREE_JOBS = {
+  apple: [[[11,12,1,2,3], 'prune', 'Winter prune the apple: dead, crossing and crowded wood, no more than 10–20%'], [[7], 'care', 'Thin apples to one or two per cluster after the June drop'], [[9], 'care', 'Clear windfalls and mummified fruit to stop brown rot spreading'], GREASE],
+  pear: [[[11,12,1,2], 'prune', 'Winter prune the pear: thin crowded spurs to 10–15 cm apart'], [[7], 'care', 'Thin pears to one or two per cluster'], [[9], 'care', 'Pick pears while still firm and ripen them indoors'], GREASE],
+  plum: [[[6,7,8], 'prune', 'Summer prune the plum on a dry day (never in winter)'], [[6], 'care', 'Thin plums to 5–8 cm apart so branches don\'t snap'], [[8], 'care', 'Prop heavily laden plum branches'], GREASE],
+  cherry: [[[7,8], 'prune', 'Prune the cherry after harvest, on a dry day'], [[6], 'care', 'Net the cherry as the fruit starts to colour'], GREASE],
+  damson: [[[6,7,8], 'prune', 'Lightly summer prune the damson on a dry day'], GREASE],
+  quince: [[[11,12,1,2], 'prune', 'Lightly winter prune the quince to let air through'], [[10], 'care', 'Store quinces away from other fruit: their scent taints it'], GREASE],
+  medlar: [[[11,12,1,2], 'prune', 'Lightly winter prune the medlar'], [[11], 'care', 'Store medlars eye-down until soft (bletted), 2–3 weeks']],
+  mulberry: [[[12,1], 'prune', 'Prune the mulberry only if needed, while fully dormant'], [[8], 'care', 'Spread a sheet under the mulberry to catch ripe fruit']],
+  fig: [[[3,4], 'prune', 'Cut out frost-damaged and crossing fig stems'], [[6], 'prune', 'Pinch new fig shoots back to five leaves'], [[10,11], 'care', 'Rub off any fig bigger than a pea; only the tiny ones ripen next year'], [[12,1], 'care', 'Fleece the fig in hard frosts to protect next year\'s embryo figs']],
+};
+const PLANT_JOBS = {
+  comfrey: [[[5,6,8,9], 'care', 'Cut comfrey and drop the leaves round the tree']],
+  blackcurrant: [[[12,1,2], 'prune', 'Prune blackcurrants: cut a third of the oldest stems to the base']],
+  redcurrant: [[[12,1,2], 'prune', 'Prune redcurrants: shorten side shoots to one or two buds']],
+  gooseberry: [[[12,1,2], 'prune', 'Prune gooseberries: open the centre and shorten side shoots']],
+  jostaberry: [[[12,1,2], 'prune', 'Prune jostaberry: remove a few of the oldest stems']],
+  blueberry: [[[2,3], 'prune', 'Prune blueberries: remove a few old, unproductive stems'], [[3], 'care', 'Mulch blueberries with ericaceous compost; water with rainwater']],
+  honeyberry: [[[5], 'care', 'Net honeyberries as they colour']],
+  raspberry: [[[2], 'prune', 'Cut all autumn raspberry canes to the ground'], [[6], 'care', 'Pull up raspberry suckers that stray out of their patch']],
+  wineberry: [[[9], 'prune', 'Cut out wineberry canes that have fruited']],
+  blackberry: [[[10], 'prune', 'Cut out blackberry stems that fruited; tie in new ones']],
+  lavender: [[[8], 'prune', 'Trim lavender after flowering, never into old wood']],
+  rhubarb: [[[1,2], 'care', 'Mulch rhubarb with compost, keeping the crown clear'], [[7], 'care', 'Stop pulling rhubarb so the plant can recover']],
+  sorrel: [[[6], 'care', 'Cut sorrel flower stems to keep leaves coming']],
+  chives: [[[3], 'care', 'Divide crowded chive clumps (every three years or so)']],
+  strawberry: [[[5], 'care', 'Tuck straw under strawberries as fruit forms'], [[8], 'care', 'Cut off unwanted strawberry runners; renew plants every 3–4 years']],
+  nasturtium: [[[5], 'sow', 'Sow nasturtiums in sunny gaps']],
+  runnerbean: [[[5], 'sow', 'Sow runner beans at the base of their pole']],
+  phacelia: [[[4], 'sow', 'Sow phacelia in bare patches']],
+  whiteclover: [[[4,9], 'sow', 'Oversow white clover into bare ground']],
+  calendula: [[[4], 'sow', 'Let calendula self-seed, or sow a pinch into gaps']],
+  daffodil: [[[5], 'care', 'Leave daffodil leaves for six weeks after flowering before cutting']],
+  oca: [[[11], 'care', 'Lift oca after the first frosts and save a few tubers'], [[4], 'sow', 'Replant saved oca tubers']],
+  jartichoke: [[[6], 'care', 'Pull Jerusalem artichoke shoots that spread outside their patch']],
+  horseradish: [[[6], 'care', 'Pull horseradish shoots that stray']],
+  mint: [[[7], 'care', 'Chop back mint runners escaping their bucket']],
+  winecap: [[[4], 'care', 'Top up the wine cap bed with fresh hardwood chip']],
+  hops: [[[11], 'prune', 'Cut dead hop bines down to the ground']],
+  kiwi: [[[1], 'prune', 'Winter prune hardy kiwi: shorten fruited shoots'], [[7], 'prune', 'Pinch out hardy kiwi shoots five leaves past the fruit']],
+  grape: [[[12,1], 'prune', 'Winter prune the grape to two buds on each spur'], [[7], 'prune', 'Summer prune grape side shoots to two leaves past the bunch']],
+  schisandra: [[[2], 'prune', 'Thin tangled schisandra stems']],
+  hazel: [[[1,2], 'prune', 'Coppice a few cobnut stems (each stem every 7–10 years)']],
+  elder: [[[1,2], 'prune', 'Cut out a few of the oldest elder stems']],
+  artichoke: [[[11], 'care', 'Mulch globe artichoke crowns before winter']],
+  perkale: [[[4], 'care', 'Take perennial kale cuttings every five years to renew plants']],
+};
+function ageOf(g) { return CUR_Y - g.planted; }
+function stageOf(g) {
+  const a = ageOf(g), mature = g.tree === 'mulberry' ? 12 : 8;
+  if (a < 0) return 'Planned';
+  if (a <= 1) return 'Establishing';
+  if (a === 2) return 'First fruits';
+  if (a <= 4) return 'Young';
+  if (a < mature) return 'Maturing';
+  return 'Mature';
+}
+const seasonText = a => a < 0 ? 'not planted yet' : a === 0 ? 'first year' : `${a + 1}${['th','st','nd','rd'][(a + 1) % 10 > 3 || Math.floor((a + 1) / 10) === 1 ? 0 : (a + 1) % 10]} growing season`;
+function jobsFor(g) {
+  const t = TREE[g.tree], rs = t.rootstocks[g.rs], a = ageOf(g);
+  const plants = g.items.map(i => PLANT[i.p]);
+  const list = [];
+  const add = (months, kind, text) => list.push({ months, kind, text, key: hash(text) });
+  if (a < 0) add([11,12,1,2,3], 'care', 'Plant bare-root in this window: the tree first, then the understory');
+  (TREE_JOBS[t.id] || []).forEach(j => add(...j));
+  const early = t.blossom.filter(m => m <= 4);
+  if (early.length) add(early, 'care', 'Watch for frost while the tree is in blossom; fleece small trees on cold nights');
+  add([2], 'care', 'Top up woodchip mulch to 10 cm, keeping it clear of the trunk');
+  add([3], 'care', 'Spread a bucket of compost around the drip line');
+  add([5,7,9], 'care', 'Pull out grass creeping into the guild circle');
+  add([11], 'care', 'Leave fallen leaves as mulch; bin any spotted with scab');
+  if (a >= 0 && a <= 2) add([5,6,7,8], 'care', 'Water the tree weekly in dry spells: two full watering cans');
+  if (a >= 0 && a <= 1 && t.id !== 'fig' && t.id !== 'mulberry') add([5], 'care', 'Pick off this year\'s fruitlets so the young tree puts its energy into roots');
+  if (a >= 0 && a <= 3) add([3], 'care', 'Check the tree tie and stake; loosen the tie if it bites the bark');
+  if (plants.some(p => p.layer === 'herb')) add([3], 'care', 'Cut back last year\'s dead stems, left standing over winter for insects');
+  if (plants.some(p => p.roles.includes('nfix') && (p.layer === 'shrub' || p.layer === 'subcanopy'))) add([6,7], 'care', 'Cut a few branches from the nitrogen fixers and drop them under the tree');
+  if (a >= 5 && plants.some(p => p.light === 'sun' && (p.layer === 'ground' || p.layer === 'herb'))) add([10], 'care', 'Swap sun-lovers fading under the canopy for shade-tolerant plants');
+  const seen = new Set();
+  plants.forEach(p => { if (seen.has(p.id)) return; seen.add(p.id); (PLANT_JOBS[p.id] || []).forEach(j => add(...j)); });
+  return list;
+}
+function harvestsFor(g) {
+  const t = TREE[g.tree], a = ageOf(g), out = [];
+  if (a < 0 || a >= 2) out.push({ name: t.name, months: t.harvest, tree: true });
+  g.items.forEach(i => { const p = PLANT[i.p]; if (p.harvest.length && p.roles.includes('food')) out.push({ name: p.name, months: p.harvest, id: p.id }); });
+  return out;
+}
+function yieldThisYear(g) {
+  const t = TREE[g.tree], rs = t.rootstocks[g.rs], a = ageOf(g), mature = t.id === 'mulberry' ? 12 : 8;
+  const lerp = (x, y, f) => x + (y - x) * f;
+  const f = a <= 4 ? 0 : Math.min(1, (a - 4) / (mature - 4));
+  let tree;
+  if (a <= 1) tree = [0, 0];
+  else if (a === 2) tree = [rs.young[0] * 0.3, rs.young[1] * 0.3];
+  else tree = [lerp(rs.young[0], rs.mature[0], f), lerp(rs.young[1], rs.mature[1], f)];
+  let under = 0;
+  g.items.forEach(i => { const p = PLANT[i.p]; if (!p.y) return; const y = a <= 1 ? p.y[0] * 0.5 : lerp(p.y[0], p.y[1], f); under += y * i.n; });
+  return { tree, under };
+}
+const doneKey = (m, key) => `${CUR_Y}-${m}|${key}`;
+function pruneDone(done) { const keep = {}; const pre = `${CUR_Y}-${CUR_M}|`; Object.keys(done || {}).forEach(k => { if (k.startsWith(pre)) keep[k] = 1; }); return keep; }
+
+let mineSel = (() => { try { return localStorage.getItem(LS_SEL); } catch (e) { return null; } })();
+let pendingDelete = null;
+function renderMineStatus() {
+  const el = $('#mineStatus');
+  el.classList.toggle('cloud', store.mode === 'cloud');
+  el.querySelector('span').textContent = store.mode === 'cloud'
+    ? 'Saved privately to your Claude account, so your guilds appear wherever you open this page signed in.'
+    : 'Saved in this browser. Use the same browser to see them again.';
+}
+function jobRow(g, j, m, withBox) {
+  const k = doneKey(m, j.key), done = !!g.done[k], id = `job-${g.id}-${j.key}`;
+  return withBox
+    ? `<li class="${done ? 'done' : ''}"><input type="checkbox" id="${id}" data-guild="${g.id}" data-job="${k}" ${done ? 'checked' : ''}><span class="kind ${j.kind}">${j.kind}</span><label for="${id}">${esc(j.text)}</label></li>`
+    : `<li><span class="kind ${j.kind}">${j.kind}</span><span>${esc(j.text)}</span></li>`;
+}
+function monthPanel() {
+  const next = CUR_M % 12 + 1;
+  const blocks = store.guilds.map(g => {
+    const jobs = jobsFor(g).filter(j => j.months.includes(CUR_M));
+    const picks = harvestsFor(g).filter(h => h.months.includes(CUR_M));
+    const nextJobs = jobsFor(g).filter(j => j.months.includes(next) && !j.months.includes(CUR_M)).length;
+    const nextPicks = harvestsFor(g).filter(h => h.months.includes(next) && !h.months.includes(CUR_M)).map(h => h.name);
+    const doneN = jobs.filter(j => g.done[doneKey(CUR_M, j.key)]).length;
+    return `<div class="mp-guild">
+      <h4>${esc(g.name)}<span>${doneN}/${jobs.length} done</span></h4>
+      ${picks.length ? `<div class="picks">${picks.map(h => `<span class="pick">Pick ${esc(h.name.toLowerCase())}</span>`).join('')}</div>` : ''}
+      ${jobs.length ? `<ul class="jobs">${jobs.map(j => jobRow(g, j, CUR_M, true)).join('')}</ul>` : '<p class="next-up">Nothing to do this month.</p>'}
+      <p class="next-up">${MONTH[next - 1]}: ${nextJobs} new job${nextJobs === 1 ? '' : 's'}${nextPicks.length ? ` · starts: ${esc(nextPicks.join(', ').toLowerCase())}` : ''}</p>
+    </div>`;
+  }).join('');
+  return `<div class="month-panel">
+    <div class="mp-head"><h3>This month: ${MONTH[CUR_M - 1]} ${CUR_Y}</h3><span class="next-up">Ticks reset each month</span></div>
+    <div class="mp-guilds">${blocks}</div>
+  </div>`;
+}
+function guildDetail(g) {
+  const t = TREE[g.tree], rs = t.rootstocks[g.rs], a = ageOf(g);
+  const jobs = jobsFor(g), picks = harvestsFor(g);
+  const y = yieldThisYear(g);
+  const max = rs.mature[1] + g.items.reduce((s, i) => s + (PLANT[i.p].y ? PLANT[i.p].y[1] * i.n : 0), 0) || 1;
+  const pct = v => (v / max * 100).toFixed(2) + '%';
+  const yieldBlock = a < 0
+    ? '<p class="y-note">Planned guild: yields start once it is planted.</p>'
+    : `<div class="y-row">
+        <div class="y-top"><span>${CUR_Y} estimate</span><span class="mono">${kg(y.tree[0] + y.under)}–${kg(y.tree[1] + y.under)} kg</span></div>
+        <div class="y-bar" role="img" aria-label="Estimated yield this year"><span class="t-lo" style="width:${pct(y.tree[0])}"></span><span class="t-hi" style="width:${pct(y.tree[1] - y.tree[0])}"></span><span class="u" style="width:${pct(y.under)}"></span></div>
+        <div class="y-sub">Tree <span class="mono">${kg(y.tree[0])}–${kg(y.tree[1])} kg</span> · understory <span class="mono">${kg(y.under)} kg</span> · bar scaled to the mature guild</div>
+      </div>
+      ${a <= 1 ? '<p class="y-note">Establishing: the understory gives the first harvests while the tree puts down roots.</p>' : ''}`;
+  // Upkeep: one line per recurring job
+  const order = { prune: 0, care: 1, sow: 2 };
+  const upkeep = [...jobs].sort((x, z) => order[x.kind] - order[z.kind] || Math.min(...x.months) - Math.min(...z.months));
+  const planner = MONTH.map((mn, i) => {
+    const m = i + 1;
+    const mp = picks.filter(h => h.months.includes(m));
+    const mj = jobs.filter(j => j.months.includes(m));
+    return `<div class="mcard ${m === CUR_M ? 'now' : ''}">
+      <h4>${mn}${m === CUR_M ? '<span>Now</span>' : ''}</h4>
+      ${mp.length ? `<div class="picks">${mp.map(h => `<span class="pick">${esc(h.name)}</span>`).join('')}</div>` : ''}
+      ${mj.length ? `<ul>${mj.map(j => jobRow(g, j, m, false)).join('')}</ul>` : (mp.length ? '' : '<p class="quiet">A quiet month.</p>')}
+    </div>`;
+  }).join('');
+  const del = pendingDelete === g.id
+    ? `<span>Delete “${esc(g.name)}”?</span><button class="btn primary" type="button" data-delyes="${g.id}">Delete</button><button class="btn" type="button" data-delno>Keep it</button>`
+    : `<button class="btn" type="button" data-edit="${g.id}">Edit in builder</button><button class="btn" type="button" data-del="${g.id}">Delete</button>`;
+  return `<div class="mg-detail">
+    <div class="mg-head">
+      <div>
+        <h3>${esc(g.name)}<span class="stage">${stageOf(g)}</span></h3>
+        <p class="mg-meta">${esc(t.name)} on ${esc(rs.name)} · planted ${g.planted} (${seasonText(a)}) · ${g.items.length} kinds of plant</p>
+        ${g.notes ? `<p class="mg-notes">${esc(g.notes)}</p>` : ''}
+      </div>
+      <div class="mg-actions">${del}</div>
+    </div>
+    <div class="mg-cols">
+      <div>
+        <div class="plan">${planSVG(t, g.rs, g.items, 'my')}</div>
+        <div><div class="block-title"><span>Expected harvest this year</span></div><div class="yield">${yieldBlock}</div></div>
+        <div><div class="block-title"><span>Planting density</span></div>${densityHTML(t, g.rs, g.items)}</div>
+      </div>
+      <div>
+        <div><div class="block-title"><span>Upkeep through the year</span><span>${jobs.length} jobs</span></div>
+          <ul class="upkeep">${upkeep.map(j => `<li><span class="when">${monthsText(j.months)}</span><span><span class="kind ${j.kind}">${j.kind}</span> ${esc(j.text)}</span></li>`).join('')}</ul>
+        </div>
+        <div><div class="block-title"><span>Harvest calendar</span></div><div class="cal-scroll"><div class="cal">${harvestCalendar(t, a >= 0 && a < 2 ? [] : g.items).html}</div></div></div>
+      </div>
+    </div>
+    <div><div class="block-title"><span>Month by month</span></div><div class="planner">${planner}</div></div>
+  </div>`;
+}
+function renderMine() {
+  renderMineStatus();
+  const body = $('#mineBody');
+  if (!store.guilds.length) {
+    body.innerHTML = `<div class="mine-empty">
+      <h3>No guilds saved yet</h3>
+      <p>Build a guild in the guild builder, then press “Save to my guilds” and give it a name and the year you planted it. It will show up here with its monthly jobs, harvests and upkeep.</p>
+      <div class="sp-actions"><a class="btn primary" href="#builder" style="text-decoration:none">Go to the guild builder</a><button class="btn" type="button" id="mineExample">Add an example guild to try it</button></div>
+    </div>`;
+    return;
+  }
+  if (!store.get(mineSel)) mineSel = store.guilds[0].id;
+  const g = store.get(mineSel);
+  body.innerHTML = monthPanel() +
+    `<div class="tabs" role="tablist" aria-label="My guilds">${store.guilds.map(x => `<button class="tab" role="tab" type="button" data-sel="${x.id}" aria-selected="${x.id === mineSel}">${esc(x.name)}</button>`).join('')}</div>` +
+    guildDetail(g);
+}
+$('#mineBody').addEventListener('change', e => {
+  const box = e.target.closest('input[data-job]'); if (!box) return;
+  const g = store.get(box.dataset.guild); if (!g) return;
+  g.done = pruneDone(g.done);
+  if (box.checked) g.done[box.dataset.job] = 1; else delete g.done[box.dataset.job];
+  store.save(g);
+  const id = box.id; renderMine(); const again = document.getElementById(id); if (again) again.focus();
+});
+$('#mineBody').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.id === 'mineExample') {
+    const t = TREE.apple;
+    const g = cleanGuild({ id: 'g' + Date.now().toString(36), name: 'Example apple guild', planted: CUR_Y - 2, notes: 'An example to show how this works. Delete it whenever you like.', tree: 'apple', rs: t.rs, items: t.guild.map(x => ({ p: x.p, n: x.n })), done: {}, created: Date.now() });
+    store.save(g); mineSel = g.id; renderMine(); return;
+  }
+  if (b.dataset.sel) { mineSel = b.dataset.sel; pendingDelete = null; try { localStorage.setItem(LS_SEL, mineSel); } catch (err) { /* ignore */ } renderMine(); const t = document.querySelector(`[data-sel="${mineSel}"]`); if (t) t.focus(); return; }
+  if (b.dataset.del) { pendingDelete = b.dataset.del; renderMine(); const y = document.querySelector('[data-delno]'); if (y) y.focus(); return; }
+  if (b.hasAttribute('data-delno')) { pendingDelete = null; renderMine(); return; }
+  if (b.dataset.delyes) { store.remove(b.dataset.delyes); pendingDelete = null; if (state.editId === b.dataset.delyes) { delete state.editId; save(); updateSaveButton(); } renderMine(); return; }
+  if (b.dataset.edit) {
+    const g = store.get(b.dataset.edit); if (!g) return;
+    state = { tree: g.tree, rs: g.rs, items: clone(g.items), editId: g.id };
+    save(); closeSavePanel(); renderBuilder(true);
+    document.getElementById('builder').scrollIntoView();
+  }
+});
+
+/* Builder: save to my guilds */
+function editing() { return state.editId ? store.get(state.editId) : null; }
+function updateSaveButton() {
+  const g = editing();
+  $('#bSaveOpen').textContent = g ? `Save changes to “${g.name}”` : 'Save to my guilds';
+}
+function closeSavePanel() { $('#bSavePanel').hidden = true; $('#mgErr').hidden = true; }
+$('#mgYear').innerHTML = [`<option value="${CUR_Y + 1}">${CUR_Y + 1} (planning)</option>`]
+  .concat(Array.from({ length: 31 }, (_, i) => `<option value="${CUR_Y - i}">${CUR_Y - i}</option>`)).join('');
+$('#bSaveOpen').addEventListener('click', () => {
+  const g = editing();
+  $('#mgName').value = g ? g.name : '';
+  $('#mgYear').value = String(g ? g.planted : CUR_Y);
+  $('#mgNotes').value = g ? g.notes : '';
+  $('#mgSave').textContent = g ? 'Save changes' : 'Save guild';
+  $('#mgSaveNew').hidden = !g;
+  $('#bSaved').hidden = true;
+  $('#bSavePanel').hidden = false;
+  $('#mgName').focus();
+});
+$('#mgCancel').addEventListener('click', closeSavePanel);
+function saveGuild(asNew) {
+  const name = $('#mgName').value.trim();
+  if (!name) { $('#mgErr').textContent = 'Give the guild a name so you can find it later.'; $('#mgErr').hidden = false; $('#mgName').focus(); return; }
+  if (!state.items.length) { $('#mgErr').textContent = 'Add at least one plant before saving.'; $('#mgErr').hidden = false; return; }
+  const prev = asNew ? null : editing();
+  const g = cleanGuild({
+    id: prev ? prev.id : 'g' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+    name, planted: +$('#mgYear').value, notes: $('#mgNotes').value.trim(),
+    tree: state.tree, rs: state.rs, items: clone(state.items),
+    done: prev ? pruneDone(prev.done) : {}, created: prev ? prev.created : Date.now(), updated: Date.now(),
+  });
+  store.save(g);
+  state.editId = g.id; save();
+  mineSel = g.id; try { localStorage.setItem(LS_SEL, mineSel); } catch (e) { /* ignore */ }
+  closeSavePanel(); updateSaveButton(); renderMine();
+  const msg = $('#bSaved');
+  msg.innerHTML = `Saved “${esc(g.name)}”. <a href="#mine">See it in My guilds</a>`;
+  msg.hidden = false;
+}
+$('#bSavePanel').addEventListener('submit', e => { e.preventDefault(); saveGuild(false); });
+$('#mgSaveNew').addEventListener('click', () => saveGuild(true));
+
 /* ---------- Boot ---------- */
 drawProfile();
 renderTabs();
 renderAtlas();
+store.load();
 renderBuilder(true);
+renderMine();
+store.connect();
 })();
 </script>
 </body>
