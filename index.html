@@ -434,6 +434,33 @@ details > summary:focus-visible { outline: 2px solid var(--accent); outline-offs
 .edit-banner { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; padding: .6rem .8rem; border-radius: var(--r); background: var(--accent-soft); font-size: .92rem; margin-bottom: 1rem; }
 .edit-banner b { font-weight: 700; }
 .mg-view { display: grid; gap: .7rem; }
+.mg-detail > *, .mg-view > * { min-width: 0; }
+.site-tools > * { min-width: 0; }
+.site-tools select { max-width: 100%; }
+
+/* Site plan */
+.site { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 280px); gap: 1rem 1.5rem; align-items: start; }
+@media (max-width: 900px) { .site { grid-template-columns: minmax(0, 1fr); } }
+.site-tools { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: .6rem 1rem; align-items: end; }
+.site-tools label { display: grid; gap: .2rem; font-size: var(--step--1); color: var(--muted); }
+.site-tools input[type="number"] { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: .35rem .5rem; width: 5.5rem; }
+.site-stage { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; touch-action: none; }
+.site-stage svg { display: block; width: 100%; height: auto; max-height: 640px; user-select: none; -webkit-user-select: none; }
+.site-stage [data-guild], .site-stage [data-feat], .site-stage [data-corner], .site-stage [data-resize] { cursor: grab; }
+.site-stage .dragging { cursor: grabbing; }
+.site-stage [data-guild]:focus, .site-stage [data-feat]:focus { outline: none; }
+.site-side { display: grid; gap: 1rem; align-content: start; }
+.site-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: .8rem .9rem; display: grid; gap: .55rem; font-size: .92rem; }
+.site-card h4 { margin: 0; font-family: var(--f-display); font-weight: 400; font-size: 1.1rem; }
+.site-card p { color: var(--muted); }
+.site-card label { display: grid; gap: .2rem; font-size: var(--step--1); color: var(--muted); }
+.site-card .row2 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; }
+.site-card input { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: .3rem .45rem; width: 100%; }
+.add-row { display: flex; flex-wrap: wrap; gap: .35rem; }
+.add-row .btn { font-size: .85rem; padding: .3rem .6rem; }
+.site-warn { list-style: none; margin: 0; padding: 0; display: grid; gap: .4rem; font-size: .88rem; }
+.site-warn li { padding: .45rem .6rem; border-radius: 8px; background: var(--accent-soft); }
+.site-warn li.ok { background: color-mix(in srgb, var(--l-ground) 18%, transparent); }
 
 /* Notes */
 .notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 1rem 2rem; }
@@ -2062,14 +2089,35 @@ function make3D(key, getSpec, note) {
     return g;
   }
   function tag(obj, key) { obj.traverse(o => { o.userData.tip = key; }); return obj; }
+  function featureModel(f) {
+    const g = new T.Group();
+    if (f.kind === 'house' || f.kind === 'shed') {
+      const h = f.h || (f.kind === 'house' ? 7 : 2.4);
+      const walls = mesh(new T.BoxGeometry(f.w, h * 0.75, f.d), f.kind === 'house' ? '#d8cbb4' : '#9a7a58');
+      walls.position.y = h * 0.375; g.add(walls);
+      const roof = mesh(new T.ConeGeometry(Math.hypot(f.w, f.d) / 2, h * 0.25, 4), f.kind === 'house' ? '#6a4a3a' : '#5a4636');
+      roof.rotation.y = Math.PI / 4; roof.scale.set(f.w / Math.hypot(f.w, f.d) * Math.SQRT2, 1, f.d / Math.hypot(f.w, f.d) * Math.SQRT2);
+      roof.position.y = h * 0.875; g.add(roof);
+    } else if (f.kind === 'path') {
+      const slab = mesh(new T.BoxGeometry(f.w, 0.05, f.d), '#bdb19a', false); slab.position.y = 0.02; g.add(slab);
+    } else if (f.kind === 'pond') {
+      const water = mesh(new T.CylinderGeometry(0.5, 0.5, 0.04, 32), '#5a8ab0', false); water.scale.set(f.w, 1, f.d); water.position.y = 0.01; g.add(water);
+    } else if (f.kind === 'tree') {
+      const t = treeModel('existing', f.h || 8, f.w / 2, month, null, null, '#3f6a3a', seedOf(f.id), false); g.add(t);
+    } else if (f.kind === 'bed') {
+      const bed = mesh(new T.BoxGeometry(f.w, 0.25, f.d), '#6a5038'); bed.position.y = 0.12; g.add(bed);
+    }
+    g.position.set(f.x, 0, f.z);
+    return tag(g, '');
+  }
 
-  function guildGroup(treeObj, rsIndex, items, young) {
+  function guildGroup(treeObj, rsIndex, items, young, mulchR) {
     const grp = new T.Group();
     const rs = treeObj.rootstocks[rsIndex];
     const scaleM = (rs.spread / 2) / 110;                 // plan units → metres
     const H = rsHeight(rs) * (young ? 0.55 : 1), R = rs.spread / 2 * (young ? 0.5 : 1);
     const groundR = 206 * scaleM;
-    const mulch = mesh(new T.CylinderGeometry(groundR, groundR, 0.05, 64), '#8a6e4e', false); grp.add(mulch);
+    const mulch = mesh(new T.CylinderGeometry(mulchR || groundR, mulchR || groundR, 0.05, 64), '#8a6e4e', false); grp.add(mulch);
     const ring = new T.Mesh(new T.RingGeometry(rs.spread / 2 - 0.03, rs.spread / 2 + 0.03, 96), new T.MeshBasicMaterial({ color: 0xf6f2e4, transparent: true, opacity: 0.7 }));
     ring.rotation.x = -Math.PI / 2; ring.position.y = 0.03; grp.add(ring);
     const tv = TREE_VIS[treeObj.id] || {};
@@ -2106,28 +2154,49 @@ function make3D(key, getSpec, note) {
     const young = age === 'young';
     let minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity, maxH = 1;
     labels = [];
+    const site = spec.site, nRad = site ? site.north * Math.PI / 180 : 0;
     spec.guilds.forEach(gd => {
-      const { grp, groundR, H } = guildGroup(gd.tree, gd.rs, gd.items, young);
+      const built = guildGroup(gd.tree, gd.rs, gd.items, young, site ? gd.r : 0);
+      const { grp, H } = built, groundR = site ? gd.r : built.groundR;
       grp.position.set(gd.x || 0, 0, gd.z || 0);
+      grp.rotation.y = -nRad;
       root.add(grp);
       minX = Math.min(minX, (gd.x || 0) - groundR); maxX = Math.max(maxX, (gd.x || 0) + groundR);
       minZ = Math.min(minZ, (gd.z || 0) - groundR); maxZ = Math.max(maxZ, (gd.z || 0) + groundR);
       maxH = Math.max(maxH, H);
       if (gd.name) labels.push({ name: gd.name, pos: new T.Vector3(gd.x || 0, H + 0.6, gd.z || 0) });
     });
-    if (!spec.guilds.length) { minX = minZ = -3; maxX = maxZ = 3; }
+    if (site) {
+      site.poly.forEach(([x, z]) => { minX = Math.min(minX, x); maxX = Math.max(maxX, x); minZ = Math.min(minZ, z); maxZ = Math.max(maxZ, z); });
+      site.features.forEach(f => { root.add(featureModel(f, nRad)); maxH = Math.max(maxH, f.kind === 'tree' ? f.h * 0.5 : 0); });
+    }
+    if (!isFinite(minX)) { minX = minZ = -3; maxX = maxZ = 3; }
     const cx = (minX + maxX) / 2, cz = (minZ + maxZ) / 2, span = Math.max(maxX - minX, maxZ - minZ) / 2;
-    const grass = mesh(new T.CylinderGeometry(span * 1.6 + 1, span * 1.6 + 1, 0.04, 64), '#7f9a5c', false);
-    grass.position.set(cx, -0.03, cz); root.add(grass);
+    if (site) {
+      const outside = mesh(new T.CylinderGeometry(span * 2.2 + 4, span * 2.2 + 4, 0.04, 64), '#9aa48a', false);
+      outside.position.set(cx, -0.05, cz); root.add(outside);
+      const shape = new T.Shape(site.poly.map(([x, z]) => new T.Vector2(x, -z)));
+      const lawn = mesh(new T.ShapeGeometry(shape), '#7f9a5c', false);
+      lawn.rotation.x = -Math.PI / 2; lawn.position.y = -0.02; root.add(lawn);
+      site.poly.forEach(([x1, z1], i) => {
+        const [x2, z2] = site.poly[(i + 1) % site.poly.length], len = Math.hypot(x2 - x1, z2 - z1);
+        const fence = mesh(new T.BoxGeometry(len, 0.5, 0.06), '#7a6048');
+        fence.position.set((x1 + x2) / 2, 0.25, (z1 + z2) / 2); fence.rotation.y = -Math.atan2(z2 - z1, x2 - x1);
+        root.add(fence);
+      });
+    } else {
+      const grass = mesh(new T.CylinderGeometry(span * 1.6 + 1, span * 1.6 + 1, 0.04, 64), '#7f9a5c', false);
+      grass.position.set(cx, -0.03, cz); root.add(grass);
+    }
     scene.add(root);
-    // Sun from due south at noon height for the month
+    // Sun from true south at noon height for the month
     const el = SUN_EL[month - 1] * Math.PI / 180, D = span * 3 + 10;
-    sun.position.set(cx, Math.sin(el) * D, cz + Math.cos(el) * D);
+    sun.position.set(cx - Math.sin(nRad) * Math.cos(el) * D, Math.sin(el) * D, cz + Math.cos(nRad) * Math.cos(el) * D);
     sun.target.position.set(cx, 0, cz);
     const sc2 = span * 1.8;
     Object.assign(sun.shadow.camera, { left: -sc2, right: sc2, top: sc2, bottom: -sc2, near: 0.5, far: D * 2 });
     sun.shadow.camera.updateProjectionMatrix();
-    center = { x: cx, z: cz };
+    center = { x: cx, z: cz, n: nRad };
     target = new T.Vector3(cx, maxH * 0.35, cz);
     guildR = span;
     if (spec.frameKey !== framedKey) { dist = Math.max(9, span * 3.2); framedKey = spec.frameKey; }
@@ -2154,7 +2223,7 @@ function make3D(key, getSpec, note) {
   function draw() {
     placeCamera(); renderer.render(scene, camera);
     // Compass: project a point north of the guild(s)
-    const pnt = new T.Vector3(center.x, 0.05, center.z - guildR * 1.08).project(camera);
+    const pnt = new T.Vector3(center.x + Math.sin(center.n || 0) * guildR * 1.08, 0.05, center.z - Math.cos(center.n || 0) * guildR * 1.08).project(camera);
     const vis = pnt.z < 1 && Math.abs(pnt.x) < 1.1 && Math.abs(pnt.y) < 1.1;
     nLabel.hidden = !vis;
     if (vis) { nLabel.style.left = ((pnt.x + 1) / 2 * 100) + '%'; nLabel.style.top = ((1 - pnt.y) / 2 * 100) + '%'; }
@@ -2170,7 +2239,7 @@ function make3D(key, getSpec, note) {
   function setSpin(on) { spin = on; spinBtn.setAttribute('aria-pressed', on); spinBtn.textContent = on ? 'Stop' : 'Spin'; if (on && !raf) raf = requestAnimationFrame(loop); }
   const VIEWS = { south: [0, 1.15], west: [-Math.PI / 2, 1.15], north: [Math.PI, 1.15], east: [Math.PI / 2, 1.15], above: [0, 0.12], ground: [0.35, 1.45] };
   function setView(name) {
-    const [t, ph] = VIEWS[name]; theta = t; phi = ph;
+    const [t, ph] = VIEWS[name]; theta = t - (center.n || 0); phi = ph;
     dist = name === 'ground' ? guildR * 3.6 : Math.max(9, guildR * 3.2);
     markView(name); requestRender();
   }
@@ -2288,7 +2357,7 @@ const view3dAtlas = make3D('atlas', () => {
   const t = TREE[atlasTree];
   return { guilds: [{ tree: t, rs: atlasRs[t.id], items: t.guild.map(g => ({ p: g.p, n: g.n })) }], frameKey: 'atlas-' + t.id + '-' + atlasRs[t.id] };
 });
-const view3dMine = make3D('mine', () => mineSpec(), 'Simplified shapes to scale. With several guilds, they are set out side by side to compare their size and look, not to match where they are in your garden.');
+const view3dMine = make3D('mine', () => mineSpec(), 'Simplified shapes to scale. Guilds sit where you placed them on the site plan; before you make one, they are set out side by side. Shadows show the noon sun for the month, including from buildings.');
 
 /* ---------- My guilds ---------- */
 const LS_MINE = 'my-guilds-v1', LS_SEL = 'my-guilds-sel';
@@ -2303,13 +2372,29 @@ function cleanGuild(g) {
   c.notes = String(c.notes || '').slice(0, 500);
   c.planted = Number(c.planted) || CUR_Y;
   c.done = c.done && typeof c.done === 'object' ? c.done : {};
+  if (!(c.pos && isFinite(c.pos.x) && isFinite(c.pos.z))) delete c.pos;
   return c;
+}
+const LS_SITE = 'my-site-v1';
+function cleanSite(x) {
+  if (!x || !Array.isArray(x.poly) || x.poly.length < 3) return null;
+  const poly = x.poly.filter(pt => Array.isArray(pt) && isFinite(pt[0]) && isFinite(pt[1])).map(pt => [+pt[0], +pt[1]]);
+  if (poly.length < 3) return null;
+  const features = (Array.isArray(x.features) ? x.features : []).filter(f => f && SITE_KINDS[f.kind] && isFinite(f.x) && isFinite(f.z))
+    .map(f => ({ id: String(f.id), kind: f.kind, name: String(f.name || SITE_KINDS[f.kind].name).slice(0, 40), x: +f.x, z: +f.z, w: Math.max(0.3, +f.w || 1), d: Math.max(0.3, +f.d || 1), h: Math.max(0, +f.h || 0) }));
+  return { poly, north: ((+x.north || 0) % 360 + 360) % 360, features };
 }
 
 const store = {
-  mode: 'local', col: null, guilds: [], queue: {},
+  mode: 'local', col: null, guilds: [], queue: {}, site: null,
   load() {
     try { const a = JSON.parse(localStorage.getItem(LS_MINE)); if (Array.isArray(a)) this.guilds = a.map(cleanGuild).filter(Boolean); } catch (e) { /* storage unavailable */ }
+    try { this.site = cleanSite(JSON.parse(localStorage.getItem(LS_SITE))); } catch (e) { /* storage unavailable */ }
+  },
+  saveSite(site) {
+    this.site = site;
+    try { localStorage.setItem(LS_SITE, JSON.stringify(site)); } catch (e) { /* ignore */ }
+    if (this.col) { const col = this.col, body = clone(site); this.enqueue('site', () => col.doc('site').set(body)); }
   },
   cache() { try { localStorage.setItem(LS_MINE, JSON.stringify(this.guilds)); } catch (e) { /* ignore */ } },
   // When the page is opened in Claude, keep guilds in the viewer's private store so they follow their account.
@@ -2322,10 +2407,14 @@ const store = {
       if (!uid) return;
       const col = db.collection('data/users/' + uid);
       const snap = await col.get();
-      const remote = snap.docs.map(d => cleanGuild(d.data())).filter(Boolean);
+      const remote = snap.docs.filter(d => d.id !== 'site').map(d => cleanGuild(d.data())).filter(Boolean);
+      const siteDoc = snap.docs.find(d => d.id === 'site');
+      const remoteSite = siteDoc ? cleanSite(siteDoc.data()) : null;
       const ids = new Set(remote.map(g => g.id));
       const localOnly = this.guilds.filter(g => !ids.has(g.id));
       for (const g of localOnly) await col.doc(g.id).set(clone(g));
+      if (remoteSite) { this.site = remoteSite; try { localStorage.setItem(LS_SITE, JSON.stringify(remoteSite)); } catch (e) { /* ignore */ } }
+      else if (this.site) await col.doc('site').set(clone(this.site));
       this.col = col; this.mode = 'cloud';
       this.guilds = [...remote, ...localOnly].sort((a, b) => (a.created || 0) - (b.created || 0));
       this.cache();
@@ -2553,6 +2642,10 @@ function mineSpec() {
     return g ? { guilds: [{ tree: TREE[g.tree], rs: g.rs, items: g.items }], frameKey: 'mine-' + g.id } : { guilds: [], frameKey: 'none' };
   }
   const gs = store.guilds;
+  if (store.site) {
+    placeUnplaced();
+    return { site: store.site, guilds: gs.map(g => ({ tree: TREE[g.tree], rs: g.rs, items: g.items, name: g.name, x: g.pos.x, z: g.pos.z, r: footprintR(g) })), frameKey: 'site' };
+  }
   const radii = gs.map(g => 206 * (TREE[g.tree].rootstocks[g.rs].spread / 2) / 110);
   const cell = (Math.max(...radii, 2) * 2) + 1.5, cols = Math.ceil(Math.sqrt(gs.length)), rows = Math.ceil(gs.length / cols);
   return {
@@ -2606,13 +2699,15 @@ function allView() {
   const upkeep = [...jobs].sort((x, z) => order[x.kind] - order[z.kind] || Math.min(...x.months) - Math.min(...z.months));
   const cards = gs.map(g => `<button type="button" class="ov-card" data-sel="${g.id}">${planSVG(TREE[g.tree], g.rs, g.items, 'ov')}<b>${esc(g.name)}</b><span>${esc(TREE[g.tree].name)} · ${stageOf(g)} · planted ${g.planted}</span></button>`).join('');
   const v = viewPref('mineall', 'plan');
+  const tab = (val, label) => `<button type="button" data-view="${val}" aria-pressed="${v === val}">${label}</button>`;
   return `<div class="mg-detail">
     <div class="all-head">
-      <div><h3>All guilds</h3><p class="all-meta">${gs.length} guilds · ${plants} plants · about ${kg(lo)}–${kg(hi)} kg expected in ${CUR_Y}</p></div>
+      <div><h3>Whole garden</h3><p class="all-meta">${gs.length} guilds · ${plants} plants · about ${kg(lo)}–${kg(hi)} kg expected in ${CUR_Y}</p></div>
     </div>
     <div class="mg-view">
-      ${viewTabs('mineall', ['Overview', '3D, all together'])}
-      <div class="overview" ${v === '3d' ? 'hidden' : ''}>${cards}</div>
+      <div class="viewtabs" role="group" aria-label="Choose view" data-for="mineall">${tab('plan', 'Overview')}${tab('site', 'Site plan')}${tab('3d', '3D, all together')}</div>
+      <div class="overview" ${v === 'plan' ? '' : 'hidden'}>${cards}</div>
+      <div id="siteSlot" ${v === 'site' ? '' : 'hidden'}>${v === 'site' ? siteEditorHTML() : ''}</div>
       <div id="mine3dSlot" ${v === '3d' ? '' : 'hidden'}></div>
     </div>
     ${fold('all-harvest', `<span>Harvest calendar, all guilds</span><span class="fold-hint">${rows.length} crops</span>`, `<div class="cal-scroll"><div class="cal">${cal}</div></div>`, true)}
@@ -2620,6 +2715,295 @@ function allView() {
     ${fold('all-upkeep', `<span>Upkeep across all guilds</span><span class="fold-hint">${jobs.length} jobs</span>`, `<ul class="upkeep">${upkeep.map(j => `<li><span class="when">${monthsText(j.months)}</span><span><span class="kind ${j.kind}">${j.kind}</span> ${esc(j.text)} <span class="quiet">· ${esc(whoText(j.guilds, gs.length))}</span></span></li>`).join('')}</ul>`)}
   </div>`;
 }
+/* ---------- Site plan ---------- */
+const SITE_KINDS = {
+  house: { name: 'House', w: 8, d: 6, h: 7, label: 'Building' },
+  shed: { name: 'Shed', w: 2.4, d: 1.8, h: 2.4, label: 'Shed' },
+  path: { name: 'Path or patio', w: 4, d: 1, h: 0, label: 'Path or patio' },
+  bed: { name: 'Veg bed', w: 3, d: 1.2, h: 0, label: 'Bed' },
+  pond: { name: 'Pond', w: 2, d: 1.5, h: 0, label: 'Pond' },
+  tree: { name: 'Existing tree', w: 5, d: 5, h: 8, label: 'Existing tree' },
+};
+let siteSel = null, siteDrag = null, siteBox = null;
+// How far a guild's planting reaches, in metres: the outermost ring used plus a margin.
+function footprintR(g) {
+  const rs = TREE[g.tree].rootstocks[g.rs], sc = (rs.spread / 2) / 110;
+  const rings = g.items.map(i => RING[PLANT[i.p].layer] || 0);
+  return Math.max(rs.spread / 2 + 0.3, ((Math.max(110, ...rings) + 16) * sc));
+}
+const canopyR = g => TREE[g.tree].rootstocks[g.rs].spread / 2;
+function defaultSite() {
+  const gs = store.guilds;
+  const cell = Math.max(4, ...gs.map(g => footprintR(g) * 2 + 1)), cols = Math.max(1, Math.ceil(Math.sqrt(gs.length))), rows = Math.max(1, Math.ceil(gs.length / cols));
+  const W = Math.max(12, Math.ceil(cols * cell + 2)), D = Math.max(10, Math.ceil(rows * cell + 2));
+  gs.forEach((g, i) => { g.pos = { x: 1 + cell * (i % cols + 0.5), z: 1 + cell * (Math.floor(i / cols) + 0.5) }; store.save(g); });
+  return { poly: [[0, 0], [W, 0], [W, D], [0, D]], north: 0, features: [] };
+}
+function pointInPoly(x, z, poly) {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [xi, zi] = poly[i], [xj, zj] = poly[j];
+    if ((zi > z) !== (zj > z) && x < (xj - xi) * (z - zi) / (zj - zi) + xi) inside = !inside;
+  }
+  return inside;
+}
+function distToSeg(x, z, [x1, z1], [x2, z2]) {
+  const dx = x2 - x1, dz = z2 - z1, L = dx * dx + dz * dz || 1;
+  const t = Math.max(0, Math.min(1, ((x - x1) * dx + (z - z1) * dz) / L));
+  return Math.hypot(x - (x1 + t * dx), z - (z1 + t * dz));
+}
+const edgeDist = (x, z, poly) => Math.min(...poly.map((p, i) => distToSeg(x, z, p, poly[(i + 1) % poly.length])));
+function placeUnplaced() {
+  const site = store.site; if (!site) return;
+  const xs = site.poly.map(p => p[0]), zs = site.poly.map(p => p[1]);
+  store.guilds.forEach(g => {
+    if (g.pos) return;
+    const r = canopyR(g);
+    let best = null;
+    for (let z = Math.min(...zs) + r; z <= Math.max(...zs) - r && !best; z += 0.5)
+      for (let x = Math.min(...xs) + r; x <= Math.max(...xs) - r && !best; x += 0.5) {
+        if (!pointInPoly(x, z, site.poly) || edgeDist(x, z, site.poly) < r) continue;
+        if (store.guilds.some(o => o !== g && o.pos && Math.hypot(o.pos.x - x, o.pos.z - z) < canopyR(o) + r + 0.5)) continue;
+        best = { x, z };
+      }
+    g.pos = best || { x: (Math.min(...xs) + Math.max(...xs)) / 2, z: (Math.min(...zs) + Math.max(...zs)) / 2 };
+    store.save(g);
+  });
+}
+const area = poly => Math.abs(poly.reduce((a, [x1, z1], i) => { const [x2, z2] = poly[(i + 1) % poly.length]; return a + x1 * z2 - x2 * z1; }, 0) / 2);
+// Rotate a plan point into true-north coordinates (north = -z)
+function toTrue(x, z, north) { const a = -north * Math.PI / 180; return [x * Math.cos(a) - z * Math.sin(a), x * Math.sin(a) + z * Math.cos(a)]; }
+function siteWarnings() {
+  const site = store.site, gs = store.guilds, out = [];
+  gs.forEach((g, i) => {
+    const r = canopyR(g);
+    if (!pointInPoly(g.pos.x, g.pos.z, site.poly)) out.push(`${g.name} is outside the plot.`);
+    else { const d = edgeDist(g.pos.x, g.pos.z, site.poly); if (d < r) out.push(`${g.name}'s mature canopy reaches ${kg(r - d)} m over the boundary. Neighbours can cut back overhanging branches.`); }
+    gs.slice(i + 1).forEach(o => { const d = Math.hypot(g.pos.x - o.pos.x, g.pos.z - o.pos.z), ov = canopyR(o) + r - d; if (ov > 0.05) out.push(`${g.name} and ${o.name} canopies overlap by ${kg(ov)} m when mature. Move them apart for light and air.`); });
+    site.features.forEach(f => {
+      if (f.kind === 'house' || f.kind === 'shed') {
+        const nx = Math.max(f.x - f.w / 2, Math.min(g.pos.x, f.x + f.w / 2)), nz = Math.max(f.z - f.d / 2, Math.min(g.pos.z, f.z + f.d / 2));
+        if (Math.hypot(g.pos.x - nx, g.pos.z - nz) < r) out.push(`${g.name}'s mature canopy overlaps the ${f.name.toLowerCase()}.`);
+        // Noon shadow: is the guild north of the building and within its shadow?
+        const [gx, gz] = toTrue(g.pos.x, g.pos.z, site.north), [bx, bz] = toTrue(f.x, f.z, site.north);
+        const half = Math.max(f.w, f.d) / 2;
+        if (gz < bz && Math.abs(gx - bx) < half + r * 0.5) {
+          const gap = (bz - half) - (gz + r * 0.5);
+          const months = SUN_EL.map((e, m) => gap < f.h / Math.tan(e * Math.PI / 180) ? m + 1 : 0).filter(Boolean);
+          if (months.length) out.push(`${g.name} sits in the ${f.name.toLowerCase()}'s noon shadow ${months.length === 12 ? 'all year round' : 'in ' + monthsText(months)}. Fruit trees need sun; move it further from the ${f.name.toLowerCase()} or to its south side.`);
+        }
+      }
+    });
+  });
+  return out;
+}
+function siteEditorHTML() {
+  if (!store.site) store.saveSite(defaultSite());
+  return `<div class="site" id="siteEd">
+    <div class="site-tools">
+      <label for="siteW">Width (m)<input type="number" id="siteW" min="2" max="500" step="0.5"></label>
+      <label for="siteD">Length (m)<input type="number" id="siteD" min="2" max="500" step="0.5"></label>
+      <button type="button" class="btn" data-site="rect">Make a rectangle this size</button>
+      <button type="button" class="btn" data-site="corner">Add a corner</button>
+      <label for="siteNorth">North is
+        <select id="siteNorth">${[['0', 'up the page'], ['45', 'up and right'], ['90', 'to the right'], ['135', 'down and right'], ['180', 'down the page'], ['225', 'down and left'], ['270', 'to the left'], ['315', 'up and left']].map(([v, l]) => `<option value="${v}">${l}</option>`).join('')}</select>
+      </label>
+    </div>
+    <div class="site-stage"><svg id="siteSvg" role="application" aria-label="Site plan. Drag guilds, features and plot corners to move them; use arrow keys to nudge the selected item."></svg></div>
+    <div class="site-side">
+      <div class="site-card" id="sitePanel"></div>
+      <div class="site-card"><h4>Add to the plan</h4><div class="add-row">${Object.entries(SITE_KINDS).map(([k, v]) => `<button type="button" class="btn" data-add-feat="${k}">+ ${v.label}</button>`).join('')}</div></div>
+      <div class="site-card"><h4>Checks</h4><ul class="site-warn" id="siteWarn"></ul></div>
+    </div>
+  </div>`;
+}
+function bboxOf(site) {
+  const pts = [...site.poly];
+  store.guilds.forEach(g => { const r = footprintR(g); pts.push([g.pos.x - r, g.pos.z - r], [g.pos.x + r, g.pos.z + r]); });
+  site.features.forEach(f => pts.push([f.x - f.w / 2, f.z - f.d / 2], [f.x + f.w / 2, f.z + f.d / 2]));
+  const xs = pts.map(p => p[0]), zs = pts.map(p => p[1]);
+  return [Math.min(...xs), Math.min(...zs), Math.max(...xs), Math.max(...zs)];
+}
+function renderSite() {
+  const site = store.site, svg = $('#siteSvg'); if (!svg || !site) return;
+  placeUnplaced();
+  if (!siteDrag) {
+    const [x0, z0, x1, z1] = bboxOf(site), span = Math.max(x1 - x0, z1 - z0), m = Math.max(1.5, span * 0.08);
+    siteBox = [x0 - m, z0 - m, x1 - x0 + 2 * m, z1 - z0 + 2 * m];
+    svg.setAttribute('viewBox', siteBox.join(' '));
+  }
+  const [bx, bz, bw, bh] = siteBox, pxW = svg.clientWidth || 700, fs = Math.max(Math.min(1.6, Math.max(0.28, Math.max(bw, bh) / 50)), 11 * bw / pxW);
+  const sel = (t, id) => siteSel && siteSel.type === t && siteSel.id === id;
+  let grid = '';
+  const step = Math.max(bw, bh) > 60 ? 5 : 1;
+  for (let x = Math.ceil(bx / step) * step; x <= bx + bw; x += step) grid += `<line x1="${x}" y1="${bz}" x2="${x}" y2="${bz + bh}" style="stroke:var(--line)" stroke-width="${x % (step * 5) === 0 ? 1.2 : 0.5}" vector-effect="non-scaling-stroke"/>`;
+  for (let z = Math.ceil(bz / step) * step; z <= bz + bh; z += step) grid += `<line x1="${bx}" y1="${z}" x2="${bx + bw}" y2="${z}" style="stroke:var(--line)" stroke-width="${z % (step * 5) === 0 ? 1.2 : 0.5}" vector-effect="non-scaling-stroke"/>`;
+  const poly = site.poly;
+  const edges = poly.map(([x1, z1], i) => {
+    const [x2, z2] = poly[(i + 1) % poly.length], L = Math.hypot(x2 - x1, z2 - z1);
+    let nx = (z2 - z1) / (L || 1), nz = -(x2 - x1) / (L || 1);
+    const mx = (x1 + x2) / 2, mz = (z1 + z2) / 2;
+    if (pointInPoly(mx + nx * 0.1, mz + nz * 0.1, poly)) { nx = -nx; nz = -nz; }
+    return `<text x="${mx + nx * fs * 1.1}" y="${mz + nz * fs * 1.1 + fs * 0.35}" font-size="${fs}" text-anchor="middle" style="fill:var(--muted);font-family:var(--f-data)">${kg(L)} m</text>`;
+  }).join('');
+  const feats = site.features.map(f => {
+    const s = sel('feat', f.id), st = s ? 'stroke:var(--accent)' : 'stroke:var(--muted)', sw = s ? 2.5 : 1;
+    let shape;
+    if (f.kind === 'pond') shape = `<ellipse rx="${f.w / 2}" ry="${f.d / 2}" style="fill:#7fa8c8;${st}" stroke-width="${sw}" vector-effect="non-scaling-stroke"/>`;
+    else if (f.kind === 'tree') shape = `<circle r="${f.w / 2}" style="fill:var(--l-subcanopy);fill-opacity:.35;${st}" stroke-width="${sw}" vector-effect="non-scaling-stroke"/><circle r="${Math.max(0.15, f.w * 0.04)}" style="fill:var(--bark)"/>`;
+    else shape = `<rect x="${-f.w / 2}" y="${-f.d / 2}" width="${f.w}" height="${f.d}" style="fill:${f.kind === 'house' ? 'var(--surface-2)' : f.kind === 'shed' ? 'var(--soil)' : f.kind === 'bed' ? 'var(--l-root)' : 'var(--gap)'};fill-opacity:${f.kind === 'bed' ? 0.45 : 1};${st}" stroke-width="${sw}" vector-effect="non-scaling-stroke"/>`;
+    const handle = s ? `<rect data-resize="${f.id}" x="${f.w / 2 - fs * 0.35}" y="${f.d / 2 - fs * 0.35}" width="${fs * 0.7}" height="${fs * 0.7}" style="fill:var(--accent)"/>` : '';
+    return `<g data-feat="${f.id}" tabindex="0" role="button" aria-label="${esc(f.name)}" transform="translate(${f.x} ${f.z})">${shape}<text y="${fs * 0.35}" font-size="${fs * 0.85}" text-anchor="middle" style="fill:var(--ink);pointer-events:none">${esc(f.name)}</text>${handle}</g>`;
+  }).join('');
+  const overl = new Set();
+  store.guilds.forEach((g, i) => store.guilds.slice(i + 1).forEach(o => { if (canopyR(g) + canopyR(o) - Math.hypot(g.pos.x - o.pos.x, g.pos.z - o.pos.z) > 0.05) { overl.add(g.id); overl.add(o.id); } }));
+  const guilds = store.guilds.map(g => {
+    const r = canopyR(g), fr = footprintR(g), s = sel('guild', g.id), bad = overl.has(g.id);
+    return `<g data-guild="${g.id}" tabindex="0" role="button" aria-label="${esc(g.name)}" transform="translate(${g.pos.x} ${g.pos.z})">
+      <circle r="${fr}" style="fill:var(--l-root);fill-opacity:.12;stroke:var(--l-root)" stroke-dasharray="4 4" stroke-width="1" vector-effect="non-scaling-stroke"/>
+      <circle r="${r}" style="fill:var(--l-canopy);fill-opacity:.28;stroke:${bad ? 'var(--accent)' : 'var(--l-canopy)'}" stroke-width="${s ? 3 : bad ? 2.5 : 1.5}" vector-effect="non-scaling-stroke"/>
+      <circle r="${Math.max(0.12, r * 0.06)}" style="fill:var(--bark)"/>
+      <text y="${-r - fs * 0.4}" font-size="${fs}" text-anchor="middle" style="fill:var(--ink);font-weight:700;pointer-events:none">${esc(g.name)}</text>
+    </g>`;
+  }).join('');
+  const corners = poly.map(([x, z], i) => `<circle data-corner="${i}" cx="${x}" cy="${z}" r="${fs * 0.45}" style="fill:${sel('corner', i) ? 'var(--accent)' : 'var(--surface)'};stroke:var(--ink)" stroke-width="1.5" vector-effect="non-scaling-stroke" tabindex="0" role="button" aria-label="Plot corner ${i + 1}"/>`).join('');
+  const nx = bx + fs * 1.6, nz = bz + fs * 1.8;
+  const north = `<g transform="translate(${nx} ${nz}) rotate(${site.north})" style="pointer-events:none"><path d="M0 ${-fs * 1.2} L${fs * 0.5} ${fs * 0.5} L0 ${fs * 0.15} L${-fs * 0.5} ${fs * 0.5}Z" style="fill:var(--ink)"/><text y="${-fs * 1.45}" font-size="${fs}" text-anchor="middle" style="fill:var(--ink);font-family:var(--f-data)" transform="rotate(${-site.north} 0 ${-fs * 1.75})">N</text></g>`;
+  const sbLen = step === 5 ? 10 : (Math.max(bw, bh) > 25 ? 5 : 2);
+  const scale = `<g style="pointer-events:none"><line x1="${bx + bw - fs - sbLen}" y1="${bz + bh - fs}" x2="${bx + bw - fs}" y2="${bz + bh - fs}" style="stroke:var(--ink)" stroke-width="2" vector-effect="non-scaling-stroke"/><text x="${bx + bw - fs - sbLen / 2}" y="${bz + bh - fs * 1.4}" font-size="${fs * 0.85}" text-anchor="middle" style="fill:var(--ink);font-family:var(--f-data)">${sbLen} m</text></g>`;
+  svg.innerHTML = `<rect x="${bx}" y="${bz}" width="${bw}" height="${bh}" style="fill:var(--surface)"/>${grid}
+    <polygon points="${poly.map(p => p.join(',')).join(' ')}" style="fill:#7f9a5c;fill-opacity:.22;stroke:var(--ink)" stroke-width="2" vector-effect="non-scaling-stroke"/>
+    ${edges}${feats}${guilds}${corners}${north}${scale}`;
+  if (!siteDrag) renderSitePanel();
+}
+function renderSitePanel() {
+  const site = store.site, xs = site.poly.map(p => p[0]), zs = site.poly.map(p => p[1]);
+  const W = Math.max(...xs) - Math.min(...xs), D = Math.max(...zs) - Math.min(...zs);
+  if (document.activeElement !== $('#siteW')) $('#siteW').value = kg(W);
+  if (document.activeElement !== $('#siteD')) $('#siteD').value = kg(D);
+  $('#siteNorth').value = String(site.north);
+  const panel = $('#sitePanel');
+  const s = siteSel;
+  if (s && s.type === 'guild' && store.get(s.id)) {
+    const g = store.get(s.id);
+    panel.innerHTML = `<h4>${esc(g.name)}</h4><p>${esc(TREE[g.tree].name)} · canopy ${kg(canopyR(g) * 2)} m across when mature · planting reaches ${kg(footprintR(g) * 2)} m across.</p>
+      <p>Trunk ${kg(g.pos.x - Math.min(...xs))} m from the left edge and ${kg(g.pos.z - Math.min(...zs))} m from the top edge.</p>
+      <div class="add-row"><button type="button" class="btn" data-sel="${g.id}">Open this guild</button></div>`;
+  } else if (s && s.type === 'feat' && site.features.find(f => f.id === s.id)) {
+    const f = site.features.find(f => f.id === s.id), round = f.kind === 'pond' || f.kind === 'tree';
+    panel.innerHTML = `<h4>${esc(SITE_KINDS[f.kind].label)}</h4>
+      <label for="featName">Name<input id="featName" type="text" maxlength="40" value="${esc(f.name)}"></label>
+      <div class="row2">
+        <label for="featW">${round ? 'Across' : 'Width'} (m)<input id="featW" type="number" min="0.3" step="0.1" value="${kg(f.w)}"></label>
+        <label for="featD">${round ? 'Other way' : 'Depth'} (m)<input id="featD" type="number" min="0.3" step="0.1" value="${kg(f.d)}"></label>
+        ${SITE_KINDS[f.kind].h ? `<label for="featH">Height (m)<input id="featH" type="number" min="0.5" step="0.5" value="${kg(f.h)}"></label>` : ''}
+      </div>
+      <p>Drag to move. Drag the small square to resize.</p>
+      <div class="add-row"><button type="button" class="btn" data-site="delfeat">Remove</button></div>`;
+  } else if (s && s.type === 'corner') {
+    panel.innerHTML = `<h4>Plot corner ${s.id + 1}</h4><p>Drag it to match your boundary. Add corners for an L-shaped or irregular plot.</p><div class="add-row">${site.poly.length > 3 ? '<button type="button" class="btn" data-site="delcorner">Remove this corner</button>' : ''}</div>`;
+  } else {
+    panel.innerHTML = `<h4>Your plot</h4><p>${kg(area(site.poly))} m² · ${site.poly.length} corners. Drag guilds and features to place them, and drag the round corner handles to match your boundary. Click anything to see its details; arrow keys nudge it.</p><p>The solid green circle is each tree's mature canopy; the dashed circle is how far its guild planting reaches.</p>`;
+  }
+  const w = siteWarnings();
+  $('#siteWarn').innerHTML = w.length ? w.map(x => `<li>${esc(x)}</li>`).join('') : '<li class="ok">No overlaps, overhangs or deep building shade.</li>';
+}
+function svgPoint(svg, e) { const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; const p = pt.matrixTransform(svg.getScreenCTM().inverse()); return [p.x, p.y]; }
+const snap = v => Math.round(v * 4) / 4;
+document.addEventListener('pointerdown', e => {
+  const svg = e.target.closest('#siteSvg'); if (!svg) return;
+  const t = e.target.closest('[data-resize],[data-corner],[data-feat],[data-guild]');
+  if (!t) { siteSel = null; renderSite(); return; }
+  e.preventDefault();
+  const [px, pz] = svgPoint(svg, e), site = store.site;
+  if (t.dataset.resize) { const f = site.features.find(f => f.id === t.dataset.resize); siteDrag = { kind: 'resize', f, px, pz, w: f.w, d: f.d }; }
+  else if (t.dataset.corner) { const i = +t.dataset.corner; siteSel = { type: 'corner', id: i }; siteDrag = { kind: 'corner', i, px, pz, x: site.poly[i][0], z: site.poly[i][1] }; }
+  else if (t.dataset.feat) { const f = site.features.find(f => f.id === t.dataset.feat); siteSel = { type: 'feat', id: f.id }; siteDrag = { kind: 'feat', f, px, pz, x: f.x, z: f.z }; }
+  else { const g = store.get(t.dataset.guild); siteSel = { type: 'guild', id: g.id }; siteDrag = { kind: 'guild', g, px, pz, x: g.pos.x, z: g.pos.z }; }
+  siteDrag.moved = false;
+  svg.setPointerCapture(e.pointerId); svg.classList.add('dragging');
+  renderSite(); renderSitePanelLight();
+});
+function renderSitePanelLight() { const pnl = $('#sitePanel'); if (pnl && siteDrag && !siteDrag.moved) { const d = siteDrag; siteDrag = null; renderSitePanel(); siteDrag = d; } }
+document.addEventListener('pointermove', e => {
+  if (!siteDrag) return;
+  const svg = $('#siteSvg'); if (!svg) return;
+  const [px, pz] = svgPoint(svg, e), dx = px - siteDrag.px, dz = pz - siteDrag.pz, d = siteDrag;
+  if (Math.abs(dx) + Math.abs(dz) > 0.05) d.moved = true;
+  if (d.kind === 'guild') d.g.pos = { x: snap(d.x + dx), z: snap(d.z + dz) };
+  else if (d.kind === 'feat') { d.f.x = snap(d.x + dx); d.f.z = snap(d.z + dz); }
+  else if (d.kind === 'corner') store.site.poly[d.i] = [snap(d.x + dx), snap(d.z + dz)];
+  else if (d.kind === 'resize') { d.f.w = Math.max(0.5, snap(d.w + dx * 2)); d.f.d = Math.max(0.5, snap(d.d + dz * 2)); }
+  renderSite();
+});
+function endSiteDrag() {
+  if (!siteDrag) return;
+  const d = siteDrag; siteDrag = null;
+  const svg = $('#siteSvg'); if (svg) svg.classList.remove('dragging');
+  if (d.moved) { if (d.kind === 'guild') store.save(d.g); else store.saveSite(store.site); }
+  renderSite();
+}
+document.addEventListener('pointerup', endSiteDrag);
+document.addEventListener('pointercancel', endSiteDrag);
+document.addEventListener('keydown', e => {
+  const t = e.target.closest && e.target.closest('#siteSvg [data-guild], #siteSvg [data-feat], #siteSvg [data-corner]'); if (!t) return;
+  const step = e.shiftKey ? 1 : 0.25, mv = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[e.key];
+  const site = store.site;
+  if (e.key === 'Delete' || e.key === 'Backspace') {
+    if (t.dataset.feat) { site.features = site.features.filter(f => f.id !== t.dataset.feat); siteSel = null; store.saveSite(site); renderSite(); e.preventDefault(); }
+    return;
+  }
+  if (!mv) return;
+  e.preventDefault();
+  let focusSel;
+  if (t.dataset.guild) { const g = store.get(t.dataset.guild); g.pos = { x: g.pos.x + mv[0], z: g.pos.z + mv[1] }; store.save(g); siteSel = { type: 'guild', id: g.id }; focusSel = `[data-guild="${g.id}"]`; }
+  else if (t.dataset.feat) { const f = site.features.find(f => f.id === t.dataset.feat); f.x += mv[0]; f.z += mv[1]; store.saveSite(site); siteSel = { type: 'feat', id: f.id }; focusSel = `[data-feat="${f.id}"]`; }
+  else { const i = +t.dataset.corner; site.poly[i] = [site.poly[i][0] + mv[0], site.poly[i][1] + mv[1]]; store.saveSite(site); siteSel = { type: 'corner', id: i }; focusSel = `[data-corner="${i}"]`; }
+  renderSite();
+  const again = document.querySelector('#siteSvg ' + focusSel); if (again) again.focus();
+});
+document.addEventListener('click', e => {
+  if (!e.target.closest('#siteEd')) return;
+  const b = e.target.closest('button'); if (!b) return;
+  const site = store.site;
+  if (b.dataset.addFeat) {
+    const k = SITE_KINDS[b.dataset.addFeat], xs = site.poly.map(p => p[0]), zs = site.poly.map(p => p[1]);
+    const f = { id: 'f' + Date.now().toString(36), kind: b.dataset.addFeat, name: k.name, x: (Math.min(...xs) + Math.max(...xs)) / 2, z: (Math.min(...zs) + Math.max(...zs)) / 2, w: k.w, d: k.d, h: k.h };
+    site.features.push(f); siteSel = { type: 'feat', id: f.id }; store.saveSite(site); renderSite(); return;
+  }
+  const act = b.dataset.site;
+  if (act === 'rect') {
+    const W = Math.max(2, parseFloat($('#siteW').value) || 12), D = Math.max(2, parseFloat($('#siteD').value) || 10);
+    site.poly = [[0, 0], [W, 0], [W, D], [0, D]]; siteSel = null;
+    const clampIn = (v, r, max) => Math.min(Math.max(v, Math.min(r, max / 2)), Math.max(max - r, max / 2));
+    store.guilds.forEach(g => { const r = canopyR(g), x = clampIn(g.pos.x, r, W), z = clampIn(g.pos.z, r, D); if (x !== g.pos.x || z !== g.pos.z) { g.pos = { x, z }; store.save(g); } });
+    site.features.forEach(f => { f.x = clampIn(f.x, f.w / 2, W); f.z = clampIn(f.z, f.d / 2, D); });
+    store.saveSite(site); renderSite();
+  } else if (act === 'corner') {
+    let best = 0, bestL = 0;
+    site.poly.forEach((p, i) => { const q = site.poly[(i + 1) % site.poly.length], L = Math.hypot(q[0] - p[0], q[1] - p[1]); if (L > bestL) { bestL = L; best = i; } });
+    const p = site.poly[best], q = site.poly[(best + 1) % site.poly.length];
+    site.poly.splice(best + 1, 0, [snap((p[0] + q[0]) / 2), snap((p[1] + q[1]) / 2)]);
+    siteSel = { type: 'corner', id: best + 1 }; store.saveSite(site); renderSite();
+  } else if (act === 'delcorner' && siteSel && siteSel.type === 'corner' && site.poly.length > 3) {
+    site.poly.splice(siteSel.id, 1); siteSel = null; store.saveSite(site); renderSite();
+  } else if (act === 'delfeat' && siteSel && siteSel.type === 'feat') {
+    site.features = site.features.filter(f => f.id !== siteSel.id); siteSel = null; store.saveSite(site); renderSite();
+  }
+});
+document.addEventListener('change', e => {
+  if (!e.target.closest('#siteEd')) return;
+  const site = store.site, id = e.target.id;
+  if (id === 'siteNorth') { site.north = +e.target.value; store.saveSite(site); renderSite(); return; }
+  const f = siteSel && siteSel.type === 'feat' && site.features.find(x => x.id === siteSel.id); if (!f) return;
+  if (id === 'featName') f.name = e.target.value.trim().slice(0, 40) || SITE_KINDS[f.kind].name;
+  if (id === 'featW') f.w = Math.max(0.3, parseFloat(e.target.value) || f.w);
+  if (id === 'featD') f.d = Math.max(0.3, parseFloat(e.target.value) || f.d);
+  if (id === 'featH') f.h = Math.max(0.5, parseFloat(e.target.value) || f.h);
+  store.saveSite(site); renderSite();
+});
+
+/* ---------- My guilds: render ---------- */
 function renderMine() {
   renderMineStatus();
   const body = $('#mineBody');
@@ -2632,16 +3016,16 @@ function renderMine() {
     return;
   }
   const multi = store.guilds.length > 1;
-  if (mineSel === 'all' && !multi) mineSel = store.guilds[0].id;
   if (mineSel !== 'all' && !store.get(mineSel)) mineSel = multi ? 'all' : store.guilds[0].id;
   const g = mineSel === 'all' ? null : store.get(mineSel);
   const picker = `<div class="mine-pick" role="tablist" aria-label="My guilds">
-    ${multi ? `<button class="tab" role="tab" type="button" data-sel="all" aria-selected="${mineSel === 'all'}">All guilds (${store.guilds.length})</button>` : ''}
+    <button class="tab" role="tab" type="button" data-sel="all" aria-selected="${mineSel === 'all'}">Whole garden (${store.guilds.length} guild${multi ? 's' : ''})</button>
     ${store.guilds.map(x => `<button class="tab" role="tab" type="button" data-sel="${x.id}" aria-selected="${x.id === mineSel}">${esc(x.name)}</button>`).join('')}
     <button class="tab add" type="button" data-newguild>+ Add another guild</button>
   </div>`;
   body.innerHTML = picker + monthPanel(g ? [g] : store.guilds) + (g ? guildDetail(g) : allView());
   mount3D(view3dMine, $('#mine3dSlot'));
+  if ($('#siteSvg')) renderSite();
 }
 $('#mineBody').addEventListener('change', e => {
   const box = e.target.closest('input[data-job]'); if (!box) return;
