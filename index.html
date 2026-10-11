@@ -535,6 +535,15 @@ svg.editing.has-sel { cursor: crosshair; }
 .pd-text .warn { color: var(--accent); }
 .pd-links { display: flex; flex-wrap: wrap; gap: .4rem .9rem; font-size: var(--step--1); align-items: center; }
 
+/* Medicinal herbs */
+.conf.poison { background: color-mix(in srgb, #c0392b 28%, transparent); }
+.mh-key { display: flex; flex-wrap: wrap; gap: .4rem; margin: 1.25rem 0 1.5rem; }
+.mh-warn { margin-top: 0; }
+.pd-item > summary .conf { grid-column: 2; justify-self: start; font-size: .68rem; }
+.mh-h { margin-top: 2.5rem; font-size: 1.35rem; }
+.mh-stories { margin-top: 1rem; }
+.mh-charm { margin-top: 2rem; }
+.mh-folk { border-left: 3px solid var(--l-climber); padding-left: .8rem; font-style: italic; }
 /* Notes */
 .notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 1rem 2rem; }
 .note h3 { font-size: 1.1rem; margin-bottom: .35rem; }
@@ -611,6 +620,7 @@ footer p + p { margin-top: .4rem; }
       <a href="#notes">UK notes</a>
       <a href="#chickens">Chickens</a>
       <a href="#plants">Plants</a>
+      <a href="#medicinal">Medicinal herbs</a>
       <a href="#sources">Sources</a>
     </nav>
   </div>
@@ -1128,6 +1138,27 @@ footer p + p { margin-top: .4rem; }
     </div>
   </section>
 
+  <section id="medicinal">
+    <div class="wrap">
+      <details class="sec" data-sec="medicinal">
+      <summary class="sec-sum"><span class="eyebrow">Herb lore</span><h2>Medicinal herbs</h2><span class="tagline">26 traditional herbs not covered elsewhere on this page: what they were used for, the stories behind them, and what the research says.</span></summary>
+      <div class="sec-body">
+      <div class="sec-intro"><p class="lede">People grew most of these herbs in cottage gardens and gathered them from hedges for centuries. Several led to drugs still used today. Others have had good trials, a few have failed them, and many have never been tested at all. Each herb has a label showing how strong the evidence is, so you can tell which is which.</p></div>
+      <p class="warnbox mh-warn"><b>This is history and research, not medical advice.</b> Herbs can be strong medicines. St John's wort can stop the contraceptive pill and many other drugs working; liquorice raises blood pressure; foxglove and coltsfoot are poisonous. Talk to a pharmacist or GP before taking any herb as a medicine, especially if you take other medicines, are pregnant or breastfeeding, or are treating a child. Never eat a wild plant unless you are certain what it is.</p>
+      <div class="mh-key" aria-label="Evidence labels"><span class="conf strong">Well supported</span><span class="conf strong">Source of a modern drug</span><span class="conf emerging">Some trial evidence</span><span class="conf contested">Mixed evidence</span><span class="conf practice">Tradition only</span><span class="conf poison">Poisonous: do not use</span></div>
+      <div class="pd-search"><label for="mhSearch">Search herbs<input type="search" id="mhSearch" placeholder="e.g. sleep, Artemisia, Nine Herbs" autocomplete="off"></label><span id="mhCount" aria-live="polite"></span></div>
+      <div class="pd-groups" id="mhGroups"></div>
+      <h3 class="mh-h">From hedgerow to pharmacy</h3>
+      <div class="dos mh-stories"><div><h3>Foxglove → digoxin</h3><p>A Shropshire woman&#x27;s family remedy for dropsy led William Withering to foxglove in 1785. Digoxin, made from the related woolly foxglove, is still prescribed for heart failure and irregular heartbeat.</p></div><div><h3>Willow and meadowsweet → aspirin</h3><p>Edward Stone tried willow bark on fevers in 1763. Chemists then extracted salicylic acid from willow and meadowsweet, and Bayer turned it into aspirin in 1897.</p></div><div><h3>Sweet wormwood → artemisinin</h3><p>A 4th-century Chinese recipe led Tu Youyou to extract artemisinin cold in 1972. It is now the core of malaria treatment, and earned her a Nobel Prize in 2015.</p></div><div><h3>Snowdrop and daffodil → galantamine</h3><p>Galantamine, used to treat Alzheimer&#x27;s disease, was first found in snowdrops. Much of it is now extracted from daffodils, including bulbs grown in Wales.</p></div></div>
+      <details class="method mh-charm" data-key="ninecharm"><summary class="m-sum"><h3>The Nine Herbs Charm</h3><span class="m-quick">An Anglo-Saxon spell, written down about a thousand years ago</span></summary>
+        <div class="m-body"><p>The charm survives in the Lacnunga ("Remedies"), a 10th-century manuscript in the British Library (Harley MS 585). The healer sang it three times over each herb, and over the patient, then pounded the herbs with soap and apple juice into a salve against poison, infection and "flying venom".</p>
+        <p>The nine herbs are mugwort, waybread (plantain), lamb's cress, nettle, mayweed (probably chamomile), crab apple, chervil and fennel, with a ninth that scholars still argue about: possibly betony or cock's-spur grass. In the charm Woden strikes a serpent with nine "glory twigs", and it breaks into nine pieces. Crab apple and fennel are already in the guilds on this page; this section covers several of the others.</p></div>
+      </details>
+      </div>
+      </details>
+    </div>
+  </section>
+
   <section id="sources">
     <div class="wrap">
       <details class="sec" data-sec="sources">
@@ -1201,6 +1232,33 @@ footer p + p { margin-top: .4rem; }
           <li><a href="https://www.woodlandtrust.org.uk/media/1796/tree-planting-for-poultry.pdf" target="_blank" rel="noopener">Woodland Trust: tree planting for poultry (PDF)</a><span>Designing tree cover on hen ranges in the UK.</span></li>
           <li><a href="https://www.gov.uk/government/news/apha-warns-not-to-feed-kitchen-scraps-to-farm-animals-because-of-disease-risk" target="_blank" rel="noopener">APHA: don't feed kitchen scraps to farm animals</a><span>The UK law on catering waste, which covers pet hens.</span></li>
           <li><a href="https://www.businesscompanion.info/en/quick-guides/animals-and-agriculture/registration-and-records-of-poultry-and-other-captive-birds" target="_blank" rel="noopener">Registering poultry and captive birds</a><span>Who must register and how.</span></li>
+          </ul>
+        </details>
+        <details class="src-group"><summary><h3>Medicinal herbs</h3><span>23</span></summary>
+          <ul>
+          <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5646235/" target="_blank" rel="noopener">Mao et al. 2016, Phytomedicine</a><span>German chamomile.</span></li>
+          <li><a href="https://pubmed.ncbi.nlm.nih.gov/17145239/" target="_blank" rel="noopener">Bent et al. 2006, American Journal of Medicine</a><span>Valerian.</span></li>
+          <li><a href="https://journals.sagepub.com/doi/10.1177/2515690X20967323" target="_blank" rel="noopener">Shinjyo et al. 2020, review of 60 studies</a><span>Valerian.</span></li>
+          <li><a href="https://nrl.northumbria.ac.uk/id/eprint/19940" target="_blank" rel="noopener">Kennedy et al., Northumbria University</a><span>Lemon balm.</span></li>
+          <li><a href="https://www.sciencedaily.com/releases/2008/10/081007192435.htm" target="_blank" rel="noopener">Linde et al. 2008, Cochrane review</a><span>St John&#x27;s wort.</span></li>
+          <li><a href="https://medicines.org.uk/emc/medicine/34826/spc" target="_blank" rel="noopener">UK product information: St John&#x27;s wort interactions</a><span>St John&#x27;s wort.</span></li>
+          <li><a href="https://www.sciencedaily.com/releases/2008/01/080122203321.htm" target="_blank" rel="noopener">Guo, Pittler and Ernst 2008, Cochrane review</a><span>Hawthorn.</span></li>
+          <li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5545334/" target="_blank" rel="noopener">Withering and the foxglove: history</a><span>Foxglove.</span></li>
+          <li><a href="https://www.cochrane.org/CD002286/feverfew-preventing-migraine" target="_blank" rel="noopener">Wider, Pittler and Ernst 2015, Cochrane review</a><span>Feverfew.</span></li>
+          <li><a href="https://makingscience.royalsociety.org/items/l-and-p_4_161" target="_blank" rel="noopener">Edward Stone&#x27;s 1763 letter, Royal Society</a><span>White willow.</span></li>
+          <li><a href="https://hekint.org/2021/09/03/the-discoverers-of-aspirin/" target="_blank" rel="noopener">The discoverers of aspirin</a><span>White willow.</span></li>
+          <li><a href="https://cochranelibrary.com/es/cdsr/doi/10.1002/14651858.CD004504.pub3" target="_blank" rel="noopener">Cochrane: herbal medicine for low back pain</a><span>White willow.</span></li>
+          <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC1298033/" target="_blank" rel="noopener">Randall et al. 2000, Journal of the Royal Society of Medicine</a><span>Stinging nettle.</span></li>
+          <li><a href="https://nutraingredients.com/Article/2008/04/28/Rosehip-reduces-osteoarthritis-pain-says-meta-analysis" target="_blank" rel="noopener">Christensen et al. 2008, rose hip meta-analysis</a><span>Dog rose.</span></li>
+          <li><a href="https://www.bmj.com/content/1/4230/171.1.full.pdf" target="_blank" rel="noopener">British Medical Journal 1942: the rose hip collection</a><span>Dog rose.</span></li>
+          <li><a href="https://www.cochrane.org/CD000530/ARI_echinacea-preventing-and-treating-common-cold" target="_blank" rel="noopener">Karsch-Völk et al. 2014, Cochrane review</a><span>Echinacea.</span></li>
+          <li><a href="https://pubmed.ncbi.nlm.nih.gov/21630133/" target="_blank" rel="noopener">Bommer et al. 2011, sage and hot flushes</a><span>Common sage.</span></li>
+          <li><a href="https://www.cochrane.org/CD003620/LIVER_milk-thistle-treatment-liver-disease" target="_blank" rel="noopener">Rambaldi et al., Cochrane review</a><span>Milk thistle.</span></li>
+          <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC3155102" target="_blank" rel="noopener">Clare et al. 2009, dandelion diuretic pilot</a><span>Dandelion.</span></li>
+          <li><a href="https://medsafe.govt.nz/profs/PUArticles/December2019/Liquorice-side-effects-interactions.htm" target="_blank" rel="noopener">Medsafe: liquorice side effects and interactions</a><span>Liquorice.</span></li>
+          <li><a href="https://spitalfieldslife.com/2018/05/15/the-nine-herbs-charm/" target="_blank" rel="noopener">The Nine Herbs Charm</a><span>Mugwort.</span></li>
+          <li><a href="https://www.livescience.com/52514-after-2015-chemistry-nobel-is-traditional-medicine-now-mainstream.html" target="_blank" rel="noopener">After the 2015 Nobel: traditional medicine and artemisinin</a><span>Sweet wormwood.</span></li>
+          <li><a href="https://en.wikipedia.org/wiki/Nine_Herbs_Charm" target="_blank" rel="noopener">The Nine Herbs Charm</a><span>Betony.</span></li>
           </ul>
         </details>
         <details class="src-group"><summary><h3>Plants for the understory</h3><span>2</span></summary>
@@ -4360,6 +4418,586 @@ $('#pdGroups').addEventListener('click', e => {
   atlasTree = b.dataset.dirTree; renderTabs(); renderAtlas(); goTo('guilds');
 });
 
+/* ---------- Medicinal herbs ---------- */
+const HERB_GROUPS = [{"id": "calm", "name": "Calming and sleep", "sw": "var(--l-herb)"}, {"id": "heart", "name": "Heart and circulation", "sw": "var(--accent)"}, {"id": "pain", "name": "Pain and inflammation", "sw": "var(--l-shrub)"}, {"id": "chest", "name": "Coughs, colds and throats", "sw": "var(--l-ground)"}, {"id": "gut", "name": "Digestion, liver and kidneys", "sw": "var(--l-root)"}, {"id": "folk", "name": "Charm and folk herbs", "sw": "var(--l-climber)"}];
+const HERB_EV = {"strong": ["strong", "Well supported"], "emerging": ["emerging", "Some trial evidence"], "contested": ["contested", "Mixed evidence"], "practice": ["practice", "Tradition only"], "drug": ["strong", "Source of a modern drug"], "poison": ["poison", "Poisonous: do not use"], "avoid": ["poison", "Avoid taking"]};
+const HERBS = [
+{
+"id": "chamomile",
+"g": "calm",
+"name": "German chamomile",
+"latin": "Matricaria chamomilla",
+"fam": "Asteraceae (daisy family)",
+"ev": "emerging",
+"pf": "Matricaria chamomilla",
+"grow": "Annual, 30–50 cm, sown in spring on sunny, poor, well-drained ground. It self-seeds freely. Pick the flower heads on a dry morning when fully open. Roman chamomile (Chamaemelum nobile) is the low perennial used for chamomile lawns.",
+"uses": "The tea has been drunk for sleep, nerves, colic, upset stomachs and teething across Europe for centuries. It was also used as a wash for sore skin and eyes.",
+"folk": "Chamomile is usually taken to be the \"mayweed\" of the Anglo-Saxon Nine Herbs Charm. In The Tale of Peter Rabbit his mother puts him to bed with a dose of camomile tea after his night in Mr McGregor's garden. Gardeners called it the \"plant's physician\", believing it revived sickly plants growing beside it.",
+"research": "In a 2016 trial, 179 people with generalised anxiety took 1,500 mg of chamomile extract a day for 12 weeks. The 93 who responded were then given either chamomile or placebo for 26 weeks. Those kept on chamomile had lower anxiety scores and somewhat fewer relapses (15% against 26%, not a significant difference). It is a single trial of an extract, not of the tea.",
+"safety": "People allergic to ragweed, daisies or other plants in the family can react. There are a few reports of interaction with warfarin.",
+"src": [
+[
+"Mao et al. 2016, Phytomedicine",
+"https://pmc.ncbi.nlm.nih.gov/articles/PMC5646235/"
+]
+],
+"gname": "Calming and sleep"
+},
+{
+"id": "valerian",
+"g": "calm",
+"name": "Valerian",
+"latin": "Valeriana officinalis",
+"fam": "Caprifoliaceae (honeysuckle family)",
+"ev": "contested",
+"pf": "Valeriana officinalis",
+"grow": "Tall native perennial, 1–1.5 m, with heads of scented pale pink flowers in June and July. It likes damp ground by streams and ditches but grows in any border. Roots are dug in the autumn of the second year; dried, they smell strongly of old socks.",
+"uses": "The root has been used for sleeplessness and nerves since Greek and Roman times. Its old English name is all-heal.",
+"folk": "One version of the Pied Piper story has him carrying valerian root in his pockets to draw the rats, which, like cats, are said to love the smell. It is said to have been given for \"shell shock\" in the First World War and for nerves during the air raids of the Second.",
+"research": "Reviews disagree. A 2006 meta-analysis of 16 trials found a possible benefit for sleep quality, but the trials had design problems and signs of publication bias. A 2020 review of 60 studies found a benefit for how well people felt they slept and for anxiety, but said that preparations vary so much that results are hard to compare.",
+"safety": "It can cause drowsiness, so don't combine it with alcohol or sleeping tablets, or drive after taking it. A few cases of liver injury have been reported.",
+"src": [
+[
+"Bent et al. 2006, American Journal of Medicine",
+"https://pubmed.ncbi.nlm.nih.gov/17145239/"
+],
+[
+"Shinjyo et al. 2020, review of 60 studies",
+"https://journals.sagepub.com/doi/10.1177/2515690X20967323"
+]
+],
+"gname": "Calming and sleep"
+},
+{
+"id": "lemonbalm",
+"g": "calm",
+"name": "Lemon balm",
+"latin": "Melissa officinalis",
+"fam": "Lamiaceae (mint family)",
+"ev": "emerging",
+"pf": "Melissa officinalis",
+"grow": "Bushy perennial, 60–90 cm, in sun or part shade. It self-seeds into every gap, so cut it back after flowering. It is one of the best bee plants for a herb layer and copes well under fruit trees.",
+"uses": "Tea for anxiety, low spirits, poor sleep and indigestion. Cold-sore creams are made from it.",
+"folk": "Melissa is Greek for honeybee. Beekeepers rubbed empty hives with it to attract a swarm. John Evelyn wrote in 1699 that balm \"is sovereign for the brain, strengthening the memory, and powerfully chasing away melancholy\". Carmelite nuns in Paris made Carmelite water from it in the 1600s.",
+"research": "Small trials by Kennedy and colleagues at Northumbria University found that single doses improved mood and calmness in healthy volunteers put under a stressful task. A systematic review found improvements in anxiety and depression scores, but the trials were few, small and varied.",
+"safety": "Generally well tolerated as a tea. Some sources advise caution if you take thyroid medicine.",
+"src": [
+[
+"Kennedy et al., Northumbria University",
+"https://nrl.northumbria.ac.uk/id/eprint/19940"
+]
+],
+"gname": "Calming and sleep"
+},
+{
+"id": "stjohns",
+"g": "calm",
+"name": "St John's wort",
+"latin": "Hypericum perforatum",
+"fam": "Hypericaceae",
+"ev": "strong",
+"pf": "Hypericum perforatum",
+"grow": "Native perennial, 30–80 cm, on dry, sunny banks and verges, flowering around Midsummer. Hold a leaf to the light and you see tiny translucent dots, which give it the name perforatum. Crushed flowers stain the fingers red.",
+"uses": "Taken for low mood and nerves. The flowers steeped in oil make a red oil used on wounds, burns and bruises.",
+"folk": "It flowers around St John's Day, 24 June. Bunches were hung over doors and windows on St John's Eve to keep evil spirits, witches and lightning away; an old name is fuga daemonum, \"flight of demons\". The red oil was said to be the blood of John the Baptist.",
+"research": "A 2008 Cochrane review of 29 trials (5,489 people) with mild to moderate depression found that extracts worked better than placebo and about as well as standard antidepressants, with fewer side effects. The authors warned that results varied by country and product.",
+"safety": "This is the herb most likely to interact with medicines. It speeds up the liver enzymes that clear many drugs, which can make the contraceptive pill fail. It must not be taken with warfarin, ciclosporin, tacrolimus, some HIV medicines or antidepressants. Speak to a pharmacist before taking it. It can also make the skin more sensitive to sun.",
+"src": [
+[
+"Linde et al. 2008, Cochrane review",
+"https://www.sciencedaily.com/releases/2008/10/081007192435.htm"
+],
+[
+"UK product information: St John's wort interactions",
+"https://medicines.org.uk/emc/medicine/34826/spc"
+]
+],
+"gname": "Calming and sleep"
+},
+{
+"id": "hawthornherb",
+"g": "heart",
+"name": "Hawthorn",
+"latin": "Crataegus monogyna",
+"fam": "Rosaceae (rose family)",
+"ev": "emerging",
+"pf": "Crataegus monogyna",
+"grow": "Native hedgerow tree to 8 m, very hardy, in any soil. It appears elsewhere on this page only as a rootstock for medlar. The white May blossom feeds early bees and the red haws feed thrushes and redwings through winter.",
+"uses": "Flowers, leaves and berries have been used for the heart and circulation since the late 1800s. Young leaves were eaten as \"bread and cheese\" by country children.",
+"folk": "May blossom is unlucky to bring indoors: it was said to bring death into the house, perhaps because the flowers contain a chemical also found in decaying flesh. The Glastonbury Thorn is said to have grown from the staff of Joseph of Arimathea. In Ireland lone hawthorns are fairy trees; roads have been rerouted rather than cut one down.",
+"research": "A 2008 Cochrane review of 14 trials (855 people) found hawthorn extract, taken alongside normal treatment for chronic heart failure, improved exercise tolerance and symptoms such as breathlessness and tiredness. Side effects were mild. There was no data on whether it helps people live longer.",
+"safety": "Heart failure must be treated by a doctor. Hawthorn may add to the effects of heart and blood pressure drugs, including digoxin, so it should only be taken with medical advice.",
+"src": [
+[
+"Guo, Pittler and Ernst 2008, Cochrane review",
+"https://www.sciencedaily.com/releases/2008/01/080122203321.htm"
+]
+],
+"gname": "Heart and circulation"
+},
+{
+"id": "foxglove",
+"g": "heart",
+"name": "Foxglove",
+"latin": "Digitalis purpurea",
+"fam": "Plantaginaceae (plantain family)",
+"ev": "poison",
+"pf": "Digitalis purpurea",
+"grow": "Native biennial, 1–2 m, that self-seeds on woodland edges, cleared ground and acid soil. Its spires of purple bells are loved by bumblebees, which climb right inside.",
+"uses": "Folk remedies used it for \"dropsy\", the swelling from a failing heart. It is now the source of digoxin, still prescribed for heart conditions.",
+"folk": "The name may come from \"folk's glove\", the glove of the fairy folk. One story says fairies gave the flowers to foxes to wear on their paws, so they could creep silently into henhouses. Other names are fairy thimbles, dead men's bells and witches' gloves.",
+"research": "In 1785 the Birmingham doctor William Withering published An Account of the Foxglove. He had been asked about a Shropshire woman's secret family remedy of about 20 herbs for dropsy, worked out that foxglove was the active one, and spent ten years recording 163 cases and careful doses. His work led to digitalis and then digoxin.",
+"safety": "Every part is poisonous. The dose that helps and the dose that kills are close together, which is why it is only given by doctors as a measured drug. Never use it at home, and don't grow it where young children play. It is often confused with comfrey before flowering.",
+"src": [
+[
+"Withering and the foxglove: history",
+"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5545334/"
+]
+],
+"gname": "Heart and circulation"
+},
+{
+"id": "feverfew",
+"g": "pain",
+"name": "Feverfew",
+"latin": "Tanacetum parthenium",
+"fam": "Asteraceae (daisy family)",
+"ev": "contested",
+"pf": "Tanacetum parthenium",
+"grow": "Short-lived bushy perennial, 30–60 cm, with small white daisies and strongly scented leaves. It self-seeds in walls and paving and thrives in poor, dry soil in sun.",
+"uses": "Its name comes from febrifuge, a fever cure. It was used for fevers, headaches, period pain and arthritis. In the 1970s it became popular for migraine after a Welsh woman reported it had cured hers.",
+"folk": "Plutarch tells of a workman who fell from the Parthenon and was saved by it, which is where the name parthenium is said to come from. It was planted around houses to purify the air and keep disease away.",
+"research": "A 2015 Cochrane review of 6 trials (561 people) for preventing migraine found mixed results. The largest and best trial found about 0.6 fewer migraines a month than placebo. The authors called the evidence low quality but found no serious side effects.",
+"safety": "Chewing fresh leaves can cause mouth ulcers. Stopping suddenly after long use can bring rebound headaches and stiffness. Avoid it in pregnancy and if you take blood thinners.",
+"src": [
+[
+"Wider, Pittler and Ernst 2015, Cochrane review",
+"https://www.cochrane.org/CD002286/feverfew-preventing-migraine"
+]
+],
+"gname": "Pain and inflammation"
+},
+{
+"id": "willow",
+"g": "pain",
+"name": "White willow",
+"latin": "Salix alba",
+"fam": "Salicaceae (willow family)",
+"ev": "drug",
+"pf": "Salix alba",
+"grow": "Large native tree for wet ground. Cuttings root just by being pushed into damp soil. It can be coppiced every few years for poles, basketry and bark, and its catkins are an early feast for bees.",
+"uses": "Bark was chewed or boiled for fever, aches and pains from ancient Egypt and Greece onwards.",
+"folk": "The Reverend Edward Stone reasoned that because willow grows in damp places where agues (malarial fevers) were common, it might hold a cure, following the old idea that God places the remedy near the disease. In a letter to the Royal Society dated 25 April 1763 he reported giving dried willow bark to about 50 fever patients over five years.",
+"research": "Salicin was later extracted from willow bark, and salicylic acid from it and from meadowsweet. In 1897 Bayer chemists made a gentler form, acetylsalicylic acid: aspirin. In a 2000 trial of 210 people with low back pain, 39% of those on a high dose of willow bark extract were pain-free in the final week, against 6% on placebo. A Cochrane review rated this as moderate evidence for short-term use.",
+"safety": "Do not take it if you are allergic to aspirin, take blood thinners, have stomach ulcers, or are giving it to a child.",
+"src": [
+[
+"Edward Stone's 1763 letter, Royal Society",
+"https://makingscience.royalsociety.org/items/l-and-p_4_161"
+],
+[
+"The discoverers of aspirin",
+"https://hekint.org/2021/09/03/the-discoverers-of-aspirin/"
+],
+[
+"Cochrane: herbal medicine for low back pain",
+"https://cochranelibrary.com/es/cdsr/doi/10.1002/14651858.CD004504.pub3"
+]
+],
+"gname": "Pain and inflammation"
+},
+{
+"id": "meadowsweet",
+"g": "pain",
+"name": "Meadowsweet",
+"latin": "Filipendula ulmaria",
+"fam": "Rosaceae (rose family)",
+"ev": "practice",
+"pf": "Filipendula ulmaria",
+"grow": "Native perennial, 60–120 cm, in damp meadows, ditches and pond edges. Frothy cream flowers in midsummer smell of honey and almonds. It suits a wet corner or pond edge of a food forest.",
+"uses": "Tea for acid stomachs, fevers, colds and rheumatic pain. It was used to flavour mead and ale.",
+"folk": "It was a strewing herb, scattered on floors to sweeten the air; the herbalist John Gerard said it \"far excelleth all other strowing herbs\" and Elizabeth I was said to prefer it in her rooms. In Welsh myth Blodeuwedd, the flower bride, was made from oak, broom and meadowsweet. Its old Latin name, Spiraea, gives aspirin its \"spir\".",
+"research": "It contains salicylates, the same family of compounds as willow bark, and its flower buds were one of the first sources of salicylic acid in the 1830s. There are no good human trials of meadowsweet itself.",
+"safety": "Avoid it if you are allergic to aspirin or take blood thinners, and don't give it to children.",
+"src": [
+[
+"The discoverers of aspirin",
+"https://hekint.org/2021/09/03/the-discoverers-of-aspirin/"
+]
+],
+"gname": "Pain and inflammation"
+},
+{
+"id": "nettle",
+"g": "pain",
+"name": "Stinging nettle",
+"latin": "Urtica dioica",
+"fam": "Urticaceae (nettle family)",
+"ev": "emerging",
+"pf": "Urtica dioica",
+"grow": "Native perennial that spreads by yellow roots into rich, disturbed soil. Leave a patch in a sunny corner: it feeds the caterpillars of peacock, small tortoiseshell, comma and red admiral butterflies, and makes a strong liquid feed. Pick the tops in spring before flowering.",
+"uses": "Eaten as a spring soup or tea after the lean winter months. People with arthritis deliberately stung themselves (urtication), and the root has been used for prostate problems. Nettle fibre was woven into cloth.",
+"folk": "Nettle is one of the Nine Herbs of the Anglo-Saxon charm. In Hans Christian Andersen's The Wild Swans, Elisa must knit shirts of nettles in silence to break the spell on her brothers. Roman soldiers are said to have beaten their legs with nettles to keep warm in British winters.",
+"research": "A small 2000 trial asked 27 people with osteoarthritis at the base of the thumb to apply nettle leaves or white deadnettle (which doesn't sting) for a week each. Pain and disability scores fell more after the stinging nettle. Trials of the root for prostate symptoms have mixed results.",
+"safety": "Wear gloves to pick it. Cook or dry the leaves to remove the sting. It may affect blood pressure, diabetes and blood-thinning medicines.",
+"src": [
+[
+"Randall et al. 2000, Journal of the Royal Society of Medicine",
+"https://pmc.ncbi.nlm.nih.gov/articles/PMC1298033/"
+]
+],
+"gname": "Pain and inflammation"
+},
+{
+"id": "rosehip",
+"g": "pain",
+"name": "Dog rose",
+"latin": "Rosa canina",
+"fam": "Rosaceae (rose family)",
+"ev": "emerging",
+"pf": "Rosa canina",
+"grow": "Native scrambling rose of hedges, 2–3 m. It makes a thorny, wildlife-rich edge to a food forest. Pick the hips after the first frost softens them, from September to November.",
+"uses": "Hips are rich in vitamin C and were made into syrup, jelly and tea for colds and winter health.",
+"folk": "The name may come from the old belief, recorded by Pliny, that the root cured the bite of a mad dog. Children used the hairs inside the hips as itching powder. In 1941, with citrus imports cut off by U-boats, the government organised a national collection: schoolchildren, scouts, guides and the WVS gathered 200 tons of hips, about 134 million fruits, made into 600,000 bottles of syrup for children.",
+"research": "A 2008 meta-analysis of 3 trials (287 people) with osteoarthritis found that rose hip powder reduced pain. The data were limited and all three trials used the same company's product.",
+"safety": "Remove the irritant hairs and seeds before using the hips. Strain syrups and teas through muslin.",
+"src": [
+[
+"Christensen et al. 2008, rose hip meta-analysis",
+"https://nutraingredients.com/Article/2008/04/28/Rosehip-reduces-osteoarthritis-pain-says-meta-analysis"
+],
+[
+"British Medical Journal 1942: the rose hip collection",
+"https://www.bmj.com/content/1/4230/171.1.full.pdf"
+]
+],
+"gname": "Pain and inflammation"
+},
+{
+"id": "echinacea",
+"g": "chest",
+"name": "Echinacea",
+"latin": "Echinacea purpurea",
+"fam": "Asteraceae (daisy family)",
+"ev": "contested",
+"pf": "Echinacea purpurea",
+"grow": "North American perennial, 60–120 cm, with purple coneflowers from July to September. It needs sun and well-drained soil; slugs eat young plants. Butterflies and bees visit it and goldfinches eat the seed heads.",
+"uses": "Plains peoples of North America used the roots for wounds, snakebite, toothache and infections. Today it is taken for colds.",
+"folk": "The name comes from echinos, Greek for hedgehog, after the spiky cone. It reached European medicine through a travelling salesman, H. C. F. Meyer, who sold it as \"Meyer's Blood Purifier\" in Nebraska in the 1870s.",
+"research": "A 2014 Cochrane review of 24 trials (4,631 people) found that echinacea products did not clearly help treat colds. For prevention there may be a small effect, perhaps 10–20% fewer colds, but the results were not reliable.",
+"safety": "Can trigger allergy in people sensitive to daisies, ragweed or chrysanthemums. Products vary a lot in which species and plant parts they contain.",
+"src": [
+[
+"Karsch-Völk et al. 2014, Cochrane review",
+"https://www.cochrane.org/CD000530/ARI_echinacea-preventing-and-treating-common-cold"
+]
+],
+"gname": "Coughs, colds and throats"
+},
+{
+"id": "sage",
+"g": "chest",
+"name": "Common sage",
+"latin": "Salvia officinalis",
+"fam": "Lamiaceae (mint family)",
+"ev": "emerging",
+"pf": "Salvia officinalis",
+"grow": "Evergreen subshrub, 60 cm, for a sunny, well-drained spot. It is easy from cuttings and does well under the sunny edge of a fruit tree. Replace plants every 4–5 years when they get woody. Bees love its blue flowers.",
+"uses": "A gargle for sore throats and mouth ulcers, a tea for digestion, and a remedy for night sweats and hot flushes.",
+"folk": "A saying from the medieval medical school at Salerno asks, \"Why should a man die while sage grows in his garden?\" An English rhyme runs, \"He that would live for aye must eat sage in May.\" Folk belief held that sage thrives where the wife rules the house.",
+"research": "In an open trial of 71 women, sage tablets cut hot flushes by about half within four weeks and by nearly two-thirds by eight. A 2021 placebo-controlled trial of 80 women reported a similar fall. A review of four trials (310 people) found fewer hot flushes but no clear change in how severe they were.",
+"safety": "Fine as a cooking herb or gargle. The oil contains thujone, which in large amounts can cause fits, so avoid concentrated extracts and essential oil, and avoid medicinal doses in pregnancy or epilepsy.",
+"src": [
+[
+"Bommer et al. 2011, sage and hot flushes",
+"https://pubmed.ncbi.nlm.nih.gov/21630133/"
+]
+],
+"gname": "Coughs, colds and throats"
+},
+{
+"id": "elecampane",
+"g": "chest",
+"name": "Elecampane",
+"latin": "Inula helenium",
+"fam": "Asteraceae (daisy family)",
+"ev": "practice",
+"pf": "Inula helenium",
+"grow": "Bold perennial, 1.5–2 m, with huge leaves and shaggy yellow daisies in late summer, for moist ground in sun or light shade. Roots are dug in autumn of the second or third year. A striking back-of-border plant that bees love.",
+"uses": "The root was a classic cough and chest remedy, boiled into syrup or candied as a sweet. It was also given to horses, giving the folk name horseheal.",
+"folk": "Legend says it sprang from the tears of Helen of Troy, hence helenium. The Romans ate it after feasts to help digestion. Candied elecampane was sold as a cough sweet in London into the 1800s.",
+"research": "The root is rich in inulin, a soluble fibre, and contains compounds that kill some bacteria in lab tests. There are no good human trials.",
+"safety": "Can cause allergy in people sensitive to the daisy family. Avoid in pregnancy.",
+"src": [],
+"gname": "Coughs, colds and throats"
+},
+{
+"id": "marshmallow",
+"g": "chest",
+"name": "Marsh mallow",
+"latin": "Althaea officinalis",
+"fam": "Malvaceae (mallow family)",
+"ev": "practice",
+"pf": "Althaea officinalis",
+"grow": "Soft grey-leaved perennial, 1–1.5 m, with pale pink flowers. It grows wild in coastal salt marshes but does well in any moist soil in sun.",
+"uses": "The root and leaves are full of slippery mucilage. They were soaked in cold water to make a soothing drink for sore throats, dry coughs and heartburn, and used as poultices on inflamed skin.",
+"folk": "The first marshmallow sweets were made in France from the root's sap whipped with egg white and sugar, as a throat lozenge. Modern marshmallows contain none of the plant. The Romans ate mallows as a vegetable, and Pliny claimed a spoonful of mallow juice a day kept all diseases away.",
+"research": "The European Medicines Agency accepts marshmallow root for soothing sore throats and dry coughs on the basis of long traditional use. There are few clinical trials.",
+"safety": "The mucilage can slow how well other medicines are absorbed, so take it an hour or two apart from them.",
+"src": [],
+"gname": "Coughs, colds and throats"
+},
+{
+"id": "coltsfoot",
+"g": "chest",
+"name": "Coltsfoot",
+"latin": "Tussilago farfara",
+"fam": "Asteraceae (daisy family)",
+"ev": "avoid",
+"pf": "Tussilago farfara",
+"grow": "Creeping native perennial of bare clay, banks and wasteland. Its yellow flowers appear in February and March before any leaves, and are an early nectar source. It spreads fast by roots.",
+"uses": "Its name means \"cough dispeller\" (tussis is Latin for cough). The leaves were smoked and brewed for coughs, asthma and bronchitis for 2,000 years, and were the main ingredient of British herbal tobacco.",
+"folk": "A painted coltsfoot flower was the sign hung outside apothecaries' shops in Paris. Children called it son-before-father, because the flowers come before the leaves.",
+"research": "It contains pyrrolizidine alkaloids, which damage the liver and can cause cancer with repeated use. Several countries restrict its sale.",
+"safety": "Do not take it. It is included here because it is one of the best-known old remedies, and a reminder that traditional does not mean safe.",
+"src": [],
+"gname": "Coughs, colds and throats"
+},
+{
+"id": "milkthistle",
+"g": "gut",
+"name": "Milk thistle",
+"latin": "Silybum marianum",
+"fam": "Asteraceae (daisy family)",
+"ev": "contested",
+"pf": "Silybum marianum",
+"grow": "Annual or biennial thistle, 1–1.5 m, with glossy leaves marbled white and purple flower heads. It likes sun and dry soil and self-seeds; bees and goldfinches visit it. Young leaves, de-spined, and flower bases were eaten as vegetables.",
+"uses": "The seeds have been taken for the liver and gallbladder since the Greeks. Silymarin, extracted from the seeds, is used in hospital as an antidote to death cap mushroom poisoning in some countries.",
+"folk": "The white veins are said to come from drops of the Virgin Mary's milk that fell on the leaves as she fed the infant Jesus, giving the names Our Lady's thistle and marianum.",
+"research": "A Cochrane review of trials in alcoholic and viral liver disease found no significant effect on deaths or complications in the better-quality trials. Lower-quality trials looked more positive.",
+"safety": "Generally well tolerated. It can cause allergy in people sensitive to the daisy family. Liver disease needs a doctor.",
+"src": [
+[
+"Rambaldi et al., Cochrane review",
+"https://www.cochrane.org/CD003620/LIVER_milk-thistle-treatment-liver-disease"
+]
+],
+"gname": "Digestion, liver and kidneys"
+},
+{
+"id": "dandelion",
+"g": "gut",
+"name": "Dandelion",
+"latin": "Taraxacum officinale",
+"fam": "Asteraceae (daisy family)",
+"ev": "emerging",
+"pf": "Taraxacum officinale",
+"grow": "Deep-rooted native perennial that turns up everywhere. Its early spring flowers are vital food for queen bumblebees, and its tap root breaks up compacted soil. Blanch leaves under a pot for less bitter salads.",
+"uses": "Leaves as a diuretic and spring tonic, root as a liver and digestive bitter, roasted root as a coffee substitute, flowers for wine.",
+"folk": "Its folk name is piss-a-bed (pissenlit in French), and children were told picking it would make them wet the bed. Blowing a clock tells the time by the number of puffs, and the seeds carry wishes. The name comes from dent de lion, \"lion's tooth\", after the leaf shape.",
+"research": "A 2009 pilot study gave 17 people a leaf extract. How often they urinated rose after the first dose, but the total volume over a day did not change much. It was a tiny study without a placebo group.",
+"safety": "Safe to eat. As a diuretic it may affect lithium and some blood pressure drugs. It can cause allergy in people sensitive to the daisy family.",
+"src": [
+[
+"Clare et al. 2009, dandelion diuretic pilot",
+"https://pmc.ncbi.nlm.nih.gov/articles/PMC3155102"
+]
+],
+"gname": "Digestion, liver and kidneys"
+},
+{
+"id": "liquorice",
+"g": "gut",
+"name": "Liquorice",
+"latin": "Glycyrrhiza glabra",
+"fam": "Fabaceae (pea family)",
+"ev": "practice",
+"pf": "Glycyrrhiza glabra",
+"grow": "Hardy perennial, 1 m, that fixes nitrogen like other legumes. It needs deep, light soil and sun, and roots are dug after 3–4 years. It can spread from runners once established.",
+"uses": "The sweet root was chewed and boiled for coughs, sore throats, stomach ulcers and indigestion from ancient Egypt and China onwards.",
+"folk": "Liquorice was grown around Pontefract in Yorkshire for centuries, possibly first by monks, and Pontefract cakes are named after the town. Liquorice root was found in Tutankhamun's tomb.",
+"research": "Its main compound, glycyrrhizin, is about 50 times sweeter than sugar. It has a well-known effect on the body: it makes the kidneys lose potassium and hold salt, which raises blood pressure. More than about 400 mg of glycyrrhizin a day (around 20–30 g of strong liquorice products) is risky, and some people react to far less.",
+"safety": "Avoid regular use if you have high blood pressure, heart or kidney disease, take diuretics or digoxin, or are pregnant. Deglycyrrhizinated (DGL) liquorice has the glycyrrhizin removed.",
+"src": [
+[
+"Medsafe: liquorice side effects and interactions",
+"https://medsafe.govt.nz/profs/PUArticles/December2019/Liquorice-side-effects-interactions.htm"
+]
+],
+"gname": "Digestion, liver and kidneys"
+},
+{
+"id": "angelica",
+"g": "gut",
+"name": "Angelica",
+"latin": "Angelica archangelica",
+"fam": "Apiaceae (carrot family)",
+"ev": "practice",
+"pf": "Angelica archangelica",
+"grow": "Statuesque biennial, up to 2 m, with globes of green-white flowers that draw clouds of hoverflies and wasps. It likes moist, rich soil and part shade. Sow fresh seed in autumn; it dies after setting seed but self-seeds.",
+"uses": "Stems were candied for cakes, and the root and seed were used for indigestion, wind, coughs and as a plague remedy. It flavours gin, Chartreuse and Bénédictine.",
+"folk": "Legend says an angel, often named as the Archangel Michael, revealed it to a monk as a cure for the plague. It was said to flower on Michael's feast day, 8 May in the old calendar. Its old name was root of the Holy Ghost, and it was worn to ward off witchcraft.",
+"research": "It contains furanocoumarins and other compounds with effects in the lab, but there are no good human trials.",
+"safety": "Its family includes deadly hemlock and hemlock water dropwort, and giant hogweed, which burns skin. Don't gather wild plants unless you are certain. The sap can make skin burn in sunlight. Avoid it in pregnancy.",
+"src": [],
+"gname": "Digestion, liver and kidneys"
+},
+{
+"id": "mugwort",
+"g": "folk",
+"name": "Mugwort",
+"latin": "Artemisia vulgaris",
+"fam": "Asteraceae (daisy family)",
+"ev": "practice",
+"pf": "Artemisia vulgaris",
+"grow": "Tall native perennial, 1–1.5 m, of waysides and waste ground, with leaves silver underneath. It is very tough and can spread, so keep it in a corner.",
+"uses": "Used for period problems, digestion and to bitter beer before hops. In Chinese and Japanese medicine dried mugwort is burnt near the skin in moxibustion.",
+"folk": "Mugwort is named first in the Anglo-Saxon Nine Herbs Charm: \"Remember, mugwort, what you made known.\" The Roman writer Pliny said a traveller carrying it would never tire, so it was tucked into shoes. On Midsummer's Eve people wore girdles of it, then threw them on the bonfire to burn away bad luck. It is still put into pillows to bring vivid dreams.",
+"research": "Its relative sweet wormwood is the source of artemisinin (see below). Mugwort itself has had little clinical study.",
+"safety": "Avoid it in pregnancy: it was traditionally used to bring on periods. Its pollen is a common cause of hay fever.",
+"src": [
+[
+"The Nine Herbs Charm",
+"https://spitalfieldslife.com/2018/05/15/the-nine-herbs-charm/"
+]
+],
+"gname": "Charm and folk herbs"
+},
+{
+"id": "sweetwormwood",
+"g": "folk",
+"name": "Sweet wormwood",
+"latin": "Artemisia annua",
+"fam": "Asteraceae (daisy family)",
+"ev": "drug",
+"pf": "Artemisia annua",
+"grow": "Sweet-scented annual from Asia, 1–2 m, easily raised from seed in a sunny spot in the UK. Its ferny leaves smell of apples and camphor.",
+"uses": "Known in China as qinghao, it was used for fevers for at least 1,600 years.",
+"folk": "In 1967 China launched Project 523 to find a malaria cure for soldiers. Tu Youyou searched old texts and found a recipe in Ge Hong's 4th-century Handbook of Prescriptions for Emergencies: soak a handful of qinghao in water, wring it out and drink the juice. That suggested heat was destroying the active compound, so she switched to cold extraction.",
+"research": "Tu Youyou's team isolated artemisinin in 1972. Artemisinin combination drugs are now the standard malaria treatment worldwide, and she shared the 2015 Nobel Prize in Physiology or Medicine.",
+"safety": "A home tea does not contain enough artemisinin to treat malaria reliably, and the WHO advises against using the plant in place of proper drugs. Malaria is a medical emergency.",
+"src": [
+[
+"After the 2015 Nobel: traditional medicine and artemisinin",
+"https://www.livescience.com/52514-after-2015-chemistry-nobel-is-traditional-medicine-now-mainstream.html"
+]
+],
+"gname": "Charm and folk herbs"
+},
+{
+"id": "plantain",
+"g": "folk",
+"name": "Plantain (waybread)",
+"latin": "Plantago major, P. lanceolata",
+"fam": "Plantaginaceae (plantain family)",
+"ev": "practice",
+"pf": "Plantago lanceolata",
+"grow": "Low native perennials of paths and lawns: greater plantain has broad leaves, ribwort plantain narrow ones. Both survive trampling and are a useful wild ground cover in a food forest. Seeds feed finches.",
+"uses": "A chewed leaf on a sting, bite, cut or blister is the classic first aid of the countryside. Tea was taken for coughs.",
+"folk": "The Nine Herbs Charm calls waybread \"mother of herbs\", open to the east and mighty within, trodden by carts and ridden over by queens. Native Americans called it white man's foot, because it sprang up wherever Europeans walked. Children fight with ribwort stems, trying to knock off each other's heads, a game called soldiers or knights.",
+"research": "The leaves contain aucubin and mucilage, which calm inflammation in lab studies. There are few human trials.",
+"safety": "Generally safe. Psyllium, a laxative fibre, comes from a related species.",
+"src": [
+[
+"The Nine Herbs Charm",
+"https://spitalfieldslife.com/2018/05/15/the-nine-herbs-charm/"
+]
+],
+"gname": "Charm and folk herbs"
+},
+{
+"id": "betony",
+"g": "folk",
+"name": "Betony",
+"latin": "Betonica officinalis",
+"fam": "Lamiaceae (mint family)",
+"ev": "practice",
+"pf": "Stachys officinalis",
+"grow": "Native perennial, 30–60 cm, of old meadows, hedge banks and open woods, with spikes of magenta flowers in summer. It suits sun or part shade and is a good bee plant for the edge of a guild.",
+"uses": "Used for headaches, nerves, wounds and almost everything else. A tea is still drunk for tension headaches.",
+"folk": "A Roman physician credited it with curing 47 ailments, and an Anglo-Saxon herbal said it was good \"whether for the man's soul or for his body\". It was planted in churchyards and worn as an amulet against evil spirits and bad dreams. An Italian proverb advises: \"Sell your coat and buy betony.\" It may be the disputed ninth herb of the Nine Herbs Charm.",
+"research": "No clinical trials.",
+"safety": "Avoid it in pregnancy.",
+"src": [
+[
+"The Nine Herbs Charm",
+"https://en.wikipedia.org/wiki/Nine_Herbs_Charm"
+]
+],
+"gname": "Charm and folk herbs"
+},
+{
+"id": "vervain",
+"g": "folk",
+"name": "Vervain",
+"latin": "Verbena officinalis",
+"fam": "Verbenaceae",
+"ev": "practice",
+"pf": "Verbena officinalis",
+"grow": "Wiry native perennial, 30–60 cm, with tiny lilac flowers on thin spikes, on dry, sunny ground. It looks like little but self-seeds and lasts for years.",
+"uses": "Used for nerves, fevers, and to help nursing mothers make milk.",
+"folk": "Christians called it herb of grace, saying it grew on Calvary and staunched Christ's wounds. It was picked with a blessing, ideally when neither sun nor moon was in the sky. The Romans used it on altars and the Druids were said to revere it. It was believed to protect against witches, yet witches were also said to use it.",
+"research": "No clinical trials worth the name.",
+"safety": "Avoid it in pregnancy.",
+"src": [],
+"gname": "Charm and folk herbs"
+},
+{
+"id": "selfheal",
+"g": "folk",
+"name": "Self-heal",
+"latin": "Prunella vulgaris",
+"fam": "Lamiaceae (mint family)",
+"ev": "practice",
+"pf": "Prunella vulgaris",
+"grow": "Creeping native perennial, 10–20 cm, with purple flower heads all summer. It grows in lawns and paths in sun or part shade, and makes a tough, bee-friendly ground cover for a food forest.",
+"uses": "Applied to cuts and bruises, and gargled for sore throats.",
+"folk": "Its names, self-heal, all-heal and carpenter's herb, come from its use by workmen who cut themselves with tools. By the old doctrine of signatures, its hooded flowers looked like a throat, so it was used for throat ailments.",
+"research": "It contains rosmarinic acid and other compounds that are active in lab tests. There are no good human trials.",
+"safety": "Generally considered safe.",
+"src": [],
+"gname": "Charm and folk herbs"
+}
+];
+function herbItem(h) {
+  const [cls, lab] = HERB_EV[h.ev];
+  const facts = [['Family', h.fam], ['Group', h.gname], ['Evidence', lab]];
+  return `<details class="pd-item" data-search="${esc((h.name + ' ' + h.latin + ' ' + h.fam + ' ' + h.uses + ' ' + h.folk).toLowerCase())}">
+    <summary><span class="dot" style="background:${HERB_GROUPS.find(g => g.id === h.g).sw}">${esc(h.name.slice(0, 2))}</span><b>${esc(h.name)} <i>${esc(h.latin)}</i></b><span class="conf ${cls}">${lab}</span></summary>
+    <div class="pd-body">
+      <dl class="facts">${facts.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
+      <div class="pd-text">
+        <h4>How it grows in the UK</h4><p>${esc(h.grow)}</p>
+        <h4>Traditional uses</h4><p>${esc(h.uses)}</p>
+        <h4>Folklore</h4><p class="mh-folk">${esc(h.folk)}</p>
+        <h4>What the research says</h4><p>${esc(h.research)}</p>
+        <h4>Safety</h4><p class="warn">${esc(h.safety)}</p>
+        <p class="pd-links">${h.src.map(([l, u]) => `<a href="${u}" target="_blank" rel="noopener">${esc(l)}</a>`).join('')}<a href="${pfafUrl(h.pf)}" target="_blank" rel="noopener">Plants For A Future entry</a></p>
+      </div>
+    </div>
+  </details>`;
+}
+function renderHerbs() {
+  $('#mhGroups').innerHTML = HERB_GROUPS.map(g => {
+    const items = HERBS.filter(h => h.g === g.id);
+    return `<details class="pd-group" data-group="${g.id}"><summary><span class="sw" style="background:${g.sw}"></span><h3>${g.name}</h3><span class="cnt">${items.length}</span></summary><div class="pd-list">${items.map(herbItem).join('')}</div></details>`;
+  }).join('');
+  $('#mhCount').textContent = `${HERBS.length} herbs`;
+}
+$('#mhSearch').addEventListener('input', e => {
+  const q = e.target.value.trim().toLowerCase();
+  let shown = 0;
+  document.querySelectorAll('#mhGroups .pd-group').forEach(g => {
+    let n = 0;
+    g.querySelectorAll('.pd-item').forEach(it => { const ok = !q || it.dataset.search.includes(q); it.hidden = !ok; if (ok) n++; });
+    g.hidden = n === 0;
+    g.querySelector('.cnt').textContent = n;
+    if (q) g.open = n > 0;
+    shown += n;
+  });
+  $('#mhCount').textContent = q ? `${shown} match${shown === 1 ? '' : 'es'}` : `${HERBS.length} herbs`;
+});
+
 /* ---------- Boot ---------- */
 drawProfile();
 renderTabs();
@@ -4372,6 +5010,7 @@ renderPrep();
 renderCalc();
 drawSoil();
 renderDirectory();
+renderHerbs();
 store.connect();
 })();
 </script>
