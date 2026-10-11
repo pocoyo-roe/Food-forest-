@@ -1804,10 +1804,12 @@ $('#guildPanel').addEventListener('click', e => {
   const vt = e.target.closest('.viewtabs [data-view]');
   if (vt) { setViewPref('atlas', vt.dataset.view); renderAtlas(); return; }
   if (e.target.id === 'toBuilder') {
-    const t = TREE[atlasTree];
-    state = { tree: t.id, rs: atlasRs[t.id], items: t.guild.map(g => ({ p: g.p, n: g.n })) };
-    closeSavePanel(); $('#bSaved').hidden = true;
-    renderBuilder(true); save();
+    const t = TREE[atlasTree], rs = atlasRs[t.id];
+    guardBuilder(`the example ${t.name.toLowerCase()} guild`, () => {
+      state = { tree: t.id, rs, items: t.guild.map(g => ({ p: g.p, n: g.n })) };
+      layoutSel = null; closeSavePanel(); $('#bSaved').hidden = true;
+      renderBuilder(true); save();
+    });
     goTo('builder');
   }
 });
@@ -3220,7 +3222,7 @@ $('#mineBody').addEventListener('click', e => {
   if (vt) { setViewPref(vt.dataset.for, b.dataset.view); renderMine(); return; }
   if (b.hasAttribute('data-newguild')) {
     const last = mineSel !== 'all' && store.get(mineSel);
-    startNewGuild(last ? last.tree : undefined);
+    guardBuilder('a new guild', () => startNewGuild(last ? last.tree : undefined));
     goTo('builder');
     return;
   }
@@ -3265,34 +3267,57 @@ function loadIntoBuilder(id) {
   renderBuilder(true);
 }
 // Switch guilds, asking first if the current one has unsaved changes.
+// A new guild counts as unsaved work once it differs from the suggested starting plants.
+function newGuildDirty() {
+  if (editing() || !state.items.length) return false;
+  const t = TREE[state.tree];
+  return guildSnapshot(state) !== guildSnapshot({ tree: t.id, rs: t.rs, items: t.guild.map(g => ({ p: g.p, n: g.n })) });
+}
+let promptAction = null, pendingAfterSave = null;
+// Run an action that replaces what's in the builder, asking first if that would lose unsaved work.
+function guardBuilder(targetLabel, action) {
+  const g = editing(), box = $('#bSwitchPrompt');
+  const reset = () => { $('#bGuildPick').value = g ? g.id : ''; };
+  if (builderDirty()) {
+    promptAction = action;
+    box.innerHTML = `<span>You've changed <b>“${esc(g.name)}”</b> since you last saved it. Save the changes before opening ${targetLabel}?</span>
+      <div class="sp-actions"><button type="button" class="btn primary" data-switch="save">Save and continue</button><button type="button" class="btn" data-switch="discard">Continue without saving</button><button type="button" class="btn" data-switch="cancel">Stay here</button></div>`;
+  } else if (newGuildDirty()) {
+    promptAction = action;
+    box.innerHTML = `<span>Your new ${esc(TREE[state.tree].name.toLowerCase())} guild hasn't been saved. Save it before opening ${targetLabel}?</span>
+      <div class="sp-actions"><button type="button" class="btn primary" data-switch="savenew">Save it first</button><button type="button" class="btn" data-switch="discard">Discard it and continue</button><button type="button" class="btn" data-switch="cancel">Stay here</button></div>`;
+  } else { box.hidden = true; action(); return; }
+  box.hidden = false; reset();
+  box.querySelector('button').focus();
+}
 function requestSwitch(id) {
   const g = editing();
-  if (!builderDirty() || (g && g.id === id)) { loadIntoBuilder(id); return; }
-  const target = id ? `“${esc(store.get(id).name)}”` : 'a new guild';
-  const box = $('#bSwitchPrompt');
-  box.innerHTML = `<span>You've changed <b>“${esc(g.name)}”</b> since you last saved it. Save the changes before opening ${target}?</span>
-    <div class="sp-actions"><button type="button" class="btn primary" data-switch="save" data-to="${id}">Save and switch</button><button type="button" class="btn" data-switch="discard" data-to="${id}">Switch without saving</button><button type="button" class="btn" data-switch="cancel">Stay here</button></div>`;
-  box.hidden = false;
-  $('#bGuildPick').value = g.id;
-  box.querySelector('button').focus();
+  if (g && g.id === id) { loadIntoBuilder(id); return; }
+  guardBuilder(id ? `“${esc(store.get(id).name)}”` : 'a new guild', () => loadIntoBuilder(id));
 }
 $('#bGuildPick').addEventListener('change', e => requestSwitch(e.target.value));
 $('#bSwitchPrompt').addEventListener('click', e => {
   const b = e.target.closest('[data-switch]'); if (!b) return;
-  const act = b.dataset.switch, to = b.dataset.to || '';
-  if (act === 'cancel') { $('#bSwitchPrompt').hidden = true; updateSaveButton(); return; }
+  const act = b.dataset.switch, action = promptAction;
+  $('#bSwitchPrompt').hidden = true; promptAction = null;
+  if (act === 'cancel' || !action) { updateSaveButton(); return; }
+  if (act === 'savenew') {           // name it first; carry on once it's saved
+    pendingAfterSave = action;
+    $('#bSaveOpen').click();
+    return;
+  }
   if (act === 'save') {
     const g = editing();
     if (g) { store.save(cleanGuild({ ...g, tree: state.tree, rs: state.rs, items: clone(state.items), updated: Date.now() })); renderMine(); }
   }
-  loadIntoBuilder(to);
+  action();
 });
 function startNewGuild(treeId) {
   const t = TREE[treeId || state.tree];
   state = { tree: t.id, rs: t.rs, items: t.guild.map(g => ({ p: g.p, n: g.n })) };
-  save(); closeSavePanel(); $('#bSaved').hidden = true; renderBuilder(true);
+  layoutSel = null; save(); closeSavePanel(); $('#bSaved').hidden = true; renderBuilder(true);
 }
-document.addEventListener('click', e => { if (e.target.id === 'bNewGuild') startNewGuild(); });
+document.addEventListener('click', e => { if (e.target.id === 'bNewGuild') guardBuilder('a new guild', () => startNewGuild()); });
 function closeSavePanel() { $('#bSavePanel').hidden = true; $('#mgErr').hidden = true; }
 $('#mgYear').innerHTML = [`<option value="${CUR_Y + 1}">${CUR_Y + 1} (planning)</option>`]
   .concat(Array.from({ length: 31 }, (_, i) => `<option value="${CUR_Y - i}">${CUR_Y - i}</option>`)).join('');
@@ -3307,7 +3332,7 @@ $('#bSaveOpen').addEventListener('click', () => {
   $('#bSavePanel').hidden = false;
   $('#mgName').focus();
 });
-$('#mgCancel').addEventListener('click', closeSavePanel);
+$('#mgCancel').addEventListener('click', () => { pendingAfterSave = null; closeSavePanel(); });
 function saveGuild(asNew) {
   const name = $('#mgName').value.trim();
   if (!name) { $('#mgErr').textContent = 'Give the guild a name so you can find it later.'; $('#mgErr').hidden = false; $('#mgName').focus(); return; }
@@ -3326,6 +3351,7 @@ function saveGuild(asNew) {
   const msg = $('#bSaved');
   msg.innerHTML = `Saved “${esc(g.name)}”. <a href="#mine">See it in My guilds</a>`;
   msg.hidden = false;
+  if (pendingAfterSave) { const next = pendingAfterSave; pendingAfterSave = null; next(); msg.hidden = false; }
 }
 $('#bSavePanel').addEventListener('submit', e => { e.preventDefault(); saveGuild(false); });
 $('#mgSaveNew').addEventListener('click', () => saveGuild(true));
