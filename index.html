@@ -504,6 +504,37 @@ svg.editing.has-sel { cursor: crosshair; }
 .chick-rules ul { margin: 0; padding-left: 1.1rem; display: grid; gap: .45rem; }
 
 
+/* Plant directory */
+.pd-search { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: end; margin-bottom: 1.25rem; }
+.pd-search label { display: grid; gap: .25rem; font-size: var(--step--1); color: var(--muted); flex: 1 1 280px; max-width: 420px; }
+.pd-search input { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: .5rem .7rem; }
+.pd-search span { font-size: var(--step--1); color: var(--muted); padding-bottom: .55rem; }
+.pd-groups { display: grid; gap: .6rem; }
+.pd-group { border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); }
+.pd-group > summary { display: flex; align-items: center; gap: .7rem; padding: .85rem 1rem; }
+.pd-group > summary h3 { font-size: 1.2rem; }
+.pd-group > summary .cnt { font-family: var(--f-data); font-size: var(--step--1); color: var(--muted); }
+.pd-group > summary .sw { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+.pd-list { display: grid; border-top: 1px solid var(--line); }
+.pd-item { border-bottom: 1px solid var(--line); }
+.pd-item:last-child { border-bottom: 0; }
+.pd-item > summary { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: .2rem .7rem; align-items: center; padding: .6rem 1rem; }
+.pd-item > summary:hover { background: var(--surface-2); }
+.pd-item > summary .dot { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-family: var(--f-data); font-size: .66rem; color: var(--on-layer); grid-row: span 2; }
+.pd-item > summary b { font-size: 1rem; }
+.pd-item > summary i { color: var(--muted); font-size: .88rem; }
+.pd-item > summary .tags { grid-column: 2; font-size: var(--step--1); color: var(--muted); }
+.pd-group > summary::after, .pd-item > summary::after { content: ''; width: .5rem; height: .5rem; margin-left: auto; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg) translateY(-2px); transition: transform .15s; }
+.pd-item > summary::after { grid-column: 3; grid-row: 1 / span 2; }
+.pd-group[open] > summary::after, .pd-item[open] > summary::after { transform: rotate(-135deg) translateY(-2px); }
+.pd-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 1rem 2rem; padding: .4rem 1rem 1.2rem 3.3rem; }
+@media (max-width: 760px) { .pd-body { grid-template-columns: minmax(0, 1fr); padding-left: 1rem; } }
+.pd-body .facts { font-size: .9rem; align-content: start; }
+.pd-text { display: grid; gap: .55rem; font-size: .94rem; }
+.pd-text h4 { margin: .3rem 0 0; font-family: var(--f-data); font-weight: 500; font-size: .72rem; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.pd-text .warn { color: var(--accent); }
+.pd-links { display: flex; flex-wrap: wrap; gap: .4rem .9rem; font-size: var(--step--1); align-items: center; }
+
 /* Notes */
 .notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 1rem 2rem; }
 .note h3 { font-size: 1.1rem; margin-bottom: .35rem; }
@@ -579,6 +610,7 @@ footer p + p { margin-top: .4rem; }
       <a href="#soil">Soil life</a>
       <a href="#notes">UK notes</a>
       <a href="#chickens">Chickens</a>
+      <a href="#plants">Plants</a>
       <a href="#sources">Sources</a>
     </nav>
   </div>
@@ -1078,6 +1110,19 @@ footer p + p { margin-top: .4rem; }
         <div><h3>Compost before it feeds crops</h3><p>Fresh chicken manure is strong enough to scorch plants. Compost it, or let it break down under mulch for a season, before it goes near salads and root crops.</p></div>
       </div>
       <p class="warnbox">The research on chickens and soil is thin: mostly short trials, single farms and practitioner accounts. The pattern across it is consistent, though. Moving hens and giving them carbon builds soil; crowding them in one place wears it out.</p>
+      </div>
+      </details>
+    </div>
+  </section>
+
+  <section id="plants">
+    <div class="wrap">
+      <details class="sec" data-sec="plants">
+      <summary class="sec-sum"><span class="eyebrow">Reference</span><h2>Plant directory</h2><span class="tagline">Every tree and companion plant on this page: how it grows, traditional uses, yields, wildlife and problems.</span></summary>
+      <div class="sec-body">
+      <div class="sec-intro"><p class="lede">Open a group, then a plant, for its full profile. Search by common name, Latin name or family. Traditional medicinal uses are described as history, not as advice; check a reliable source before eating anything you are not sure of.</p></div>
+      <div class="pd-search"><label for="pdSearch">Search plants<input type="search" id="pdSearch" placeholder="e.g. comfrey, Ribes, Rosaceae" autocomplete="off"></label><span id="pdCount" aria-live="polite"></span></div>
+      <div class="pd-groups" id="pdGroups"></div>
       </div>
       </details>
     </div>
@@ -3616,6 +3661,705 @@ $('#openAll').addEventListener('click', () => document.querySelectorAll('details
 $('#closeAll').addEventListener('click', () => document.querySelectorAll('details.sec').forEach(d => { d.open = false; }));
 if (location.hash && /^#[\w.~-]+$/.test(location.hash)) setTimeout(() => goTo(location.hash.slice(1)), 0);
 
+/* ---------- Plant directory ---------- */
+const PLANT_INFO = {
+"apple": {
+"fam": "Rosaceae",
+"origin": "Cultivated apple came from the wild apples of Central Asia; the crab apple (Malus sylvestris) is native to Britain.",
+"grow": "Deciduous tree whose size is set almost entirely by its rootstock, from 2 m to over 6 m. Most varieties need a pollination partner flowering at the same time. Fruit forms on short spurs from the second to fourth year. Prefers well-drained soil and full sun; crops less in part shade.",
+"uses": "Eaten fresh, cooked and stored through winter; pressed for juice and cider, a long tradition in the West Country and Herefordshire. Wassailing in January was meant to wake the trees and bless the next crop. Crab apples are rich in pectin and help other fruit jams and jellies set.",
+"insects": "Blossom feeds early bumblebees, solitary mining bees and hoverflies. Old trees carry lichens, mistletoe and hundreds of invertebrates; traditional orchards are a UK priority habitat.",
+"problems": "Apple scab, powdery mildew, canker, codling moth, woolly aphid, apple sawfly and brown rot. Choose varieties sold as scab-resistant, keep the canopy open and clear fallen fruit. Pips contain small amounts of amygdalin.",
+"pf": "Malus domestica"
+},
+"pear": {
+"fam": "Rosaceae",
+"origin": "Cultivated pears were brought to Britain by the Romans; the wild pear is rare here.",
+"grow": "Upright, long-lived deciduous tree; on pear rootstock it can live over a century. Flowers earlier than apple, so it needs a sheltered, frost-free spot, and most varieties crop better with a partner. Likes deep, moisture-retentive soil.",
+"uses": "Dessert and cooking pears, and perry made from small, tannic perry pears in Herefordshire, Gloucestershire and Worcestershire. Fine-grained pear wood is prized for carving and musical instruments.",
+"insects": "Early blossom feeds bees and flies. Pear nectar is low in sugar, so honeybees visit less keenly than for apple.",
+"problems": "Pear rust (bright orange leaf spots; it alternates with juniper), scab, pear midge (blackened, dropping fruitlets), leaf blister mite, canker and fireblight. Fruit left too long on the tree goes brown and mealy inside.",
+"pf": "Pyrus communis"
+},
+"plum": {
+"fam": "Rosaceae",
+"origin": "A cultivated hybrid thought to descend from native blackthorn and cherry plum.",
+"grow": "Deciduous tree that crops young, often from year two to four, and heavily in alternate years. Flowers in March and April; many varieties are self-fertile. Likes moist, fertile soil and shelter from cold spring winds.",
+"uses": "Eaten fresh, made into jam, pies and plum brandy, and dried as prunes. The Vale of Evesham is the traditional heart of English plum growing.",
+"insects": "Very early blossom is vital food for queen bumblebees and early solitary bees coming out of hibernation.",
+"problems": "Silver leaf and bacterial canker enter through winter pruning cuts, so prune in summer. Plum moth larvae burrow into fruit, aphids curl leaves, brown rot spoils fruit and wasps attack ripe plums. Heavy crops can snap branches unless thinned.",
+"pf": "Prunus domestica"
+},
+"cherry": {
+"fam": "Rosaceae",
+"origin": "The wild cherry or gean (Prunus avium) is native to British woodland.",
+"grow": "Vigorous tree that can pass 15 m on seedling roots; the Gisela 5 rootstock keeps it near 3 m so it can be netted. Needs deep, well-drained soil and hates waterlogging. Many modern varieties are self-fertile.",
+"uses": "Fresh fruit, preserves and kirsch. Cherry wood is a fine furniture timber, and dried cherry stalks were a traditional herbal tea.",
+"insects": "April blossom feeds bees. Small nectar glands on the leaf stalks feed ants and parasitic wasps.",
+"problems": "Birds take most of the crop unless the tree is netted. Bacterial canker, silver leaf, cherry blackfly, brown rot and fruit splitting after heavy rain.",
+"pf": "Prunus avium"
+},
+"damson": {
+"fam": "Rosaceae",
+"origin": "Probably introduced, but naturalised for centuries in hedgerows, especially in Cumbria's Lyth Valley and Shropshire.",
+"grow": "Small, tough, upright tree, often suckering. Self-fertile and tolerant of wind, heavy soil and cooler districts, which is why it was planted around farms and orchards as a windbreak.",
+"uses": "Jam, damson gin and damson cheese (a stiff fruit paste). Damsons are also said to have been used to dye cloth.",
+"insects": "Early blossom for bees; dense hedgerow damsons give birds nesting cover and host moth caterpillars.",
+"problems": "Silver leaf (prune in summer), aphids, plum moth and suckers from the roots. Very sour raw.",
+"pf": "Prunus insititia"
+},
+"quince": {
+"fam": "Rosaceae",
+"origin": "From the Caucasus and Iran; grown in Britain since at least the 13th century.",
+"grow": "Small, often crooked tree of 3–5 m with large pink-white flowers in May. Self-fertile. Likes warm, moist but well-drained soil and a sunny spot.",
+"uses": "Cooked into jelly, membrillo and marmalade; the word marmalade comes from marmelo, Portuguese for quince. The strongly scented fruit was kept to perfume rooms and linen.",
+"insects": "Large, late flowers feed bumblebees and solitary bees after the main fruit blossom has finished.",
+"problems": "Quince leaf blight causes brown spots and leaf drop in wet summers; also brown rot, mildew and fireblight. Raw fruit is hard and astringent. The seeds should not be eaten crushed.",
+"pf": "Cydonia oblonga"
+},
+"medlar": {
+"fam": "Rosaceae",
+"origin": "From south-west Asia; once common in medieval monastery and manor gardens.",
+"grow": "Small, spreading and often weeping tree of 3–6 m. Very hardy, self-fertile and late-flowering (May–June), so frost rarely hurts the blossom.",
+"uses": "Fruit is eaten after bletting (softening in storage) or made into medlar jelly and medlar cheese. Chaucer and Shakespeare both mention it, with rude nicknames.",
+"insects": "Large single white flowers attract bees and hoverflies.",
+"problems": "Few: occasional mildew, leaf spot, brown rot and caterpillars. Damaged fruit rots in storage.",
+"pf": "Mespilus germanica"
+},
+"mulberry": {
+"fam": "Moraceae",
+"origin": "From south-west Asia; widely planted in England under James I in the early 1600s in a failed attempt to start a silk industry.",
+"grow": "Slow-growing, very long-lived spreading tree with brittle branches that may lean and even root where they touch the ground. Bleeds sap heavily if cut outside midwinter.",
+"uses": "Fruit eaten fresh, in pies, jam and wine, and used as a dye. White mulberry leaves feed silkworms; ancient black mulberries survive in many college, palace and manor gardens.",
+"insects": "Wind-pollinated, so it offers little to bees, but fallen fruit feeds birds, butterflies such as red admirals, and wasps.",
+"problems": "Mulberry canker and dieback, coral spot and sap bleeding. Ripe fruit stains paving, clothes and hands.",
+"pf": "Morus nigra"
+},
+"fig": {
+"fam": "Moraceae",
+"origin": "From the Mediterranean and western Asia; grown in England since Roman times.",
+"grow": "Large shrub or small tree with big lobed leaves. UK figs set fruit without pollination. Restricting the roots makes it fruit rather than grow leaves, and tiny embryo figs overwinter to ripen the next summer.",
+"uses": "Fresh or dried fruit and jam; the leaves are used to wrap and flavour food.",
+"insects": "The fig wasp that pollinates wild figs does not live in Britain. Ripe fruit draws wasps and birds.",
+"problems": "Frost damage to young shoots and embryo figs, coral spot, botrytis on fruit and figs dropping before they ripen. The milky sap irritates skin and can cause burns in sunlight.",
+"pf": "Ficus carica"
+},
+"hazel": {
+"fam": "Betulaceae",
+"origin": "Native.",
+"grow": "Multi-stemmed shrub or small tree of 4–6 m. Wind-pollinated catkins open from January; a different variety nearby improves nut set. Has been coppiced in Britain for thousands of years and regrows strongly from the stool.",
+"uses": "Nuts, and coppiced rods for hurdles, wattle-and-daub, bean poles, hedge-laying stakes and thatching spars. Forked hazel twigs were the traditional water-divining rod.",
+"insects": "Catkin pollen is one of the first foods for bees in late winter; the leaves feed many moth caterpillars, and hazelnuts are vital to dormice.",
+"problems": "Grey squirrels, nut weevil, big bud mite and honey fungus. Suckers freely.",
+"pf": "Corylus avellana"
+},
+"elder": {
+"fam": "Adoxaceae (Viburnaceae)",
+"origin": "Native.",
+"grow": "Fast-growing, multi-stemmed shrub or small tree to about 6 m. Grows on almost any soil, regrows from hard pruning and is spread by birds.",
+"uses": "Elderflower cordial, fritters and 'champagne'; elderberry wine and syrup, a traditional winter remedy for colds. Elder features in a great deal of folklore as a protective tree.",
+"insects": "Flat flower heads feed hoverflies, flies and beetles; the berries feed thrushes, blackbirds and warblers.",
+"problems": "Raw berries, leaves, bark and stems contain compounds that cause sickness, so always cook the berries. Blackfly in spring; seedlings pop up wherever birds perch.",
+"pf": "Sambucus nigra"
+},
+"seabuck": {
+"fam": "Elaeagnaceae",
+"origin": "Native on some British coasts, especially east-coast dunes.",
+"grow": "Thorny, suckering shrub or small tree of 2–6 m. Separate male and female plants; fixes nitrogen with root bacteria (Frankia). Very tolerant of wind, salt and poor sandy soil, but needs sun.",
+"uses": "Sharp orange berries very high in vitamin C, used for juice and syrups; oil from the pulp and seeds is used for skin. A traditional food and medicine in Russia, China and the Himalaya.",
+"insects": "Wind-pollinated; berries that hang on into winter feed fieldfares and other thrushes.",
+"problems": "Long thorns, aggressive suckering and fiddly picking (freezing cut branches makes it easier). No fruit without a male plant.",
+"pf": "Hippophae rhamnoides"
+},
+"siberianpea": {
+"fam": "Fabaceae",
+"origin": "From Siberia and Mongolia.",
+"grow": "Hardy deciduous shrub of 3–5 m that tolerates drought, cold and poor soil, and fixes nitrogen. Yellow pea flowers in May are followed by small pods.",
+"uses": "The seeds were cooked and eaten as a pulse in Siberia and are fed to poultry. Widely planted for shelterbelts. PFAF records a blue dye from the leaves.",
+"insects": "Flowers are visited by bees; the seeds are a favourite of chickens.",
+"problems": "Few pests. Can self-seed; cook the seeds before eating.",
+"pf": "Caragana arborescens"
+},
+"alder": {
+"fam": "Betulaceae",
+"origin": "From Corsica and southern Italy.",
+"grow": "Fast-growing conical tree of 10–25 m unless coppiced. Fixes nitrogen and, unlike native alder, copes with dry soils. Catkins open in February.",
+"uses": "Windbreaks, shelterbelts, timber and coppiced biomass.",
+"insects": "Early catkin pollen for bees; the seeds feed siskins and redpolls.",
+"problems": "Gets large quickly if not cut back every few years; otherwise few problems.",
+"pf": "Alnus cordata"
+},
+"blackcurrant": {
+"fam": "Grossulariaceae",
+"origin": "Native to northern Europe, including damp woods in Britain.",
+"grow": "Bush to about 1.5 m that fruits best on young wood. Self-fertile. Likes moist, rich soil and tolerates part shade.",
+"uses": "Exceptionally high in vitamin C. During the Second World War blackcurrant growing was encouraged and blackcurrant syrup was given to children. Jam, cordial and cassis liqueur; the leaves make a tea.",
+"insects": "Early flowers feed bumblebees and other bees.",
+"problems": "Big bud mite (which spreads reversion virus), currant blister aphid, leaf spot, mildew and birds.",
+"pf": "Ribes nigrum"
+},
+"redcurrant": {
+"fam": "Grossulariaceae",
+"origin": "Native to western Europe, including Britain.",
+"grow": "Bush of 1.2–1.5 m that fruits on spurs on older wood, so it can be trained as a cordon or fan against a fence.",
+"uses": "Redcurrant jelly with roast lamb, summer pudding and garnishes.",
+"insects": "Early flowers for bees; the berries feed birds.",
+"problems": "Birds, currant blister aphid (red, blistered leaves), gooseberry sawfly and coral spot.",
+"pf": "Ribes rubrum"
+},
+"gooseberry": {
+"fam": "Grossulariaceae",
+"origin": "Native or long naturalised in British woods and hedges.",
+"grow": "Thorny bush of 1–1.5 m that fruits on older wood and spurs. Very hardy and tolerant of shade.",
+"uses": "Fools, pies, jam and a sharp sauce for mackerel. Nineteenth-century gooseberry clubs in Lancashire and Cheshire competed to grow the heaviest berry, and a show at Egton Bridge in Yorkshire still does.",
+"insects": "Early flowers for bees.",
+"problems": "Gooseberry sawfly caterpillars can strip a bush in days; American gooseberry mildew; sharp thorns.",
+"pf": "Ribes uva-crispa"
+},
+"jostaberry": {
+"fam": "Grossulariaceae",
+"origin": "A blackcurrant and gooseberry hybrid bred in Germany and released in the 1970s.",
+"grow": "Vigorous, thornless bush to about 2 m, resistant to big bud mite and mildew.",
+"uses": "Eaten fresh or made into jam; too new to have a folk tradition.",
+"insects": "Flowers feed bees.",
+"problems": "Large size; birds; occasional mildew.",
+"pf": "Ribes x nidigrolaria"
+},
+"blueberry": {
+"fam": "Ericaceae",
+"origin": "Highbush blueberry is North American; the native bilberry is a close relative.",
+"grow": "Bush of 1–2 m that needs acid soil (pH 4.5–5.5), steady moisture and the special fungi that partner with its roots. Crops better with two varieties. Fiery autumn colour.",
+"uses": "Fresh, baked and frozen. Native American peoples dried the berries and added them to pemmican.",
+"insects": "Bell-shaped flowers are buzz-pollinated by bumblebees.",
+"problems": "Yellow leaves on alkaline soil or tap water, birds, drought, and vine weevil in pots.",
+"pf": "Vaccinium corymbosum"
+},
+"honeyberry": {
+"fam": "Caprifoliaceae",
+"origin": "From Siberia, northern China and Japan, where it is called haskap.",
+"grow": "Very hardy bush of 1–1.5 m whose flowers survive hard frost. Needs a second, compatible variety flowering at the same time.",
+"uses": "Eaten fresh or as jam. The Ainu of northern Japan prized it as a fruit of long life.",
+"insects": "Very early flowers feed queen bumblebees.",
+"problems": "Birds; may flower before many pollinators are about; mildew in late summer.",
+"pf": "Lonicera caerulea"
+},
+"raspberry": {
+"fam": "Rosaceae",
+"origin": "Native; wild raspberries grow in British woods and heaths.",
+"grow": "Suckering canes of 1.2–1.8 m. Autumn varieties fruit on the current year's canes. Likes moist, slightly acid soil and dislikes waterlogging.",
+"uses": "Fresh, jam and raspberry vinegar. Raspberry leaf tea is a traditional drink in late pregnancy.",
+"insects": "Flowers are a favourite of bees and give a fine honey.",
+"problems": "Raspberry beetle, root rot in wet soil, viruses spread by aphids, and suckers coming up where you don't want them.",
+"pf": "Rubus idaeus"
+},
+"wineberry": {
+"fam": "Rosaceae",
+"origin": "From Japan, Korea and China.",
+"grow": "Arching, bristly red canes about 2 m long that fruit in their second year. Each berry is wrapped in a sticky husk until it ripens.",
+"uses": "Eaten fresh and in desserts; grown for its red winter stems too.",
+"insects": "Flowers feed bees; the sticky hairs keep many insects off the fruit.",
+"problems": "Cane tips root where they touch soil, and it has become invasive in the eastern United States. Birds.",
+"pf": "Rubus phoenicolasius"
+},
+"aronia": {
+"fam": "Rosaceae",
+"origin": "From eastern North America.",
+"grow": "Suckering shrub of 1.5–2.5 m, very hardy and tolerant of wet or poor soil. Brilliant red autumn colour.",
+"uses": "Juice, wine and jam; the berries are very high in anthocyanins. Native Americans used them for tea and pemmican, and they are popular in eastern Europe.",
+"insects": "White May flowers feed bees.",
+"problems": "Astringent raw; suckers; few pests.",
+"pf": "Aronia melanocarpa"
+},
+"elaeagnus": {
+"fam": "Elaeagnaceae",
+"origin": "A garden hybrid of two East Asian species.",
+"grow": "Dense evergreen shrub of 3–5 m that tolerates salt, wind and poor soil and fixes nitrogen. Scented flowers in October and November; fruit ripens the following April.",
+"uses": "Hedging and windbreaks. The red, silver-speckled fruit is eaten when fully ripe.",
+"insects": "Late flowers feed bees and other insects when little else is in bloom.",
+"problems": "Gets large; occasional dieback of branches; fruit is astringent until fully ripe.",
+"pf": "Elaeagnus x ebbingei"
+},
+"goumi": {
+"fam": "Elaeagnaceae",
+"origin": "From China, Korea and Japan.",
+"grow": "Deciduous shrub of 2–3 m that fixes nitrogen, is self-fertile and tolerates poor soil.",
+"uses": "Fruit eaten fresh or made into jam.",
+"insects": "Fragrant spring flowers feed bees.",
+"problems": "Tart unless fully ripe; birds.",
+"pf": "Elaeagnus multiflora"
+},
+"ugni": {
+"fam": "Myrtaceae",
+"origin": "From Chile.",
+"grow": "Evergreen shrub of 1–2 m, hardy to around −10 °C. Likes acid to neutral soil and shelter. It is often said to have been Queen Victoria's favourite fruit.",
+"uses": "Eaten fresh or as jam; in Chile it flavours a liqueur called murtado.",
+"insects": "Bell-shaped flowers are visited by bees.",
+"problems": "Frost damage in cold districts; small crops after cool summers.",
+"pf": "Ugni molinae"
+},
+"lavender": {
+"fam": "Lamiaceae",
+"origin": "From the Mediterranean.",
+"grow": "Woody evergreen sub-shrub of 0.5–0.8 m. Needs full sun and sharp drainage, and gets leggy after 8–10 years.",
+"uses": "Lavender oil was distilled commercially at Mitcham in Surrey and is still grown in Norfolk. Used in scented sachets and as a gentle antiseptic and calming herb.",
+"insects": "Hugely popular with bumblebees, honeybees, wool carder bees and butterflies.",
+"problems": "Rosemary beetle, root rot in wet winters, and woody, bare centres if cut into old wood.",
+"pf": "Lavandula angustifolia"
+},
+"rosemary": {
+"fam": "Lamiaceae",
+"origin": "From the Mediterranean.",
+"grow": "Evergreen shrub of 1–1.5 m that needs sun and drainage. Flowers from late winter into spring.",
+"uses": "A cooking herb and a long-standing symbol of remembrance (\"rosemary, that's for remembrance\" in Hamlet), carried at weddings and funerals.",
+"insects": "Early flowers are valuable for bees.",
+"problems": "Rosemary beetle, root rot on wet clay and damage in hard winters.",
+"pf": "Rosmarinus officinalis"
+},
+"comfrey": {
+"fam": "Boraginaceae",
+"origin": "Common comfrey is native. 'Bocking 14' is a sterile Russian comfrey selected by Lawrence Hills at Bocking in Essex, founder of what became Garden Organic.",
+"grow": "Deep-rooted perennial of 1–1.5 m that dies back in winter. Sterile, so it spreads only from root pieces, but any fragment left in the ground regrows.",
+"uses": "Its old name 'knitbone' comes from its traditional use as a poultice for sprains and broken bones. Today it is grown mainly for mulch and liquid feed.",
+"insects": "Bell flowers feed bumblebees, especially long-tongued species; short-tongued bumblebees bite holes to steal the nectar.",
+"problems": "Contains pyrrolizidine alkaloids, which damage the liver, so it should not be eaten. Very hard to remove once planted; comfrey rust.",
+"pf": "Symphytum x uplandicum"
+},
+"rhubarb": {
+"fam": "Polygonaceae",
+"origin": "From Siberia and China.",
+"grow": "Crowns last ten years or more, need a cold winter rest and like rich, moist soil. Forcing under pots gives early, tender stems.",
+"uses": "Stems in crumbles, pies and jams. Rhubarb root is a traditional purgative in Chinese medicine. The Yorkshire Rhubarb Triangle around Wakefield is famous for candle-lit forcing sheds.",
+"insects": "Tall flower spikes are visited by flies and bees.",
+"problems": "Leaves are poisonous (oxalic acid). Crown rot in waterlogged soil; plants bolt in dry or stressed conditions.",
+"pf": "Rheum x hybridum"
+},
+"sorrel": {
+"fam": "Polygonaceae",
+"origin": "Native.",
+"grow": "Clump-forming perennial of 0.3–0.6 m that leafs up very early in spring and runs to seed in summer.",
+"uses": "Sorrel soup, green sauce and a sharp sauce for fish. The lemony taste comes from oxalic acid.",
+"insects": "Wind-pollinated; the leaves feed caterpillars of the small copper butterfly.",
+"problems": "Eat in moderation because of oxalic acid. Self-seeds; slugs and leaf beetles.",
+"pf": "Rumex acetosa"
+},
+"sweetcicely": {
+"fam": "Apiaceae",
+"origin": "From the mountains of Europe; naturalised in northern England and Scotland.",
+"grow": "Perennial of about 1 m with ferny, aniseed-scented leaves that appear very early, a deep taproot and a liking for shade. Self-seeds.",
+"uses": "Stewed with rhubarb or gooseberries it cuts their sharpness, so less sugar is needed. The green seeds can be chewed and the roots cooked.",
+"insects": "Early white umbels feed hoverflies and early bees.",
+"problems": "Related to poisonous hemlock: check for the strong aniseed smell before eating anything wild. Self-seeds.",
+"pf": "Myrrhis odorata"
+},
+"lovage": {
+"fam": "Apiaceae",
+"origin": "From the eastern Mediterranean; grown in Britain since Roman times.",
+"grow": "Tall perennial of 1.5–2 m that likes rich, moist soil and dies back in winter.",
+"uses": "Celery-flavoured leaves for soups and stocks; the hollow stems were used as drinking straws. A traditional digestive herb.",
+"insects": "Umbels attract hoverflies and parasitic wasps.",
+"problems": "Leaf miners and slugs on young shoots. The sap can make skin sensitive to sunlight.",
+"pf": "Levisticum officinale"
+},
+"yarrow": {
+"fam": "Asteraceae",
+"origin": "Native.",
+"grow": "Spreading perennial of 0.3–0.6 m that creeps by underground stems and tolerates drought and mowing.",
+"uses": "Named Achillea after Achilles, said to have treated soldiers' wounds with it; old names include soldier's woundwort and nosebleed. Also a traditional tea for colds.",
+"insects": "Flat flower heads feed hoverflies, ladybirds, parasitic wasps and soldier beetles.",
+"problems": "Spreads; can irritate sensitive skin.",
+"pf": "Achillea millefolium"
+},
+"fennel": {
+"fam": "Apiaceae",
+"origin": "From the Mediterranean; naturalised on British coasts.",
+"grow": "Perennial of 1.5–2 m with a deep taproot. Self-seeds freely.",
+"uses": "Seeds are a traditional digestive (the basis of gripe water) and flavour fish and bread; leaves and pollen are used in cooking.",
+"insects": "Yellow umbels attract hoverflies and solitary wasps all summer.",
+"problems": "Self-seeds everywhere; crosses with dill; aphids.",
+"pf": "Foeniculum vulgare"
+},
+"chives": {
+"fam": "Amaryllidaceae",
+"origin": "Native, though rare in the wild in Britain.",
+"grow": "Clump of about 30 cm that dies back in winter. Divide every few years to keep it vigorous.",
+"uses": "Leaves and edible flowers in cooking.",
+"insects": "Purple flowers are loved by bees.",
+"problems": "Onion white rot, rust and leek moth. Alliums are poisonous to dogs and cats.",
+"pf": "Allium schoenoprasum"
+},
+"tansy": {
+"fam": "Asteraceae",
+"origin": "Native.",
+"grow": "Spreading perennial of 0.6–1.2 m that creeps by underground stems.",
+"uses": "A traditional strewing herb to keep insects out of houses, a yellow dye, and a bitter ingredient in Easter tansy puddings.",
+"insects": "Button flowers attract ladybirds, lacewings and hoverflies; the rare tansy beetle lives on it near York.",
+"problems": "Poisonous (contains thujone), so not to be eaten. Spreads hard.",
+"pf": "Tanacetum vulgare"
+},
+"borage": {
+"fam": "Boraginaceae",
+"origin": "From the Mediterranean.",
+"grow": "Annual of about 0.6 m that self-seeds every year.",
+"uses": "Flowers in salads and summer drinks. 'Borage for courage': Roman soldiers were said to drink it in wine before battle. Seed oil is sold as starflower oil.",
+"insects": "Refills its nectar within minutes, making it one of the best plants for honeybees and bumblebees.",
+"problems": "Self-seeds widely; bristly hairs irritate skin. Contains small amounts of pyrrolizidine alkaloids, so eat flowers sparingly.",
+"pf": "Borago officinalis"
+},
+"calendula": {
+"fam": "Asteraceae",
+"origin": "From southern Europe.",
+"grow": "Hardy annual of 0.4–0.6 m that self-seeds and flowers from June until the frosts.",
+"uses": "Petals coloured butter, cheese and rice as 'poor man's saffron'. Calendula ointment is a traditional skin balm.",
+"insects": "Hoverflies and bees.",
+"problems": "Powdery mildew in late summer; blackfly.",
+"pf": "Calendula officinalis"
+},
+"phacelia": {
+"fam": "Boraginaceae",
+"origin": "From California.",
+"grow": "Fast annual of 0.6–0.9 m that flowers 6–8 weeks after sowing and dies in hard frost. Its fibrous roots open up soil.",
+"uses": "Bee forage and green manure.",
+"insects": "One of the best plants for bees, and popular with hoverflies.",
+"problems": "Can self-seed. Handling it gives some people a skin rash.",
+"pf": "Phacelia tanacetifolia"
+},
+"perkale": {
+"fam": "Brassicaceae",
+"origin": "An old French variety.",
+"grow": "Perennial kale that rarely flowers, so it is grown from cuttings. Spreads to about 1 m.",
+"uses": "Leaves cooked like kale all year round.",
+"insects": "Seldom flowers, so offers little to pollinators; cabbage white caterpillars feed on it.",
+"problems": "Cabbage whites, pigeons, clubroot, mealy cabbage aphid and whitefly.",
+"pf": "Brassica oleracea"
+},
+"artichoke": {
+"fam": "Asteraceae",
+"origin": "From the Mediterranean.",
+"grow": "Silver-leaved perennial of 1.2–1.5 m. Crowns crop well for 4–6 years and need good drainage and protection in cold, wet winters.",
+"uses": "Flower buds are eaten; a fashionable Tudor vegetable. The leaves are a traditional digestive herb.",
+"insects": "Open thistle-like flowers are bumblebee magnets.",
+"problems": "Winter wet rots the crowns; blackfly and slugs.",
+"pf": "Cynara cardunculus"
+},
+"goodkinghenry": {
+"fam": "Amaranthaceae",
+"origin": "Naturalised in Britain since ancient times.",
+"grow": "Long-lived perennial of 0.3–0.6 m that copes with shade and likes fertile soil.",
+"uses": "Young shoots were eaten as 'poor man's asparagus' and the leaves like spinach; an old cottage-garden pot herb.",
+"insects": "Wind-pollinated; of little interest to insects.",
+"problems": "Contains oxalates and saponins: cook it and eat in moderation. Slugs.",
+"pf": "Blitum bonus-henricus"
+},
+"lupin": {
+"fam": "Fabaceae",
+"origin": "From western North America.",
+"grow": "Short-lived perennial of 0.9–1.2 m with a deep taproot. Fixes nitrogen and prefers light, neutral to acid soil.",
+"uses": "Grown as an ornamental. Some other lupin species give edible seeds after long soaking, but this one does not.",
+"insects": "Bumblebees.",
+"problems": "Lupin aphid (large and grey) can kill plants; seeds are poisonous; self-seeds and has become invasive along rivers in Scotland.",
+"pf": "Lupinus polyphyllus"
+},
+"marjoram": {
+"fam": "Lamiaceae",
+"origin": "Native on chalk and limestone grassland.",
+"grow": "Perennial of 0.3–0.6 m that needs sun and drainage.",
+"uses": "The herb oregano, and a traditional tea for coughs and digestion.",
+"insects": "One of the best plants for butterflies, and popular with bees and hoverflies.",
+"problems": "Few; flops in rich soil; self-seeds.",
+"pf": "Origanum vulgare"
+},
+"strawberry": {
+"fam": "Rosaceae",
+"origin": "A hybrid of two American wild strawberries first raised in 18th-century France.",
+"grow": "Perennial that spreads by runners and crops well for three or four years. Needs sun.",
+"uses": "Fresh fruit and jam; strawberries and cream at Wimbledon.",
+"insects": "Flowers feed bees and flies; good pollination gives well-shaped fruit.",
+"problems": "Grey mould, slugs, birds, vine weevil and viruses. Replace plants every three or four years.",
+"pf": "Fragaria x ananassa"
+},
+"alpinestrawberry": {
+"fam": "Rosaceae",
+"origin": "Native to British woodland.",
+"grow": "Small clump that makes few runners and copes with shade.",
+"uses": "Tiny, intensely flavoured berries; the leaves make a tea.",
+"insects": "Bees and flies.",
+"problems": "Birds and slugs; small crop per plant.",
+"pf": "Fragaria vesca"
+},
+"whiteclover": {
+"fam": "Fabaceae",
+"origin": "Native.",
+"grow": "Creeping perennial that roots along its stems and fixes nitrogen with root bacteria.",
+"uses": "Grazing pasture and green manure; the flowers make a tea. Four-leaved clovers are a symbol of luck.",
+"insects": "A major honey plant, also loved by bumblebees.",
+"problems": "Creeps into beds and slugs shelter in it.",
+"pf": "Trifolium repens"
+},
+"thyme": {
+"fam": "Lamiaceae",
+"origin": "Wild thymes are native to British chalk grassland and heath.",
+"grow": "Low mat of 5–10 cm that needs sun and sharp drainage.",
+"uses": "Cooking herb; its oil, thymol, is a traditional antiseptic. The Romans used thyme in baths.",
+"insects": "Bees and butterflies; wild thyme is the food plant of the rare large blue butterfly.",
+"problems": "Rots on wet clay; goes woody after a few years.",
+"pf": "Thymus serpyllum"
+},
+"mint": {
+"fam": "Lamiaceae",
+"origin": "Several mints are native, such as water mint.",
+"grow": "Spreads fast by underground runners, especially in moist soil.",
+"uses": "Mint sauce with lamb, tea, and peppermint as a traditional digestive.",
+"insects": "Flowers feed hoverflies and bees.",
+"problems": "Very invasive; mint rust; mint beetle.",
+"pf": "Mentha spicata"
+},
+"nasturtium": {
+"fam": "Tropaeolaceae",
+"origin": "From Peru.",
+"grow": "Frost-tender annual that sprawls or climbs. Flowers best on poor soil; rich soil gives mostly leaves.",
+"uses": "Peppery leaves and flowers in salads; the seeds are pickled as 'poor man's capers'.",
+"insects": "Long-tongued bumblebees visit the spurred flowers; blackfly and cabbage white caterpillars are drawn to it.",
+"problems": "Blackfly and cabbage white caterpillars (which is why it works as a trap crop); killed by the first frost.",
+"pf": "Tropaeolum majus"
+},
+"ajuga": {
+"fam": "Lamiaceae",
+"origin": "Native, in damp woods and meadows.",
+"grow": "Evergreen carpet that spreads by runners in damp shade.",
+"uses": "Once called carpenter's herb and used to stop bleeding.",
+"insects": "Blue spikes in spring feed bumblebees and early butterflies.",
+"problems": "Powdery mildew in dry spells; spreads.",
+"pf": "Ajuga reptans"
+},
+"woodruff": {
+"fam": "Rubiaceae",
+"origin": "Native; a sign of ancient woodland.",
+"grow": "Fine carpet of about 20 cm for moist, humus-rich shade.",
+"uses": "Dried leaves smell of new-mown hay (from coumarin). Used to flavour German May wine and to scent linen and stuff mattresses.",
+"insects": "Small white flowers attract small flies and bees.",
+"problems": "Coumarin can harm the liver in large amounts, so use it only as a flavouring. Spreads in good conditions.",
+"pf": "Galium odoratum"
+},
+"winecap": {
+"fam": "Strophariaceae",
+"origin": "Found across Europe and North America on wood chip and straw.",
+"grow": "A fungus, not a plant: it colonises fresh hardwood chip or straw from bought spawn and fruits from summer to autumn.",
+"uses": "A large, meaty mushroom for cooking, sometimes called the garden giant.",
+"insects": "Feeds soil life as it digests the wood; slugs love it.",
+"problems": "Must be cooked, and some people find it disagrees with them. Be certain of identification before eating any mushroom. Slugs.",
+"pf": "Stropharia rugosoannulata"
+},
+"daffodil": {
+"fam": "Amaryllidaceae",
+"origin": "The wild daffodil is native.",
+"grow": "Bulbs that multiply into clumps; leaves die back by early summer.",
+"uses": "The national flower of Wales. Galantamine, a drug used for Alzheimer's disease, is extracted from daffodils, including crops grown in Wales.",
+"insects": "Early flowers feed queen bumblebees.",
+"problems": "Every part is poisonous, and the bulbs have been mistaken for onions. Narcissus bulb fly, basal rot, and fewer flowers when clumps get crowded.",
+"pf": "Narcissus pseudonarcissus"
+},
+"wildgarlic": {
+"fam": "Amaryllidaceae",
+"origin": "Native, especially in ancient woodland.",
+"grow": "Bulbs that carpet the ground in spring and die back by June; spreads by seed and bulbs.",
+"uses": "Pesto, soups and a traditional spring tonic, also called ramsons.",
+"insects": "White flowers feed early insects and hoverflies.",
+"problems": "Its leaves can be confused with lily of the valley and lords-and-ladies, both poisonous; crush a leaf and check for garlic smell. Spreads fast. It is illegal to dig up wild plants without the landowner's permission.",
+"pf": "Allium ursinum"
+},
+"camassia": {
+"fam": "Asparagaceae",
+"origin": "From western North America.",
+"grow": "Bulbs for damp meadows that flower in May.",
+"uses": "A staple food of Native American peoples of the Pacific Northwest, who pit-roasted the bulbs for a day or more to make them sweet.",
+"insects": "Bees.",
+"problems": "Raw bulbs are indigestible. In the wild it can be confused with poisonous death camas, which is not a garden issue. Slugs.",
+"pf": "Camassia quamash"
+},
+"perleek": {
+"fam": "Amaryllidaceae",
+"origin": "Native, mainly on coasts in south-west England, Wales and Ireland; named after the botanist Charles Babington.",
+"grow": "Perennial that grows from autumn to early summer and forms little bulbils in its flower heads.",
+"uses": "Used like leeks or mild garlic.",
+"insects": "Flowers are visited by bees.",
+"problems": "Allium rust, leek moth and white rot.",
+"pf": "Allium ampeloprasum babingtonii"
+},
+"welshonion": {
+"fam": "Amaryllidaceae",
+"origin": "From East Asia; 'Welsh' comes from an old word for foreign, not from Wales.",
+"grow": "Clump-forming perennial that stays green for most of the year.",
+"uses": "Used like spring onions; a staple of Japanese and Chinese cooking.",
+"insects": "Bees.",
+"problems": "Onion fly, rust and white rot.",
+"pf": "Allium fistulosum"
+},
+"oca": {
+"fam": "Oxalidaceae",
+"origin": "From the Andes.",
+"grow": "Bushy plant whose tubers only start forming after the autumn equinox, when days shorten. Frost kills the leaves.",
+"uses": "An Andean staple eaten raw (crisp and lemony) or cooked, and traditionally sun-dried.",
+"insects": "Of little interest to insects.",
+"problems": "Early frosts can kill the plants before the tubers swell; contains oxalic acid; slugs.",
+"pf": "Oxalis tuberosa"
+},
+"skirret": {
+"fam": "Apiaceae",
+"origin": "From eastern Europe and Asia; a popular Tudor vegetable.",
+"grow": "Perennial of about 1 m with a cluster of finger-like roots; likes moist soil.",
+"uses": "Roots boiled or roasted; once called 'sugar root' for its sweetness.",
+"insects": "Umbels attract hoverflies.",
+"problems": "Some roots have a woody core; slugs and carrot root fly.",
+"pf": "Sium sisarum"
+},
+"jartichoke": {
+"fam": "Asteraceae",
+"origin": "From North America.",
+"grow": "Sunflower relative of 2–3 m that forms knobbly tubers and spreads every year.",
+"uses": "Eaten by Native American peoples. The tubers store energy as inulin, which gut bacteria ferment, giving them a reputation for causing wind.",
+"insects": "Late flowers feed bees.",
+"problems": "Spreads and is hard to clear; flatulence; sclerotinia rot; slugs.",
+"pf": "Helianthus tuberosus"
+},
+"horseradish": {
+"fam": "Brassicaceae",
+"origin": "From south-east Europe and western Asia; naturalised in Britain.",
+"grow": "Deep taproot that regrows from any fragment left in the soil.",
+"uses": "Horseradish sauce with roast beef; a traditional remedy for blocked noses.",
+"insects": "White flowers attract small insects.",
+"problems": "Invasive. The pungent oils irritate eyes and skin when grating.",
+"pf": "Armoracia rusticana"
+},
+"kiwi": {
+"fam": "Actinidiaceae",
+"origin": "From north-east Asia.",
+"grow": "Vigorous deciduous climber of 6–15 m. Most varieties need a male and female plant; 'Issai' is self-fertile. Takes three to five years to start fruiting, and late frosts damage new shoots.",
+"uses": "Eaten whole, skin and all; rich in vitamin C. Traditionally foraged in Korea and the Russian Far East.",
+"insects": "Flowers are visited by bees.",
+"problems": "Late frosts, sheer vigour, and a slow start to cropping.",
+"pf": "Actinidia arguta"
+},
+"grape": {
+"fam": "Vitaceae",
+"origin": "Grapes are from the Mediterranean and western Asia; 'Phoenix' and 'Solaris' are modern disease-resistant hybrids.",
+"grow": "Vigorous climber that fruits on new shoots from last year's canes. Needs sun and a warm wall or post.",
+"uses": "Fresh grapes and wine. The Romans planted vineyards in Britain, and English sparkling wine now grows on the southern chalk.",
+"insects": "Small flowers are mostly self-pollinated; wasps and birds go for ripe grapes.",
+"problems": "Powdery and downy mildew, grey mould, wasps and birds.",
+"pf": "Vitis vinifera"
+},
+"hops": {
+"fam": "Cannabaceae",
+"origin": "Native.",
+"grow": "Herbaceous perennial whose twining stems climb 6 m each summer and die back in winter. Separate male and female plants; the cones grow on females.",
+"uses": "Beer, with Kent's oast houses as a lasting landmark; young shoots eaten like asparagus; hop pillows to help sleep.",
+"insects": "Food plant of comma and red admiral caterpillars; hop aphids draw in ladybirds.",
+"problems": "Hop aphid, powdery mildew and sheer vigour. The stems are rough on skin, and hops are poisonous to dogs.",
+"pf": "Humulus lupulus"
+},
+"runnerbean": {
+"fam": "Fabaceae",
+"origin": "From Central America; first grown in England in the 1600s as an ornamental for its red flowers.",
+"grow": "Frost-tender climber, grown here as an annual, that twines up to 2–3 m. Needs steady moisture.",
+"uses": "Green beans, picked young and often.",
+"insects": "Red flowers feed bumblebees; long-tongued ones pollinate, others bite holes to rob nectar.",
+"problems": "Blackfly, slugs, poor pod set in hot, dry weather, and frost. Raw beans contain lectins, so cook them.",
+"pf": "Phaseolus coccineus"
+},
+"blackberry": {
+"fam": "Rosaceae",
+"origin": "The bramble is native; thornless varieties are selected forms.",
+"grow": "Long canes fruit in their second year and root at the tips where they touch the soil.",
+"uses": "Jam, crumble and bramble jelly; the leaves make a tea. Folklore says not to pick after Michaelmas, when the devil spoils them.",
+"insects": "Flowers are loved by bees and butterflies, and brambles support hundreds of invertebrate species.",
+"problems": "Tip-rooting spreads it; raspberry beetle, cane spot and rust.",
+"pf": "Rubus fruticosus"
+},
+"schisandra": {
+"fam": "Schisandraceae",
+"origin": "From north-east China and the Russian Far East.",
+"grow": "Twining climber of 6–8 m that copes with shade and likes moist soil. Most plants need a partner of the opposite sex to fruit.",
+"uses": "Called five-flavour berry in China, where it is used in traditional medicine and made into tea.",
+"insects": "Flowers are visited by bees.",
+"problems": "Slow to establish; no fruit without male and female plants; few pests.",
+"pf": "Schisandra chinensis"
+}
+};
+const pfafUrl = n => 'https://pfaf.org/user/Plant.aspx?LatinName=' + n.trim().split(/\s+/).map(encodeURIComponent).join('+');
+const guildsWith = id => TREES.filter(t => t.guild.some(g => g.p === id)).map(t => t.name);
+function dirPlant(p) {
+  const i = PLANT_INFO[p.id] || {};
+  const facts = [
+    ['Family', i.fam], ['Origin', i.origin], ['Light', LIGHT[p.light]],
+    p.space ? ['Spacing', spacingText(p.space)] : null,
+    ['Harvest', p.harvest.length ? monthsText(p.harvest) : 'Not grown for food'],
+    p.y ? ['Yield per plant', `${kg(p.y[0])} kg young · ${kg(p.y[1])} kg mature`] : null,
+    ['Jobs in a guild', p.roles.map(r => ROLES[r].label).join(', ')],
+    guildsWith(p.id).length ? ['In example guilds', guildsWith(p.id).join(', ')] : null,
+  ].filter(Boolean).filter(f => f[1]);
+  return `<details class="pd-item" data-search="${esc((p.name + ' ' + p.latin + ' ' + (i.fam || '')).toLowerCase())}">
+    <summary><span class="dot" style="background:var(--l-${p.layer})">${p.ab}</span><b>${esc(p.name)} <i>${esc(p.latin)}</i></b><span class="tags">${esc(p.roles.map(r => ROLES[r].label).join(' · '))}${p.harvest.length && p.roles.includes('food') ? ' · pick ' + monthsText(p.harvest).replace('All year', 'all year') : ''}</span></summary>
+    <div class="pd-body">
+      <dl class="facts">${facts.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
+      <div class="pd-text">
+        <h4>How it grows</h4><p>${esc(i.grow || '')}</p>
+        <h4>Traditional uses</h4><p>${esc(i.uses || '')}</p>
+        <h4>Insects and wildlife</h4><p>${esc(i.insects || '')}</p>
+        <h4>Problems to watch for</h4><p>${esc(i.problems || '')}</p>
+        ${p.warn ? `<p class="warn">${esc(p.warn)}</p>` : ''}
+        <h4>Growing tip</h4><p>${esc(p.note)}</p>
+        <p class="pd-links">${i.pf ? `<a href="${pfafUrl(i.pf)}" target="_blank" rel="noopener">Plants For A Future entry</a>` : ''}</p>
+      </div>
+    </div>
+  </details>`;
+}
+function dirTree(t) {
+  const i = PLANT_INFO[t.id] || {}, rs = t.rootstocks[t.rs];
+  const facts = [
+    ['Family', i.fam], ['Origin', i.origin], ['Varieties', t.varieties], ['Pollination', t.pollination], ['Site', t.site],
+    ['Rootstocks', t.rootstocks.map(r => `${r.name}: ${r.ht}, ${r.mature[0]}–${r.mature[1]} kg mature`).join('; ')],
+    ['Blossom', t.blossom.length ? monthsText(t.blossom) : 'Hidden inside the fruit'], ['Harvest', monthsText(t.harvest)], ['Prune', monthsText(t.prune)],
+    ['Yield', `${rs.young[0]}–${rs.young[1]} kg in years 3–4, ${rs.mature[0]}–${rs.mature[1]} kg mature (${rs.name})`],
+  ].filter(f => f[1]);
+  return `<details class="pd-item" data-search="${esc((t.name + ' ' + t.latin + ' ' + (i.fam || '')).toLowerCase())}">
+    <summary><span class="dot" style="background:var(--bark)">${t.ab}</span><b>${esc(t.name)} <i>${esc(t.latin)}</i></b><span class="tags">Fruit tree · pick ${monthsText(t.harvest)} · prune ${monthsText(t.prune)}</span></summary>
+    <div class="pd-body">
+      <dl class="facts">${facts.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl>
+      <div class="pd-text">
+        <h4>How it grows</h4><p>${esc(i.grow || '')}</p>
+        <h4>Traditional uses</h4><p>${esc(i.uses || '')}</p>
+        <h4>Insects and wildlife</h4><p>${esc(i.insects || '')}</p>
+        <h4>Problems to watch for</h4><p>${esc(i.problems || '')}</p>
+        <h4>Pruning</h4><p>${esc(t.pruneNote)}</p>
+        <p class="pd-links"><button type="button" class="btn" data-dir-tree="${t.id}">See the example guild</button>${t.sources.map(([l, u]) => `<a href="${u}" target="_blank" rel="noopener">${esc(l)}</a>`).join('')}${i.pf ? `<a href="${pfafUrl(i.pf)}" target="_blank" rel="noopener">Plants For A Future entry</a>` : ''}</p>
+      </div>
+    </div>
+  </details>`;
+}
+function renderDirectory() {
+  const groups = [{ id: 'trees', name: 'Fruit trees', sw: 'var(--bark)', items: TREES.map(dirTree) }]
+    .concat(LAYERS.filter(l => l.id !== 'canopy').map(l => ({ id: l.id, name: l.name, sw: `var(--l-${l.id})`, items: PLANTS.filter(p => p.layer === l.id).sort((a, b) => a.name.localeCompare(b.name)).map(dirPlant) })));
+  $('#pdGroups').innerHTML = groups.map(g => `<details class="pd-group" data-group="${g.id}"><summary><span class="sw" style="background:${g.sw}"></span><h3>${g.name}</h3><span class="cnt">${g.items.length}</span></summary><div class="pd-list">${g.items.join('')}</div></details>`).join('');
+  $('#pdCount').textContent = `${TREES.length + PLANTS.length} plants`;
+}
+$('#pdSearch').addEventListener('input', e => {
+  const q = e.target.value.trim().toLowerCase();
+  let shown = 0;
+  document.querySelectorAll('#pdGroups .pd-group').forEach(g => {
+    let n = 0;
+    g.querySelectorAll('.pd-item').forEach(it => { const ok = !q || it.dataset.search.includes(q); it.hidden = !ok; if (ok) n++; });
+    g.hidden = n === 0;
+    g.querySelector('.cnt').textContent = n;
+    if (q) g.open = n > 0;
+    shown += n;
+  });
+  $('#pdCount').textContent = q ? `${shown} match${shown === 1 ? '' : 'es'}` : `${TREES.length + PLANTS.length} plants`;
+});
+$('#pdGroups').addEventListener('click', e => {
+  const b = e.target.closest('[data-dir-tree]'); if (!b) return;
+  atlasTree = b.dataset.dirTree; renderTabs(); renderAtlas(); goTo('guilds');
+});
+
 /* ---------- Boot ---------- */
 drawProfile();
 renderTabs();
@@ -3627,6 +4371,7 @@ setBuilderView(builderView);
 renderPrep();
 renderCalc();
 drawSoil();
+renderDirectory();
 store.connect();
 })();
 </script>

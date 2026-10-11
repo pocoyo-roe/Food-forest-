@@ -23,6 +23,7 @@ Each main section opens and closes like a drop-down, so the page starts as a sho
 - **Preparing the ground**: five methods with steps, effort, cost and evidence (Charles Dowding's cardboard and compost, Geoff Lawton's sheet mulching with support species, Paul Gautschi's Back to Eden wood chip, a light-proof cover for a season, and one-off digging followed by a sown ground cover), a picker that recommends methods for your plot, a materials calculator and a note on choosing safe cardboard.
 - **Soil life**: a hoverable cross-section of the soil food web, how soil builds step by step, current research rated as well supported, emerging, contested or practitioner ideas, and what it means for a guild.
 - **Chickens, soil and compost**: UK rules first (registering every flock, the ban on feeding kitchen scraps, bird flu biosecurity), five ways to put hens to work, each with a diagram of how it runs (Geoff Lawton's compost-turning flock, a chicken tractor to prepare ground, the Edible Acres compost run adapted for UK law, deep litter, and hens following other animals or the harvest), the research on chickens and soil rated by strength, and how to fit hens into a forest garden.
+- **Plant directory**: a drop-down for each group and each of the 69 plants (9 fruit trees and 60 companions), with family, origin, how it grows, traditional uses, yield, harvest months, spacing, insects and wildlife it supports, problems to watch for, and a link to its Plants For A Future entry. Searchable by common name, Latin name or family.
 - **UK growing notes**: planting season, summer pruning of stone fruit, frost pockets, pollination groups, mulching and planning for shade.
 
 ## Editing the plants
@@ -30,6 +31,7 @@ Each main section opens and closes like a drop-down, so the page starts as a sho
 All data lives in the `<script>` at the bottom of `index.html`:
 
 - `PLANTS`: companion plants, with layer, jobs, harvest months and yield per plant (young / mature, kg).
+- `PLANT_INFO`: plant directory profiles (family, origin, growth, traditional uses, insects, problems, PFAF name).
 - `SPACING`: planting density for herbaceous and ground cover plants (spacing in cm, plants per m², or sowing rate).
 - `TREES`: centre trees, with rootstocks, calendars, pruning notes and the suggested guild.
 
