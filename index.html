@@ -495,6 +495,11 @@ svg.editing.has-sel { cursor: crosshair; }
 .switch-prompt { display: grid; gap: .6rem; padding: .8rem .9rem; margin-bottom: 1rem; border-radius: var(--r); background: var(--accent-soft); font-size: .95rem; }
 .switch-prompt .sp-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
 
+/* Chickens */
+.chick-rules h3 { font-size: 1.1rem; margin-bottom: .5rem; }
+.chick-rules ul { margin: 0; padding-left: 1.1rem; display: grid; gap: .45rem; }
+
+
 /* Notes */
 .notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 1rem 2rem; }
 .note h3 { font-size: 1.1rem; margin-bottom: .35rem; }
@@ -569,6 +574,7 @@ footer p + p { margin-top: .4rem; }
       <a href="#ground">Ground prep</a>
       <a href="#soil">Soil life</a>
       <a href="#notes">UK notes</a>
+      <a href="#chickens">Chickens</a>
       <a href="#sources">Sources</a>
     </nav>
   </div>
@@ -988,6 +994,85 @@ footer p + p { margin-top: .4rem; }
       </details>
     </div>
   </section>
+  <section id="chickens">
+    <div class="wrap">
+      <details class="sec" data-sec="chickens">
+      <summary class="sec-sum"><span class="eyebrow">Animals in the system</span><h2>Chickens, soil and compost</h2><span class="tagline">How hens can turn waste and weeds into compost and fertile ground, and the UK rules to know first.</span></summary>
+      <div class="sec-body">
+      <div class="sec-intro"><p class="lede">Hens scratch, shred and manure whatever you give them. Kept moving and given plenty of carbon to work, they turn bedding, garden waste and weeds into compost, clear ground for new guilds and clean up windfalls under trees. Left too long in one place they strip the ground bare, compact it and overload it with nitrogen. Every method below works by managing where the hens are and what they scratch through.</p></div>
+
+      <div class="warnbox chick-rules">
+        <h3>UK rules before you start</h3>
+        <ul>
+          <li><b>Register your birds.</b> Since 2024 every keeper in Great Britain must register with the Animal and Plant Health Agency, even for one hen. New keepers have 30 days. <a href="https://www.gov.uk/government/consultations/poultry-and-other-captive-birds-registration-in-great-britain/outcome/summary-of-responses-and-government-response" target="_blank" rel="noopener">Government response</a></li>
+          <li><b>No kitchen scraps.</b> It is illegal to feed catering waste or kitchen scraps to poultry, even pets, because of the risk of spreading animal diseases. Vegetables picked from the garden and fed straight to the hens are treated differently from food that has been through the kitchen. This rules out the food-scrap compost systems used in the US unless you change the inputs. <a href="https://www.gov.uk/government/news/apha-warns-not-to-feed-kitchen-scraps-to-farm-animals-because-of-disease-risk" target="_blank" rel="noopener">APHA warning</a> · <a href="https://lowimpact.org/posts/whats-wrong-with-feeding-food-waste-to-chickens-and-other-livestock" target="_blank" rel="noopener">Why the law exists</a></li>
+          <li><b>Bird flu.</b> An Avian Influenza Prevention Zone requires biosecurity from all keepers, and housing orders can require birds to be kept under cover. Plan a covered run you can close. <a href="https://www.gov.uk/guidance/avian-influenza-bird-flu" target="_blank" rel="noopener">Current bird flu guidance</a></li>
+          <li><b>Rats and foxes.</b> Shut hens in at night and use a rat-proof feeder. Compost runs with food in them attract rats fast.</li>
+        </ul>
+      </div>
+
+      <div class="block-title" style="margin-top:2rem"><span>Five ways to put hens to work</span></div>
+      <div class="methods">
+        <details class="method" id="c-lawton" data-key="c-lawton">
+          <summary><div class="m-sum"><h3>Compost-turning flock ("chicken tractor on steroids")</h3><p class="who">Geoff Lawton, Zaytuna Farm, New South Wales</p><p class="m-quick"><span>Scale: <b>large garden</b></span><span>Labour: <b>weekly pile building</b></span><span>Output: <b>about 1 m³ of compost a week</b></span><span>UK: <b>no kitchen scraps</b></span></p></div></summary>
+          <div class="m-body">
+            <div><ol><li>Lay bedding under the roost and in the nest boxes. After a week it is full of manure.</li><li>Fork the manured bedding into a round compost cage with other bulky material: hay, straw, other manures and green waste.</li><li>Let the hens onto the pile. They scratch, shred and turn it while eating insects and seeds, and the pile heats up.</li><li>Build a new pile each week inside a ring of moveable electric netting, and move the old ones on as they mature.</li><li>Lawton reports rich compost in about 30 days, with the hens feeding largely from the piles rather than bought grain.</li></ol></div>
+            <div><dl class="facts"><dt>Soil benefit</dt><dd>A steady supply of finished compost for guilds and beds</dd><dt>Feed</dt><dd>Lawton gives grit and little or no grain; in the UK you will need some layers pellets</dd><dt>UK change</dt><dd>Build piles from garden waste, bedding and bought-in manure only. Feeding kitchen or restaurant scraps to poultry is illegal here.</dd></dl><p class="ev">Lawton's full video sits behind a login, so the details reach most people through summaries. One forum write-up of it says the compost-fed hens laid as well as grain-fed ones, and often better; treat that as second-hand. ECHO in Florida adapted the system after Lawton taught it on a design course. <a href="https://permies.com/t/33875/Geoff-Lawton-Chicken-Tractor-Steroids" target="_blank" rel="noopener">Summary of Lawton's video</a> · <a href="https://www.hobbyfarms.com/?p=42086" target="_blank" rel="noopener">Hobby Farms on chickens and compost</a> · <a href="https://www.echocommunity.org/resources/8898ec8d-e8ca-4216-a900-2825ed30f74a" target="_blank" rel="noopener">ECHO's adaptation</a></p></div>
+          </div>
+        </details>
+        <details class="method" id="c-tractor" data-key="c-tractor">
+          <summary><div class="m-sum"><h3>Chicken tractor to prepare new ground</h3><p class="who">A moveable pen over beds or new planting areas · used on a large scale at Zaytuna with electric netting</p><p class="m-quick"><span>Scale: <b>any garden</b></span><span>Labour: <b>move every 1–3 days</b></span><span>Soil benefit: <b>clears and manures ground</b></span><span>UK: <b>good fit</b></span></p></div></summary>
+          <div class="m-body">
+            <div><ol><li>Put a bottomless pen over grass or weeds where a new guild or bed will go.</li><li>Add a thin layer of compost or straw for the hens to work, and move the pen along every couple of days, before the ground turns bare and compacted.</li><li>The hens eat the weeds and grubs, scratch the surface open and leave manure behind.</li><li>Cover the worked strip straight away with wood chip or compost so the soil is never left bare.</li><li>Plant trees and shrubs into it. Give the ground a season under mulch before sowing salads and other crops eaten raw, so the fresh manure can break down.</li></ol></div>
+            <div><dl class="facts"><dt>Soil benefit</dt><dd>Kills turf and adds manure without digging, an alternative to cardboard for ground preparation</dd><dt>Watch out</dt><dd>Left too long in one place, hens strip the ground bare, compact it and overload it with nitrogen</dd><dt>UK change</dt><dd>None needed; a small pen of three or four hens suits most gardens</dd></dl><p class="ev">One gardener's version uses long beds about a metre wide, adding compost from one end and moving the tractor along every two days. Compare this with the other methods under Preparing the ground. <a href="https://naturalbuildingblog.com/no-work-chicken-gardening/" target="_blank" rel="noopener">No-work chicken gardening</a></p></div>
+          </div>
+        </details>
+        <details class="method" id="c-edible" data-key="c-edible">
+          <summary><div class="m-sum"><h3>Compost run (the Edible Acres system)</h3><p class="who">Sean Dembrosky, Edible Acres, Trumansburg, New York · modelled on the Vermont Compost Company</p><p class="m-quick"><span>Scale: <b>small farm</b></span><span>Labour: <b>collecting materials, some hand turning</b></span><span>Bonus: <b>compost heat</b></span><span>UK: <b>adapt the inputs</b></span></p></div></summary>
+          <div class="m-body">
+            <div><ol><li>Fence a run and fill it deep with a bulky mix of hay, wood chip and food waste.</li><li>Let the flock live on it. They forage through the pile all day, turning it as they go.</li><li>Keep adding fresh material on top; take finished compost from the bottom or the oldest end.</li><li>Supplement the hens with grain. Edible Acres trades for waste whole grains and sprouts leftover seed.</li><li>The working pile stays warm, and Edible Acres has used it to heat a winter run and a polytunnel.</li></ol></div>
+            <div><dl class="facts"><dt>Soil benefit</dt><dd>Large volumes of compost for a nursery and forest garden</dd><dt>Feed</dt><dd>Grain is the main cost; the pile supplies insects and greens</dd><dt>UK change</dt><dd>Feed the pile with wood chip, leaves, straw, grass clippings, garden waste and weeds, not kitchen or food-business scraps</dd></dl><p class="ev">Most of the detail comes from Dembrosky's own videos and forum posts rather than a written guide. The Vermont Compost Company, which inspired it, has fed about 800 hens on community food scraps with no bought grain since 1998. <a href="https://sustainabletompkins.org/signs-of-sustainability/tompkins-weekly-column/a-visit-with-t-burgs-edible-acres/" target="_blank" rel="noopener">A visit to Edible Acres</a> · <a href="https://permies.com/t/108008/critters/Edible-Acres-chickens-making-compost" target="_blank" rel="noopener">Dembrosky on the system</a> · <a href="https://www.wcax.com/2021/10/07/chickens-turn-compost-back-into-food" target="_blank" rel="noopener">Vermont Compost Company</a></p></div>
+          </div>
+        </details>
+        <details class="method" id="c-deep" data-key="c-deep">
+          <summary><div class="m-sum"><h3>Deep litter coop and run</h3><p class="who">The standard small-flock method, used by backyard keepers everywhere</p><p class="m-quick"><span>Scale: <b>any flock</b></span><span>Labour: <b>top up, empty once a year</b></span><span>Soil benefit: <b>compost made in place</b></span><span>UK: <b>good fit</b></span></p></div></summary>
+          <div class="m-body">
+            <div><ol><li>Start with 10–20 cm of dry carbon bedding: wood shavings, straw, hemp or, outside, wood chip.</li><li>Add a fresh layer whenever it smells or looks wet, rather than mucking out.</li><li>The hens turn the manure into the bedding as they scratch, and it composts slowly in place.</li><li>Once a year, dig out the bottom layer. Finish it in a compost heap or spread it as mulch around established trees.</li></ol></div>
+            <div><dl class="facts"><dt>Soil benefit</dt><dd>Rich, part-composted litter for mulching guilds</dd><dt>Watch out</dt><dd>Keep it dry and well ventilated; stop if it smells of ammonia</dd><dt>UK change</dt><dd>Have a covered area ready in case of a bird flu housing order</dd></dl><p class="ev">Carbon bedding soaks up the nitrogen in manure; moisture and air keep it composting rather than going sour. Composting slows almost to a stop in a hard freeze. <a href="https://the-chicken-chick.com/the-deep-litter-method-of-waste/" target="_blank" rel="noopener">The deep litter method</a></p></div>
+          </div>
+        </details>
+        <details class="method" id="c-follow" data-key="c-follow">
+          <summary><div class="m-sum"><h3>Hens following other animals or the harvest</h3><p class="who">Joel Salatin's Eggmobile at Polyface Farm, Virginia · orchard trials in Oregon and Michigan</p><p class="m-quick"><span>Scale: <b>orchard or pasture</b></span><span>Labour: <b>moving a mobile house</b></span><span>Soil benefit: <b>spreads manure thinly</b></span><span>UK: <b>for larger sites</b></span></p></div></summary>
+          <div class="m-body">
+            <div><ol><li>At Polyface, cattle graze a fresh strip each day and a mobile hen house follows about three days behind.</li><li>The hens scratch apart the cow pats, spreading the manure and eating the fly larvae in them.</li><li>Moving them on keeps their own high-nitrogen manure from building up in one place.</li><li>In an orchard, let hens in after harvest and in early spring to clean up windfalls, weeds and grubs, then move them on.</li></ol></div>
+            <div><dl class="facts"><dt>Soil benefit</dt><dd>Manure spread thinly and evenly instead of concentrated near the house</dd><dt>Pests</dt><dd>Mixed evidence; see the research below</dd><dt>UK change</dt><dd>Fits a field-scale food forest or orchard more than a garden</dd></dl><p class="ev">Salatin's rule is that portable housing stops nitrogen and disease building up where birds gather. <a href="https://www.motherearthnews.com/homesteading-and-livestock/polyface-eggmobile-zbcz1507/" target="_blank" rel="noopener">The Polyface Eggmobile</a> · <a href="https://extension.oregonstate.edu/catalog/em-9320-chicken-tractors-moveable-flocks-help-manage-orchard-pests" target="_blank" rel="noopener">Oregon State: chicken tractors in orchards</a></p></div>
+          </div>
+        </details>
+      </div>
+
+      <div class="filter-row" style="margin-top:2.5rem"><span>What the research says</span></div>
+      <div class="research" style="margin-top:.6rem">
+<details class="finding" data-c="emerging"><summary><div class="f-head"><span class="conf emerging">Emerging</span><h3>Compost-fed hens can lay as well as grain-fed</h3></div></summary><p>A Vermont farm trial compared hens fed from an active food-scrap compost system with grain-fed hens: 1,032 eggs against 1,036 over 107 days, and deeper yolks (13 against 5–7 on the colour scale). The compost system took more labour and needed wood chip and hay. Food scraps cannot legally be used this way in the UK.</p><p class="src"><a href="https://projects.sare.org/project-reports/fne14-801/" target="_blank" rel="noopener">SARE report FNE14-801, Black Dirt Farm</a> · <a href="https://projects.sare.org/wp-content/uploads/Feeding-Community-Food-Scraps-to-Laying-Hens-in-an-Active-Composting-System-manual.pdf" target="_blank" rel="noopener">Operator's manual (PDF)</a></p></details>
+<details class="finding" data-c="contested"><summary><div class="f-head"><span class="conf contested">Mixed</span><h3>Density decides whether hens build or damage soil</h3></div></summary><p>In an Italian olive grove grazed by chickens for over 20 years, soil carbon and nitrogen were lower near the houses where birds crowded, and matched ungrazed soil 50 m away. The authors conclude that high density harms soil while moderate grazing lets it recover.</p><p class="src"><a href="https://research.unipg.it/handle/11391/1604834" target="_blank" rel="noopener">University of Perugia, olive grove study (2025)</a></p></details>
+<details class="finding" data-c="emerging"><summary><div class="f-head"><span class="conf emerging">Emerging</span><h3>Manure raises organic matter where it lands</h3></div></summary><p>A SARE pastured poultry project found higher organic matter and better water infiltration where manure was deposited, but no change in soil compaction after grazing. A 2025 North Carolina silvopasture study found more soil carbon under rotated broilers, though some of the difference existed before the birds arrived.</p><p class="src"><a href="https://projects.sare.org/sare_project/fw01-010/" target="_blank" rel="noopener">SARE: pastured poultry project</a> · <a href="https://janeway.uncpress.org/capstone/article/id/2861" target="_blank" rel="noopener">UNC Asheville silvopasture study</a></p></details>
+<details class="finding" data-c="contested"><summary><div class="f-head"><span class="conf contested">Mixed</span><h3>Chickens in orchards: good on weeds, patchy on pests</h3></div></summary><p>In a 13-month Oregon trial, chickens (especially broilers) reduced weeds and some pests in an organic apple orchard, but results were "not as promising" as hoped. Michigan trials in 1990–91 found spring flocks controlled weeds as well as herbicide, with no clear effect on codling moth.</p><p class="src"><a href="https://extension.oregonstate.edu/catalog/em-9320-chicken-tractors-moveable-flocks-help-manage-orchard-pests" target="_blank" rel="noopener">Oregon State EM 9320</a> · <a href="https://projects.sare.org/sare_project/lnc91-022-1/" target="_blank" rel="noopener">SARE: sustainable apple production, Michigan</a></p></details>
+<details class="finding" data-c="strong"><summary><div class="f-head"><span class="conf strong">Well supported</span><h3>Trees get hens out ranging</h3></div></summary><p>Woodland Trust research on UK egg farms found that planting trees on around 20% of a hen range encourages birds to range further, which reduces feather pecking and spreads manure, and creates woodland-edge habitat for song thrushes, tree sparrows and bats.</p><p class="src"><a href="https://www.woodlandtrust.org.uk/media/49130/trees-on-hen-ranges-are-havens-for-wildlife-15064-woodland-eggs-research-briefing.pdf" target="_blank" rel="noopener">Woodland Trust research briefing (PDF)</a> · <a href="https://www.woodlandtrust.org.uk/media/1796/tree-planting-for-poultry.pdf" target="_blank" rel="noopener">Tree planting for poultry (PDF)</a></p></details>
+      </div>
+
+      <div class="dos">
+        <div><h3>Keep them off new guilds</h3><p>Hens dig around young trees and undermine their roots. Keep them out for the first two years, or ring trees with logs, flat stones or brush so they can't scratch near the trunk.</p></div>
+        <div><h3>Use them before you plant</h3><p>Run a chicken tractor over the site of your next guild for a few weeks, then mulch it. It does the job of cardboard and adds manure.</p></div>
+        <div><h3>Bring them in after harvest</h3><p>A short visit to mature guilds in autumn and early spring cleans up windfalls, slugs and grubs, then move them on before they reach the mulch around shallow roots.</p></div>
+        <div><h3>Plant for the flock</h3><p>Mulberry, elder, sea buckthorn and Siberian pea shrub drop fruit and seed hens love, and give them shade and shelter from hawks.</p></div>
+        <div><h3>More carbon than you think</h3><p>Every bucket of manure needs several of wood chip, straw or leaves. If the run or the heap smells of ammonia, add more carbon.</p></div>
+        <div><h3>Compost before it feeds crops</h3><p>Fresh chicken manure is strong enough to scorch plants. Compost it, or let it break down under mulch for a season, before it goes near salads and root crops.</p></div>
+      </div>
+      <p class="warnbox">The research on chickens and soil is thin: mostly short trials, single farms and practitioner accounts. The pattern across it is consistent, though. Moving hens and giving them carbon builds soil; crowding them in one place wears it out.</p>
+      </div>
+      </details>
+    </div>
+  </section>
+
   <section id="sources">
     <div class="wrap">
       <details class="sec" data-sec="sources">
@@ -1048,6 +1133,19 @@ footer p + p { margin-top: .4rem; }
           <li><a href="https://www.spun.earth/articles/the-underground-atlas-is-live" target="_blank" rel="noopener">SPUN: the Underground Atlas</a><span>Interactive global maps of mycorrhizal fungi.</span></li>
           <li><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6382109/" target="_blank" rel="noopener">Stroud 2019: on-farm earthworm survey</a><span>Rothamsted's #60minworms survey of English fields.</span></li>
           <li><a href="https://digital.library.adelaide.edu.au/items/859bce9c-d575-40cb-8ec9-554c8c0670f2" target="_blank" rel="noopener">Bowles et al. 2017: tillage, cover crops and mycorrhizas</a><span>Meta-analysis of 54 field studies.</span></li>
+          </ul>
+        </details>
+        <details class="src-group"><summary><h3>Chickens and soil</h3><span>9</span></summary>
+          <ul>
+          <li><a href="https://permies.com/t/33875/Geoff-Lawton-Chicken-Tractor-Steroids" target="_blank" rel="noopener">Geoff Lawton: chicken tractor on steroids (summary)</a><span>The compost-turning flock system from Zaytuna Farm.</span></li>
+          <li><a href="https://sustainabletompkins.org/signs-of-sustainability/tompkins-weekly-column/a-visit-with-t-burgs-edible-acres/" target="_blank" rel="noopener">A visit to Edible Acres</a><span>Sean Dembrosky's chicken compost system and forest nursery.</span></li>
+          <li><a href="https://projects.sare.org/wp-content/uploads/Feeding-Community-Food-Scraps-to-Laying-Hens-in-an-Active-Composting-System-manual.pdf" target="_blank" rel="noopener">SARE: hens in an active composting system (PDF)</a><span>Operator's manual and trial results from Vermont.</span></li>
+          <li><a href="https://www.motherearthnews.com/homesteading-and-livestock/polyface-eggmobile-zbcz1507/" target="_blank" rel="noopener">The Polyface Eggmobile</a><span>Hens following cattle to spread manure and break fly cycles.</span></li>
+          <li><a href="https://extension.oregonstate.edu/catalog/em-9320-chicken-tractors-moveable-flocks-help-manage-orchard-pests" target="_blank" rel="noopener">Oregon State: chicken tractors in orchards</a><span>13-month trial on orchard pests and weeds.</span></li>
+          <li><a href="https://research.unipg.it/handle/11391/1604834" target="_blank" rel="noopener">Chickens and soil in an olive grove</a><span>Twenty years of poultry grazing and what density does to soil.</span></li>
+          <li><a href="https://www.woodlandtrust.org.uk/media/1796/tree-planting-for-poultry.pdf" target="_blank" rel="noopener">Woodland Trust: tree planting for poultry (PDF)</a><span>Designing tree cover on hen ranges in the UK.</span></li>
+          <li><a href="https://www.gov.uk/government/news/apha-warns-not-to-feed-kitchen-scraps-to-farm-animals-because-of-disease-risk" target="_blank" rel="noopener">APHA: don't feed kitchen scraps to farm animals</a><span>The UK law on catering waste, which covers pet hens.</span></li>
+          <li><a href="https://www.businesscompanion.info/en/quick-guides/animals-and-agriculture/registration-and-records-of-poultry-and-other-captive-birds" target="_blank" rel="noopener">Registering poultry and captive birds</a><span>Who must register and how.</span></li>
           </ul>
         </details>
         <details class="src-group"><summary><h3>Plants for the understory</h3><span>2</span></summary>
