@@ -27,6 +27,7 @@
   --harvest: #5d2a51;
   --prune: #8f7a5c;
   --gap: #c9b7a1;
+  --sky: #e6ede6;
 
   --l-canopy: #2e5e3e;
   --l-subcanopy: #6a8b33;
@@ -52,7 +53,7 @@
   :root:not([data-theme="light"]) {
     --bg: #131a15; --surface: #1a231d; --surface-2: #222d25; --ink: #e2e8dc; --muted: #9aa898;
     --line: #2f3b32; --accent: #d9a2cb; --accent-soft: #3b2536; --on-accent: #21121d;
-    --soil: #3a3125; --bark: #a07a5a; --blossom: #b8668f; --harvest: #d9a2cb; --prune: #a99372; --gap: #4a3d30;
+    --soil: #3a3125; --bark: #a07a5a; --blossom: #b8668f; --harvest: #d9a2cb; --prune: #a99372; --gap: #4a3d30; --sky: #18211c;
     --l-canopy: #5f9b6c; --l-subcanopy: #93b25a; --l-shrub: #c27aad; --l-herb: #d1a64a;
     --l-ground: #4fb0a5; --l-root: #b9845f; --l-climber: #7f97d9; --on-layer: #10160f;
     color-scheme: dark;
@@ -61,7 +62,7 @@
 :root[data-theme="dark"] {
   --bg: #131a15; --surface: #1a231d; --surface-2: #222d25; --ink: #e2e8dc; --muted: #9aa898;
   --line: #2f3b32; --accent: #d9a2cb; --accent-soft: #3b2536; --on-accent: #21121d;
-  --soil: #3a3125; --bark: #a07a5a; --blossom: #b8668f; --harvest: #d9a2cb; --prune: #a99372; --gap: #4a3d30;
+  --soil: #3a3125; --bark: #a07a5a; --blossom: #b8668f; --harvest: #d9a2cb; --prune: #a99372; --gap: #4a3d30; --sky: #18211c;
   --l-canopy: #5f9b6c; --l-subcanopy: #93b25a; --l-shrub: #c27aad; --l-herb: #d1a64a;
   --l-ground: #4fb0a5; --l-root: #b9845f; --l-climber: #7f97d9; --on-layer: #10160f;
   color-scheme: dark;
@@ -279,6 +280,28 @@ textarea { resize: vertical; }
 .mcard li { display: grid; grid-template-columns: auto 1fr; gap: .4rem; align-items: start; }
 .mcard .quiet { color: var(--muted); }
 
+/* Plan / 3D switch */
+.viewtabs { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px; background: var(--surface); justify-self: start; }
+.viewtabs button { border: 0; background: transparent; padding: .3rem .9rem; border-radius: 999px; cursor: pointer; font-size: .9rem; color: var(--muted); }
+.viewtabs button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+.v3d { display: grid; gap: .7rem; }
+.v3d-stage { position: relative; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; background: var(--sky); aspect-ratio: 5 / 4; max-height: 560px; touch-action: none; }
+.v3d-stage canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+.v3d-stage canvas:active { cursor: grabbing; }
+.v3d-stage canvas:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.v3d-compass { position: absolute; font-family: var(--f-data); font-size: .75rem; font-weight: 500; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; width: 1.6rem; height: 1.6rem; display: grid; place-items: center; transform: translate(-50%, -50%); pointer-events: none; }
+.v3d-hint { position: absolute; left: .6rem; bottom: .5rem; font-size: var(--step--1); color: var(--muted); background: color-mix(in srgb, var(--surface) 80%, transparent); padding: .1rem .45rem; border-radius: 6px; pointer-events: none; }
+.v3d-msg { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 1.5rem; color: var(--muted); }
+.v3d-row { display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: var(--surface); }
+.seg button { border: 0; border-right: 1px solid var(--line); background: transparent; padding: .3rem .6rem; font-size: .85rem; cursor: pointer; }
+.seg button:last-child { border-right: 0; }
+.seg button:hover { background: var(--surface-2); }
+.seg button[aria-pressed="true"] { background: var(--surface-2); font-weight: 700; }
+.v3d-month { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .3rem .75rem; align-items: center; font-size: .9rem; flex: 1 1 260px; min-width: 0; max-width: 100%; }
+.v3d-month input { width: 100%; accent-color: var(--accent); }
+.v3d-month output { grid-column: 1 / -1; font-size: var(--step--1); color: var(--muted); font-family: var(--f-data); }
+
 /* Notes */
 .notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 1rem 2rem; }
 .note h3 { font-size: 1.1rem; margin-bottom: .35rem; }
@@ -446,7 +469,35 @@ footer p + p { margin-top: .4rem; }
         </div>
         <div class="b-results">
           <div class="plan-wrap">
+            <div class="viewtabs" role="group" aria-label="Guild view">
+              <button type="button" data-view="plan" aria-pressed="true">Plan</button>
+              <button type="button" data-view="3d" aria-pressed="false">3D</button>
+            </div>
             <div class="plan" id="bPlan"></div>
+            <div class="v3d" id="b3d" hidden>
+              <div class="v3d-stage" id="b3dStage">
+                <canvas id="b3dCanvas" tabindex="0" aria-label="3D view of the guild. Drag or use the arrow keys to turn it, scroll or use plus and minus to zoom."></canvas>
+                <span class="v3d-compass" id="b3dN" hidden>N</span>
+                <span class="v3d-hint">Drag to turn · scroll or pinch to zoom · hover a plant</span>
+                <p class="v3d-msg" id="b3dMsg">Loading the 3D view…</p>
+              </div>
+              <div class="v3d-row">
+                <div class="seg" role="group" aria-label="Viewpoint" id="b3dViews">
+                  <button type="button" data-cam="south">From south</button><button type="button" data-cam="west">West</button><button type="button" data-cam="north">North</button><button type="button" data-cam="east">East</button><button type="button" data-cam="above">Above</button><button type="button" data-cam="ground">Eye level</button>
+                </div>
+                <button type="button" class="btn" id="b3dSpin" aria-pressed="false">Spin</button>
+              </div>
+              <div class="v3d-row">
+                <label class="v3d-month" for="b3dMonth">Month
+                  <input type="range" id="b3dMonth" min="1" max="12" step="1">
+                  <output id="b3dMonthOut" for="b3dMonth"></output>
+                </label>
+                <div class="seg" role="group" aria-label="Guild age" id="b3dAge">
+                  <button type="button" data-age="young">Year 3</button><button type="button" data-age="mature">Mature</button>
+                </div>
+              </div>
+              <p class="y-note">Plants are simplified shapes drawn to scale from the rootstock size. Shadows show where the noon sun falls in the chosen month, so you can see which plants end up in shade.</p>
+            </div>
           </div>
           <div>
             <div class="block-title"><span>Your guild</span><span id="bCount"></span></div>
@@ -990,9 +1041,12 @@ function tipHTML(key) {
 function showTip(el) {
   const key = el.getAttribute('data-tip'); if (!key) return;
   tipAnchor = el;
+  placeTip(key, el.getBoundingClientRect());
+  linkHighlight(el, true);
+}
+function placeTip(key, rc) {
   tip.innerHTML = tipHTML(key);
   tip.setAttribute('aria-hidden', 'false');
-  const rc = el.getBoundingClientRect();
   const tw = tip.offsetWidth, th = tip.offsetHeight, vw = innerWidth, vh = innerHeight;
   let x = rc.left + rc.width / 2 - tw / 2;
   x = Math.max(12, Math.min(vw - tw - 12, x));
@@ -1000,7 +1054,6 @@ function showTip(el) {
   if (y + th > vh - 12) y = Math.max(12, rc.top - th - 10);
   tip.style.left = x + 'px'; tip.style.top = y + 'px';
   tip.classList.add('show');
-  linkHighlight(el, true);
 }
 function hideTip() {
   if (tipAnchor) linkHighlight(tipAnchor, false);
@@ -1086,11 +1139,10 @@ const RING = { climber: 26, ground: 58, root: 92, herb: 126, shrub: 160, subcano
 const ARC = { shrub: [-165, -15], subcanopy: [-150, -30] };   // tall plants on the north arc
 const SINGLE = { subcanopy: -125, shrub: -55 };            // keep lone tall plants apart
 const OFFSET = { climber: 40, ground: 15, root: 0, herb: 30, shrub: 0, subcanopy: 0 };
-function planSVG(tree, rsIndex, items, ctx) {
-  const rs = tree.rootstocks[rsIndex];
-  const byLayer = {};
+// Positions of each guild member in plan units (drip line = 110), shared by the plan and 3D views.
+function layoutGuild(items) {
+  const byLayer = {}, out = [];
   items.forEach(it => { const p = PLANT[it.p]; if (p.layer === 'canopy') return; (byLayer[p.layer] ||= []).push(it); });
-  let marks = '';
   Object.entries(byLayer).forEach(([layer, list]) => {
     let [a0, a1] = ARC[layer] || [-90 + OFFSET[layer], 270 + OFFSET[layer]];
     const full = !ARC[layer];
@@ -1104,7 +1156,15 @@ function planSVG(tree, rsIndex, items, ctx) {
       const p = PLANT[it.p];
       const ang = (list.length === 1 && !isFull ? (SINGLE[layer] ?? (a0 + a1) / 2) : a0 + step * i) * Math.PI / 180;
       const rr = R + (crowded ? (i % 2 ? 9 : -9) : 0);
-      const x = Math.cos(ang) * rr, y = Math.sin(ang) * rr;
+      out.push({ it, p, x: Math.cos(ang) * rr, y: Math.sin(ang) * rr });
+    });
+  });
+  return out;
+}
+function planSVG(tree, rsIndex, items, ctx) {
+  const rs = tree.rootstocks[rsIndex];
+  let marks = '';
+  layoutGuild(items).forEach(({ it, p, x, y }) => {
       const link = `${ctx}-${it.p}`;
       const tipKey = ctx === 'atlas' ? `gp:${it.p}:${tree.id}` : `p:${it.p}`;
       marks += `<g class="mk" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})" data-tip="${tipKey}" data-link="${link}" tabindex="0" role="button" aria-label="${esc(p.name)}">
@@ -1112,7 +1172,6 @@ function planSVG(tree, rsIndex, items, ctx) {
         <text text-anchor="middle" dy="4" font-size="10" style="fill:var(--on-layer);font-family:var(--f-data)">${p.ab}</text>
         ${it.n > 1 ? `<g transform="translate(12 -11)"><circle r="8.5" style="fill:var(--ink)"/><text text-anchor="middle" dy="3.2" font-size="8.5" style="fill:var(--bg);font-family:var(--f-data)">${it.n > 99 ? '99' : it.n}</text></g>` : ''}
       </g>`;
-    });
   });
   return `<svg viewBox="-212 -226 424 440" role="img" aria-label="Plan view of the ${esc(tree.name)} guild">
     <circle r="206" style="fill:var(--surface-2)"/>
@@ -1309,6 +1368,7 @@ function renderPick() {
 function renderResults() {
   const t = TREE[state.tree]; const items = state.items;
   $('#bPlan').innerHTML = planSVG(t, state.rs, items, 'b') + legendHTML();
+  view3d.update();
   const total = items.reduce((a, i) => a + i.n, 0);
   $('#bCount').textContent = `${items.length} kinds · ${total} plants`;
   const order = Object.fromEntries(LAYERS.map((l, i) => [l.id, i]));
@@ -1366,8 +1426,394 @@ $('#bRoot').addEventListener('change', e => { state.rs = +e.target.value; save()
 $('#bSuggest').addEventListener('click', () => { state.items = TREE[state.tree].guild.map(g => ({ p: g.p, n: g.n })); save(); renderBuilder(false); });
 $('#bClear').addEventListener('click', () => { state.items = []; save(); renderBuilder(false); });
 
-/* ---------- My guilds ---------- */
+/* ---------- 3D view ---------- */
 const NOW = new Date(), CUR_M = NOW.getMonth() + 1, CUR_Y = NOW.getFullYear();
+// Visual hints per plant: h/w in metres, leaf/flower/fruit colours, months in flower, evergreen.
+const VIS_LAYER = {
+  subcanopy: { shape: 'tree', h: 3, w: 2.2, leaf: '#5f8a3c' },
+  shrub: { shape: 'bush', h: 1.3, w: 1.1, leaf: '#4f7d3a' },
+  herb: { shape: 'clump', h: 0.7, w: 0.5, leaf: '#5b8a3e' },
+  ground: { shape: 'mat', h: 0.1, w: 0.35, leaf: '#4f8a46' },
+  root: { shape: 'bulb', h: 0.35, w: 0.15, leaf: '#6a9a4a' },
+  climber: { shape: 'vine', h: 3, w: 0.3, leaf: '#4f7d3a' },
+};
+const VIS = {
+  hazel: { h: 4, w: 3, flower: ['#d8c86a', [2]] }, elder: { h: 3.5, w: 2.6, flower: ['#f1ead0', [6]], fruit: '#1e1420' },
+  seabuck: { h: 3, w: 2, leaf: '#9aa58a', fruit: '#f08a1a' }, siberianpea: { h: 3, w: 2, flower: ['#f2d23a', [5]] }, alder: { h: 5, w: 2.5, leaf: '#3f6a3a' },
+  blackcurrant: { fruit: '#22122a' }, redcurrant: { fruit: '#c8102e' }, gooseberry: { fruit: '#9cbf45' }, jostaberry: { h: 1.6, w: 1.4, fruit: '#3a1830' },
+  blueberry: { fruit: '#3b4f9a', leaf: '#3f6a4a' }, honeyberry: { fruit: '#2f3f7a' }, raspberry: { h: 1.6, w: 0.8, fruit: '#d22f4a' }, wineberry: { fruit: '#c7203a' },
+  aronia: { fruit: '#1e1a2a' }, elaeagnus: { h: 1.8, w: 1.6, leaf: '#7c8a62', fruit: '#c8302a', ev: true, flower: ['#efe8d0', [10]] }, goumi: { fruit: '#c8302a' },
+  ugni: { h: 1, w: 0.9, leaf: '#3f5f3a', fruit: '#b0303a', ev: true }, lavender: { h: 0.6, w: 0.7, leaf: '#93a596', flower: ['#8a6ac8', [6,7,8]], ev: true },
+  rosemary: { h: 0.9, w: 0.8, leaf: '#5f7a62', flower: ['#8fa6d8', [2,3,4,5]], ev: true },
+  comfrey: { h: 1, w: 0.7, leaf: '#3f6a34', flower: ['#9a5ab8', [5,6,7,8]] }, rhubarb: { h: 0.8, w: 1, leaf: '#4f7a32', flower: ['#f1ead0', [6]] },
+  sorrel: { h: 0.5, leaf: '#5f9a3a' }, sweetcicely: { h: 0.9, w: 0.7, leaf: '#6a9a4a', flower: ['#f6f4ea', [4,5]] }, lovage: { h: 1.6, w: 0.7, flower: ['#d8d06a', [6,7]] },
+  yarrow: { h: 0.6, flower: ['#f4f0e4', [6,7,8,9]] }, fennel: { h: 1.5, w: 0.6, leaf: '#7a9a4a', flower: ['#e8d23a', [6,7,8,9]] },
+  chives: { h: 0.35, w: 0.25, leaf: '#3f7a3a', flower: ['#c27bc0', [5,6]] }, tansy: { h: 1, flower: ['#e8c81a', [7,8,9]] }, borage: { h: 0.7, w: 0.6, flower: ['#4f7fd6', [6,7,8,9]] },
+  calendula: { h: 0.45, w: 0.4, flower: ['#f29a1d', [6,7,8,9,10]] }, phacelia: { h: 0.6, flower: ['#8a7fd6', [6,7,8]] }, perkale: { h: 1, w: 0.8, leaf: '#3d5f4a', ev: true },
+  artichoke: { h: 1.3, w: 0.9, leaf: '#9fb0a0', flower: ['#8a5ac8', [7,8]] }, goodkinghenry: { h: 0.5 }, lupin: { h: 1, flower: ['#7a6ad8', [6,7]] },
+  marjoram: { h: 0.4, flower: ['#d48ab8', [7,8,9]] },
+  strawberry: { fruit: '#d8202a', flower: ['#f6f4ea', [5]] }, alpinestrawberry: { fruit: '#d8202a', w: 0.25 }, whiteclover: { w: 0.6, flower: ['#f6f4ea', [6,7,8]] },
+  thyme: { leaf: '#7a8a6a', flower: ['#d48ab8', [6,7]], ev: true }, mint: { h: 0.3, flower: ['#b8a0d8', [7,8]] }, nasturtium: { h: 0.25, w: 0.5, leaf: '#6f9a3b', flower: ['#f07a1a', [6,7,8,9,10]] },
+  ajuga: { leaf: '#3f4f3a', flower: ['#4f5fc8', [5]], ev: true }, woodruff: { flower: ['#f6f4ea', [5]] }, winecap: { shape: 'mush', fruit: '#8a3a2a' },
+  daffodil: { flower: ['#f4d21a', [3,4]], season: [2,3,4,5] }, wildgarlic: { h: 0.3, w: 0.3, flower: ['#f6f4ea', [4,5]], season: [2,3,4,5] },
+  camassia: { h: 0.6, flower: ['#5f6ad8', [5]], season: [4,5,6] }, perleek: { h: 0.6, season: [2,3,4,5,6,7] }, welshonion: { h: 0.5, ev: true },
+  oca: { h: 0.4, w: 0.4, season: [5,6,7,8,9,10,11] }, skirret: { h: 0.8, flower: ['#f6f4ea', [7,8]] }, jartichoke: { h: 2.5, w: 0.5, flower: ['#f2c21a', [9,10]], season: [4,5,6,7,8,9,10,11] },
+  horseradish: { h: 0.8, w: 0.5 },
+  kiwi: { fruit: '#7a7a3a' }, grape: { fruit: '#3a2a4a' }, hops: { fruit: '#b8c96a', season: [4,5,6,7,8,9,10] }, runnerbean: { flower: ['#d8302a', [7,8,9]], season: [6,7,8,9,10] },
+  blackberry: { fruit: '#1a1020' }, schisandra: { fruit: '#c8202a' },
+};
+const TREE_VIS = {
+  apple: { fruit: '#c8302a', blossom: '#f6d8e2' }, pear: { fruit: '#b8b84a', blossom: '#f6f4ea' }, plum: { fruit: '#5a2a5a', blossom: '#f6f4ea' },
+  cherry: { fruit: '#8a0f1f', blossom: '#f8eef0' }, damson: { fruit: '#2a2550', blossom: '#f6f4ea' }, quince: { fruit: '#e0b830', blossom: '#f2c6d2' },
+  medlar: { fruit: '#8a5a2a', blossom: '#f6f4ea' }, mulberry: { fruit: '#2a0f1a', blossom: null }, fig: { fruit: '#5a3550', blossom: null, leaf: '#4f7d3a' },
+};
+// Noon sun height at about 52°N, mid-month, in degrees.
+const SUN_EL = [17, 25, 36, 48, 57, 61, 59, 52, 41, 29, 20, 15];
+const visOf = p => Object.assign({}, VIS_LAYER[p.layer], VIS[p.id] || {});
+function rng(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const seedOf = str => { let h = 2166136261; for (let i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
+function rsHeight(rs) { const m = String(rs.ht).match(/[\d.]+/g); return m ? parseFloat(m[m.length - 1]) : rs.spread; }
+
+const view3d = (() => {
+  let T = null, renderer, scene, camera, root, sun, raycaster, pointer, loading = false, failed = false;
+  let guildR = 4, theta = 0.55, phi = 1.05, dist = 12, target = null, spin = false, raf = 0, pending = false;
+  let month = CUR_M, age = 'mature', active = false, lastKey = '';
+  const canvas = $('#b3dCanvas'), stage = $('#b3dStage'), msg = $('#b3dMsg'), nLabel = $('#b3dN');
+  const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim() || '#888888';
+
+  function load() {
+    if (window.THREE) { T = window.THREE; return Promise.resolve(); }
+    if (loading) return loading;
+    loading = new Promise((res, rej) => {
+      const sc = document.createElement('script');
+      sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+      sc.onload = () => { T = window.THREE; T ? res() : rej(); };
+      sc.onerror = rej;
+      document.head.appendChild(sc);
+    });
+    return loading;
+  }
+  function init() {
+    try { renderer = new T.WebGLRenderer({ canvas, antialias: true }); }
+    catch (e) { fail('Your browser could not start the 3D view (WebGL is turned off or unsupported). The plan view shows the same layout.'); return false; }
+    renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = T.PCFSoftShadowMap;
+    scene = new T.Scene();
+    camera = new T.PerspectiveCamera(40, 1, 0.1, 200);
+    scene.add(new T.HemisphereLight(0xf2f6ff, 0x6a5a40, 0.75));
+    sun = new T.DirectionalLight(0xfff4e0, 0.85);
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(2048, 2048);
+    sun.shadow.bias = -0.0005;
+    scene.add(sun); scene.add(sun.target);
+    raycaster = new T.Raycaster(); pointer = new T.Vector2();
+    bindControls();
+    new ResizeObserver(() => { if (active) { resize(); requestRender(); } }).observe(stage);
+    return true;
+  }
+  function fail(text) { failed = true; msg.textContent = text; msg.hidden = false; }
+
+  /* Geometry helpers */
+  const mats = {};
+  function mat(color) { return mats[color] ||= new T.MeshLambertMaterial({ color, flatShading: true }); }
+  function mesh(geo, color, cast = true) { const m = new T.Mesh(geo, mat(color)); m.castShadow = cast; m.receiveShadow = true; return m; }
+  function blob(rx, ry, rz, color, r) {
+    const g = new T.Group();
+    const lumps = [[0, 0, 0, 1], [0.45, -0.15, 0.2, 0.7], [-0.4, -0.1, -0.25, 0.72], [0.1, 0.3, -0.35, 0.6]];
+    lumps.forEach(([x, y, z, k], i) => {
+      if (i && rx < 0.25) return;
+      const m = mesh(new T.IcosahedronGeometry(1, 1), color);
+      const j = 0.9 + r() * 0.2;
+      m.scale.set(rx * k * j, ry * k * j, rz * k * j);
+      m.position.set(x * rx, y * ry, z * rz);
+      m.rotation.y = r() * 6;
+      g.add(m);
+    });
+    return g;
+  }
+  function dots(n, rx, ry, rz, cy, size, color, r, upper = true) {
+    if (!n) return null;
+    const geo = new T.IcosahedronGeometry(size, 0);
+    const im = new T.InstancedMesh(geo, mat(color), n);
+    const m4 = new T.Matrix4();
+    for (let i = 0; i < n; i++) {
+      const u = r() * Math.PI * 2, v = upper ? Math.acos(1 - r() * 1.3) : Math.acos(1 - 2 * r());
+      m4.makeTranslation(Math.sin(v) * Math.cos(u) * rx, cy + Math.cos(v) * ry, Math.sin(v) * Math.sin(u) * rz);
+      im.setMatrixAt(i, m4);
+    }
+    im.castShadow = false;
+    return im;
+  }
+  function branches(h0, len, spread, color, r, count = 6) {
+    const g = new T.Group(), up = new T.Vector3(0, 1, 0);
+    for (let i = 0; i < count; i++) {
+      const a = (i / count) * Math.PI * 2 + r() * 0.6, tilt = 0.45 + r() * 0.45;
+      const dir = new T.Vector3(Math.cos(a) * Math.sin(tilt) * spread, Math.cos(tilt), Math.sin(a) * Math.sin(tilt) * spread).normalize();
+      const b = mesh(new T.CylinderGeometry(0.015 + len * 0.01, 0.03 + len * 0.018, len, 5), color);
+      b.quaternion.setFromUnitVectors(up, dir);
+      b.position.set(dir.x * len / 2, h0 + dir.y * len / 2, dir.z * len / 2);
+      g.add(b);
+    }
+    return g;
+  }
+  function leafColor(base, p, m, ev) {
+    if (ev) return base;
+    if (m === 11) return '#b8862a';
+    if (m === 10) return new T.Color(base).lerp(new T.Color('#b8862a'), 0.35).getStyle();
+    if (m === 4) return new T.Color(base).lerp(new T.Color('#a8c86a'), 0.35).getStyle();
+    return base;
+  }
+  const inLeaf = (m, ev) => ev || (m >= 4 && m <= 11);
+
+  /* Builders */
+  function treeModel(id, H, R, m, fruitColor, blossomColor, leaf, seed, ev) {
+    const r = rng(seed), g = new T.Group();
+    const trunkH = H * 0.38, bark = css('--bark');
+    const trunk = mesh(new T.CylinderGeometry(Math.max(0.05, R * 0.04), Math.max(0.07, R * 0.06), trunkH, 7), bark);
+    trunk.position.y = trunkH / 2; g.add(trunk);
+    const cy = trunkH + (H - trunkH) * 0.5, ry = (H - trunkH) * 0.55;
+    if (inLeaf(m, ev)) {
+      const c = blob(R, ry, R, leafColor(leaf, null, m, ev), r); c.position.y = cy; g.add(c);
+      if (blossomColor && TREE[id] && TREE[id].blossom.includes(m)) { const d = dots(260, R * 1.02, ry * 1.02, R * 1.02, cy, 0.055, blossomColor, r); if (d) g.add(d); }
+    } else {
+      g.add(branches(trunkH, (H - trunkH) * 1.1, R / Math.max(0.5, (H - trunkH)), bark, r, 7));
+      if (blossomColor && TREE[id] && TREE[id].blossom.includes(m)) { const d = dots(220, R, ry, R, cy, 0.055, blossomColor, r); if (d) g.add(d); }
+    }
+    if (fruitColor && TREE[id] && TREE[id].harvest.includes(m)) { const d = dots(Math.round(30 + R * 20), R * 0.98, ry * 0.95, R * 0.98, cy - ry * 0.1, 0.065, fruitColor, r, false); if (d) g.add(d); }
+    return g;
+  }
+  function plantModel(p, m, scale, seed) {
+    const v = visOf(p), r = rng(seed), g = new T.Group();
+    const h = v.h * scale, w = v.w * scale;
+    const flowering = v.flower && v.flower[1].includes(m);
+    const fruiting = v.fruit && p.harvest.includes(m);
+    const ev = !!v.ev;
+    if (v.season && !v.season.includes(m)) return g;
+    switch (v.shape) {
+      case 'tree': {
+        return treeModel(p.id, h, w / 2, m, fruiting ? v.fruit : null, flowering ? v.flower[0] : null, v.leaf, seed, ev);
+      }
+      case 'bush': {
+        if (inLeaf(m, ev)) { const b = blob(w / 2, h / 2, w / 2, leafColor(v.leaf, p, m, ev), r); b.position.y = h / 2; g.add(b); }
+        else g.add(branches(0, h, 0.5, css('--bark'), r, 5));
+        if (fruiting) { const d = dots(26, w / 2, h / 2, w / 2, h / 2, 0.035, v.fruit, r, false); if (d) g.add(d); }
+        if (flowering) { const d = dots(30, w / 2, h / 2, w / 2, h / 2, 0.03, v.flower[0], r); if (d) g.add(d); }
+        return g;
+      }
+      case 'clump': {
+        const dormant = !ev && (m <= 2 || m >= 11);
+        const hh = dormant ? 0.06 : (m === 3 ? h * 0.4 : h);
+        const c = blob(w / 2, hh / 2, w / 2, dormant ? '#8a7a5a' : leafColor(v.leaf, p, m, true), r); c.position.y = hh / 2; g.add(c);
+        if (flowering && !dormant) { const d = dots(18, w / 2, hh / 2, w / 2, hh / 2, 0.035, v.flower[0], r); if (d) g.add(d); }
+        if (fruiting && v.fruit && !dormant) { const d = dots(10, w / 2, hh / 2, w / 2, hh / 2, 0.03, v.fruit, r, false); if (d) g.add(d); }
+        return g;
+      }
+      case 'mat': {
+        const c = mesh(new T.CylinderGeometry(w / 2, w / 2 * 1.05, h, 9), (!ev && (m <= 2 || m === 12)) ? new T.Color(v.leaf).lerp(new T.Color('#8a7a5a'), 0.4).getStyle() : v.leaf, false);
+        c.position.y = h / 2; g.add(c);
+        if (flowering) { const d = dots(12, w / 2.2, h, w / 2.2, h * 0.6, 0.025, v.flower[0], r); if (d) g.add(d); }
+        if (fruiting) { const d = dots(6, w / 2.2, h, w / 2.2, h * 0.5, 0.03, v.fruit, r); if (d) g.add(d); }
+        return g;
+      }
+      case 'bulb': {
+        for (let i = 0; i < 3; i++) { const l = mesh(new T.ConeGeometry(0.02, h, 4), v.leaf); l.position.set((r() - 0.5) * w, h / 2, (r() - 0.5) * w); l.rotation.set((r() - 0.5) * 0.4, 0, (r() - 0.5) * 0.4); g.add(l); }
+        if (flowering) { const f = mesh(new T.IcosahedronGeometry(0.05, 0), v.flower[0]); f.position.y = h; g.add(f); }
+        return g;
+      }
+      case 'mush': {
+        if (!fruiting) return g;
+        for (let i = 0; i < 5; i++) { const cap = mesh(new T.CylinderGeometry(0.05, 0.07, 0.04, 8), v.fruit); cap.position.set((r() - 0.5) * 0.4, 0.07, (r() - 0.5) * 0.4); g.add(cap); }
+        return g;
+      }
+    }
+    return g;
+  }
+  function vineModel(p, m, trunkR, H, seed) {
+    const v = visOf(p), r = rng(seed), g = new T.Group();
+    if (v.season && !v.season.includes(m)) return g;
+    const pts = [];
+    for (let i = 0; i <= 40; i++) { const t = i / 40; pts.push(new T.Vector3(Math.cos(t * 14) * (trunkR + 0.06), 0.1 + t * H, Math.sin(t * 14) * (trunkR + 0.06))); }
+    const tube = mesh(new T.TubeGeometry(new T.CatmullRomCurve3(pts), 80, 0.02, 5), css('--bark'));
+    g.add(tube);
+    if (inLeaf(m, v.ev)) { const d = dots(50, trunkR + 0.18, H / 2, trunkR + 0.18, H / 2 + 0.1, 0.07, v.leaf, r, false); if (d) g.add(d); }
+    if (v.fruit && p.harvest.includes(m)) { const d = dots(18, trunkR + 0.2, H / 2, trunkR + 0.2, H / 2, 0.04, v.fruit, r, false); if (d) g.add(d); }
+    if (v.flower && v.flower[1].includes(m)) { const d = dots(16, trunkR + 0.2, H / 2, trunkR + 0.2, H / 2, 0.035, v.flower[0], r, false); if (d) g.add(d); }
+    return g;
+  }
+  function tag(obj, key) { obj.traverse(o => { o.userData.tip = key; }); return obj; }
+
+  function build(treeObj, rsIndex, items) {
+    if (root) { scene.remove(root); root.traverse(o => { if (o.geometry) o.geometry.dispose(); }); }
+    root = new T.Group();
+    const rs = treeObj.rootstocks[rsIndex];
+    const scaleM = (rs.spread / 2) / 110;                 // plan units → metres
+    const young = age === 'young';
+    const H = rsHeight(rs) * (young ? 0.55 : 1), R = rs.spread / 2 * (young ? 0.5 : 1);
+    const groundR = 206 * scaleM;
+    // Ground: grass, mulched guild circle, drip line
+    const grass = mesh(new T.CylinderGeometry(groundR * 1.7, groundR * 1.7, 0.04, 48), '#7f9a5c', false); grass.position.y = -0.03; root.add(grass);
+    const mulch = mesh(new T.CylinderGeometry(groundR, groundR, 0.05, 64), '#8a6e4e', false); mulch.position.y = 0; root.add(mulch);
+    const ring = new T.Mesh(new T.RingGeometry(rs.spread / 2 - 0.03, rs.spread / 2 + 0.03, 96), new T.MeshBasicMaterial({ color: 0xf6f2e4, transparent: true, opacity: 0.7 }));
+    ring.rotation.x = -Math.PI / 2; ring.position.y = 0.03; root.add(ring);
+    // Tree
+    const tv = TREE_VIS[treeObj.id] || {};
+    root.add(tag(treeModel(treeObj.id, H, R, month, tv.fruit, tv.blossom, tv.leaf || '#3f6f3a', seedOf(treeObj.id), false), `tree:${treeObj.id}:${rsIndex}`));
+    // Understory
+    const sc = young ? 0.7 : 1;
+    layoutGuild(items).forEach(({ it, p, x, y }) => {
+      const X = x * scaleM, Z = y * scaleM;
+      const v = visOf(p);
+      let model;
+      if (v.shape === 'vine') {
+        model = vineModel(p, month, Math.max(0.05, R * 0.04), H * (young ? 0.6 : 0.85), seedOf(p.id));
+      } else {
+        model = new T.Group();
+        const sown = p.space && p.space.sow && it.n === 1;
+        const count = sown ? 7 : Math.min(it.n, v.shape === 'tree' || v.shape === 'bush' ? 4 : 12);
+        const w = v.w * (v.shape === 'tree' || v.shape === 'bush' ? sc : 1);
+        const spreadR = count > 1 ? Math.max(w * 0.6, Math.sqrt(count) * w * 0.45) : 0;
+        for (let i = 0; i < count; i++) {
+          const a = i * 2.39996, rr = count > 1 ? spreadR * Math.sqrt((i + 0.5) / count) : 0;
+          const pm = plantModel(p, month, v.shape === 'tree' || v.shape === 'bush' ? sc : 1, seedOf(p.id) + i * 7919);
+          pm.position.set(Math.cos(a) * rr, 0, Math.sin(a) * rr);
+          model.add(pm);
+        }
+        model.position.set(X, 0.02, Z);
+      }
+      root.add(tag(model, `p:${p.id}`));
+    });
+    scene.add(root);
+    // Sun from due south at noon height for the month
+    const el = SUN_EL[month - 1] * Math.PI / 180, D = groundR * 3 + 10;
+    sun.position.set(0, Math.sin(el) * D, Math.cos(el) * D);
+    sun.target.position.set(0, 0, 0);
+    const sc2 = groundR * 1.8;
+    Object.assign(sun.shadow.camera, { left: -sc2, right: sc2, top: sc2, bottom: -sc2, near: 0.5, far: D * 2 });
+    sun.shadow.camera.updateProjectionMatrix();
+    target = new T.Vector3(0, H * 0.35, 0);
+    guildR = groundR;
+    if (!build.done) { dist = Math.max(9, groundR * 3.2); build.done = true; }
+    renderer.setClearColor(new T.Color(css('--sky')));
+    requestRender();
+  }
+
+  /* Camera */
+  function placeCamera() {
+    phi = Math.min(1.52, Math.max(0.12, phi));
+    camera.position.set(target.x + dist * Math.sin(phi) * Math.sin(theta), target.y + dist * Math.cos(phi), target.z + dist * Math.sin(phi) * Math.cos(theta));
+    camera.lookAt(target);
+  }
+  function resize() {
+    const w = stage.clientWidth, h = stage.clientHeight;
+    if (!w || !h) return;
+    renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+  }
+  function requestRender() {
+    if (pending || !renderer) return; pending = true;
+    requestAnimationFrame(() => { pending = false; draw(); });
+  }
+  function draw() {
+    placeCamera(); renderer.render(scene, camera);
+    // Compass: project a point north of the guild
+    const pnt = new T.Vector3(0, 0.05, -guildR * 1.08).project(camera);
+    const vis = pnt.z < 1 && Math.abs(pnt.x) < 1.1 && Math.abs(pnt.y) < 1.1;
+    nLabel.hidden = !vis;
+    if (vis) { nLabel.style.left = ((pnt.x + 1) / 2 * 100) + '%'; nLabel.style.top = ((1 - pnt.y) / 2 * 100) + '%'; }
+  }
+  function loop() { if (!spin || !active) { raf = 0; return; } theta += 0.004; draw(); raf = requestAnimationFrame(loop); }
+  function setSpin(on) { spin = on; $('#b3dSpin').setAttribute('aria-pressed', on); $('#b3dSpin').textContent = on ? 'Stop' : 'Spin'; if (on && !raf) raf = requestAnimationFrame(loop); }
+  const VIEWS = { south: [0, 1.15], west: [-Math.PI / 2, 1.15], north: [Math.PI, 1.15], east: [Math.PI / 2, 1.15], above: [0, 0.12], ground: [0.35, 1.45] };
+  function setView(name) {
+    const [t, ph] = VIEWS[name]; theta = t; phi = ph;
+    dist = name === 'ground' ? guildR * 3.6 : Math.max(9, guildR * 3.2);
+    markView(name); requestRender();
+  }
+  function markView(name) { $('#b3dViews').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.cam === name)); }
+
+  function bindControls() {
+    const pts = new Map(); let downAt = null, moved = false, pinch = 0;
+    canvas.addEventListener('pointerdown', e => { canvas.setPointerCapture(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]); downAt = [e.clientX, e.clientY]; moved = false; if (pts.size === 2) { const [a, b] = [...pts.values()]; pinch = Math.hypot(a[0] - b[0], a[1] - b[1]); } });
+    canvas.addEventListener('pointermove', e => {
+      if (pts.has(e.pointerId)) {
+        const prev = pts.get(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]);
+        if (pts.size === 2) { const [a, b] = [...pts.values()]; const d = Math.hypot(a[0] - b[0], a[1] - b[1]); if (pinch) dist = Math.min(60, Math.max(3, dist * pinch / d)); pinch = d; }
+        else { theta -= (e.clientX - prev[0]) * 0.008; phi -= (e.clientY - prev[1]) * 0.006; }
+        if (Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]) > 4) { moved = true; markView(null); hideTip(); }
+        requestRender(); return;
+      }
+      if (e.pointerType === 'mouse') pick(e);
+    });
+    const up = e => { pts.delete(e.pointerId); if (pts.size < 2) pinch = 0; if (!moved && e.pointerType !== 'mouse' && e.type === 'pointerup') pick(e); };
+    canvas.addEventListener('pointerup', up); canvas.addEventListener('pointercancel', up);
+    canvas.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') { hideTip(); canvas.style.cursor = ''; } });
+    canvas.addEventListener('wheel', e => { e.preventDefault(); dist = Math.min(60, Math.max(3, dist * (e.deltaY > 0 ? 1.1 : 0.9))); requestRender(); }, { passive: false });
+    canvas.addEventListener('keydown', e => {
+      const k = e.key; let used = true;
+      if (k === 'ArrowLeft') theta -= 0.15; else if (k === 'ArrowRight') theta += 0.15;
+      else if (k === 'ArrowUp') phi -= 0.1; else if (k === 'ArrowDown') phi += 0.1;
+      else if (k === '+' || k === '=') dist = Math.max(3, dist * 0.9); else if (k === '-') dist = Math.min(60, dist * 1.1);
+      else used = false;
+      if (used) { e.preventDefault(); markView(null); requestRender(); }
+    });
+  }
+  function pick(e) {
+    if (!root) return;
+    const rc = canvas.getBoundingClientRect();
+    pointer.set(((e.clientX - rc.left) / rc.width) * 2 - 1, -((e.clientY - rc.top) / rc.height) * 2 + 1);
+    raycaster.setFromCamera(pointer, camera);
+    const hit = raycaster.intersectObjects(root.children, true).find(h => h.object.userData.tip);
+    const key = hit ? hit.object.userData.tip : '';
+    canvas.style.cursor = key ? 'pointer' : '';
+    if (!key) { if (lastKey) { hideTip(); lastKey = ''; } return; }
+    if (key !== lastKey || !tip.classList.contains('show')) { tipAnchor = null; placeTip(key, { left: e.clientX, right: e.clientX, top: e.clientY, bottom: e.clientY, width: 0, height: 0 }); lastKey = key; }
+    else { placeTip(key, { left: e.clientX, right: e.clientX, top: e.clientY, bottom: e.clientY, width: 0, height: 0 }); }
+  }
+
+  function monthLabel() {
+    const t = TREE[state.tree], m = month;
+    const bits = [];
+    if (t.blossom.includes(m)) bits.push('blossom'); if (t.harvest.includes(m)) bits.push('fruit on the tree'); if (!(m >= 4 && m <= 11)) bits.push('bare branches'); else if (m >= 10) bits.push('autumn colour');
+    $('#b3dMonthOut').textContent = `${MONTH[m - 1]} · noon sun ${SUN_EL[m - 1]}° high${bits.length ? ' · ' + bits.join(', ') : ''}`;
+  }
+  async function show() {
+    active = true;
+    $('#b3dMonth').value = month; monthLabel();
+    $('#b3dAge').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.age === age));
+    if (failed) return;
+    if (!renderer) {
+      msg.hidden = false; msg.textContent = 'Loading the 3D view…';
+      try { await load(); } catch (e) { fail('The 3D view could not load. Check your connection and try again; the plan view shows the same layout.'); return; }
+      if (!init()) return;
+      markView('south'); theta = VIEWS.south[0]; phi = VIEWS.south[1];
+    }
+    msg.hidden = true;
+    resize(); update();
+    if (spin && !raf) raf = requestAnimationFrame(loop);
+  }
+  function hide() { active = false; hideTip(); }
+  function update() { if (!active || !renderer) return; build(TREE[state.tree], state.rs, state.items); monthLabel(); }
+  $('#b3dMonth').addEventListener('input', e => { month = +e.target.value; monthLabel(); update(); });
+  $('#b3dAge').addEventListener('click', e => { const b = e.target.closest('[data-age]'); if (!b) return; age = b.dataset.age; $('#b3dAge').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); update(); });
+  $('#b3dViews').addEventListener('click', e => { const b = e.target.closest('[data-cam]'); if (b && renderer) setView(b.dataset.cam); });
+  $('#b3dSpin').addEventListener('click', () => setSpin(!spin));
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
+  if (mq.addEventListener) mq.addEventListener('change', () => { if (renderer && active) { renderer.setClearColor(new T.Color(css('--sky'))); requestRender(); } });
+  return { show, hide, update };
+})();
+
+let builderView = (() => { try { return localStorage.getItem('builder-view') === '3d' ? '3d' : 'plan'; } catch (e) { return 'plan'; } })();
+function setBuilderView(v) {
+  builderView = v;
+  document.querySelectorAll('.viewtabs [data-view]').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === v));
+  $('#bPlan').hidden = v !== 'plan';
+  $('#b3d').hidden = v !== '3d';
+  try { localStorage.setItem('builder-view', v); } catch (e) { /* ignore */ }
+  if (v === '3d') view3d.show(); else view3d.hide();
+}
+document.querySelector('.viewtabs').addEventListener('click', e => { const b = e.target.closest('[data-view]'); if (b) setBuilderView(b.dataset.view); });
+
+/* ---------- My guilds ---------- */
 const LS_MINE = 'my-guilds-v1', LS_SEL = 'my-guilds-sel';
 const clone = o => JSON.parse(JSON.stringify(o));
 const hash = str => { let h = 5381; for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) | 0; return (h >>> 0).toString(36); };
@@ -1715,6 +2161,7 @@ renderAtlas();
 store.load();
 renderBuilder(true);
 renderMine();
+setBuilderView(builderView);
 store.connect();
 })();
 </script>
