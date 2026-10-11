@@ -97,8 +97,21 @@ button { font: inherit; color: inherit; }
 .nav nav a { text-decoration: none; color: var(--muted); padding: .3rem .6rem; border-radius: 999px; font-size: .95rem; }
 .nav nav a:hover { color: var(--ink); background: var(--surface-2); }
 
-section { padding-block: clamp(2.5rem, 6vw, 4.5rem); }
-section + section { border-top: 1px solid var(--line); }
+section { padding-block: 0; }
+.sec > summary.sec-sum { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 1rem; row-gap: .2rem; padding-block: 1.4rem; align-items: center; }
+.sec-sum .eyebrow, .sec-sum h2, .sec-sum .tagline { grid-column: 1; }
+.sec-sum::after { content: ''; grid-column: 2; grid-row: 1 / span 3; width: .8rem; height: .8rem; border-right: 2.5px solid var(--muted); border-bottom: 2.5px solid var(--muted); transform: rotate(45deg) translate(-3px, -3px); transition: transform .15s; }
+.sec[open] > .sec-sum::after { transform: rotate(-135deg) translate(-3px, -3px); }
+.sec-sum:hover h2 { color: var(--accent); }
+.sec-sum:hover::after { border-color: var(--ink); }
+.sec-sum:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 6px; }
+.sec-sum .tagline { color: var(--muted); font-size: .98rem; }
+.sec[open] > .sec-sum .tagline { display: none; }
+.sec-body { padding-bottom: clamp(2.5rem, 6vw, 4rem); }
+.sec-intro { display: grid; gap: .5rem; margin-bottom: 1.75rem; }
+.sec-controls { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.5rem; }
+section { border-top: 1px solid var(--line); }
+section:last-of-type { border-bottom: 1px solid var(--line); }
 .sec-head { display: grid; gap: .5rem; margin-bottom: 1.75rem; }
 
 /* Hero */
@@ -546,6 +559,7 @@ footer p + p { margin-top: .4rem; }
     <p class="eyebrow">Forest gardening for British gardens</p>
     <h1>Plant a guild, not just a tree.</h1>
     <p class="lede">A tree guild is a fruit tree with a ring of companions that feed the soil, cover the ground, bring in pollinators and give you a second, third and fourth harvest from the same patch. Here are nine guilds that work in the UK climate, with what to pick when, when to prune, and what to expect in year three versus year ten.</p>
+    <div class="sec-controls"><button type="button" class="btn" id="openAll">Open all sections</button><button type="button" class="btn" id="closeAll">Close all</button></div>
     <div class="hero-stats">
       <div><b>7</b><span>layers of a food forest</span></div>
       <div><b>9</b><span>fruit tree guilds</span></div>
@@ -556,11 +570,10 @@ footer p + p { margin-top: .4rem; }
 
   <section id="layers">
     <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow">The structure</p>
-        <h2>Seven layers in one patch of ground</h2>
-        <p class="lede">A woodland edge stacks plants by height and by depth. A food forest copies that so every layer earns its place. Hover or tap a layer to see what lives there.</p>
-      </div>
+      <details class="sec" data-sec="layers">
+      <summary class="sec-sum"><span class="eyebrow">The structure</span><h2>Seven layers in one patch of ground</h2><span class="tagline">How a food forest stacks plants from canopy to roots.</span></summary>
+      <div class="sec-body">
+      <div class="sec-intro"><p class="lede">A woodland edge stacks plants by height and by depth. A food forest copies that so every layer earns its place. Hover or tap a layer to see what lives there.</p></div>
       <div class="profile">
         <figure class="profile-fig" style="margin:0">
           <svg id="profileSvg" viewBox="0 0 800 340" role="group" aria-label="Cross-section of a mature apple guild showing seven layers"></svg>
@@ -572,27 +585,29 @@ footer p + p { margin-top: .4rem; }
         </div>
       </div>
     </div>
+      </details>
+    </div>
   </section>
 
   <section id="guilds">
     <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow">The guild atlas</p>
-        <h2>Nine fruit trees, each with an example guild</h2>
-        <p class="lede">Pick a tree to see a ready-made example guild for it: which plants to put around it, why each one is there, when to pick and prune, and how much to expect. Hover over a plant in the plan or 3D view for details. Copy any example into the builder to make it your own.</p>
-      </div>
+      <details class="sec" data-sec="guilds">
+      <summary class="sec-sum"><span class="eyebrow">The guild atlas</span><h2>Nine fruit trees, each with an example guild</h2><span class="tagline">Pick a tree to see what to plant around it, when to pick and prune, and how much to expect.</span></summary>
+      <div class="sec-body">
+      <div class="sec-intro"><p class="lede">Pick a tree to see a ready-made example guild for it: which plants to put around it, why each one is there, when to pick and prune, and how much to expect. Hover over a plant in the plan or 3D view for details. Copy any example into the builder to make it your own.</p></div>
       <div class="tabs" role="tablist" id="treeTabs" aria-label="Fruit tree"></div>
       <div class="guild" id="guildPanel" role="tabpanel"></div>
+    </div>
+      </details>
     </div>
   </section>
 
   <section id="builder">
     <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow">Design your own</p>
-        <h2>Guild builder</h2>
-        <p class="lede">Pick a centre tree and rootstock, then add plants from each layer. The plan, harvest calendar and yield estimate update as you go, and the checklist shows which jobs your guild still needs doing. Your guild is saved in this browser. It starts with the suggested apple guild as an example.</p>
-      </div>
+      <details class="sec" data-sec="builder">
+      <summary class="sec-sum"><span class="eyebrow">Design your own</span><h2>Guild builder</h2><span class="tagline">Design your own guild layer by layer, in plan or 3D.</span></summary>
+      <div class="sec-body">
+      <div class="sec-intro"><p class="lede">Pick a centre tree and rootstock, then add plants from each layer. The plan, harvest calendar and yield estimate update as you go, and the checklist shows which jobs your guild still needs doing. Your guild is saved in this browser. It starts with the suggested apple guild as an example.</p></div>
       <div class="builder">
         <div>
           <div class="b-controls">
@@ -663,27 +678,29 @@ footer p + p { margin-top: .4rem; }
         </div>
       </div>
     </div>
+      </details>
+    </div>
   </section>
 
   <section id="mine">
     <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow">Your forest garden</p>
-        <h2>My guilds</h2>
-        <p class="lede">Guilds you save from the builder appear here with this month's jobs and harvests, a year planner, regular upkeep and what to expect from them at their age. Tick jobs off as you do them.</p>
-        <p class="mine-status" id="mineStatus"><i></i><span>Saved in this browser.</span></p>
-      </div>
+      <details class="sec" data-sec="mine">
+      <summary class="sec-sum"><span class="eyebrow">Your forest garden</span><h2>My guilds</h2><span class="tagline">Your saved guilds, this month's jobs, a site plan and a 3D garden.</span></summary>
+      <div class="sec-body">
+      <div class="sec-intro"><p class="lede">Guilds you save from the builder appear here with this month's jobs and harvests, a year planner, regular upkeep and what to expect from them at their age. Tick jobs off as you do them.</p>
+        <p class="mine-status" id="mineStatus"><i></i><span>Saved in this browser.</span></p></div>
       <div id="mineBody"></div>
+    </div>
+      </details>
     </div>
   </section>
 
   <section id="ground">
     <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow">Before you plant</p>
-        <h2>Preparing the ground</h2>
-        <p class="lede">Grass is the biggest competitor of a young fruit tree, and perennial weeds will outlast anything you plant if they get a head start. Every method below aims for the same result: weed-free, covered soil you never have to dig again. They differ in how fast you can plant, how much material you need and how they treat the life already in the soil.</p>
-      </div>
+      <details class="sec" data-sec="ground">
+      <summary class="sec-sum"><span class="eyebrow">Before you plant</span><h2>Preparing the ground</h2><span class="tagline">Five ways to clear grass and weeds before you plant.</span></summary>
+      <div class="sec-body">
+      <div class="sec-intro"><p class="lede">Grass is the biggest competitor of a young fruit tree, and perennial weeds will outlast anything you plant if they get a head start. Every method below aims for the same result: weed-free, covered soil you never have to dig again. They differ in how fast you can plant, how much material you need and how they treat the life already in the soil.</p></div>
 
       <div class="prep-tools">
         <div class="tool" id="prepPicker">
@@ -861,15 +878,16 @@ footer p + p { margin-top: .4rem; }
 
       <details class="warnbox" data-key="cardboard"><summary>Which cardboard is safe to use?</summary><p>Use plain brown corrugated boxes with tape and labels removed. Avoid glossy, waxed, printed or grease-proof card: a 2024 study found PFAS ("forever chemicals") in cardboard used as poultry bedding, and coated food packaging is the likeliest source. Plain boxes are thought to be low risk. <a href="https://www.bangordailynews.com/2024/06/05/homestead/cardboard-pfas-into-garden-joam40zk0w/" target="_blank" rel="noopener">University of Maine Extension on cardboard and PFAS</a> · <a href="https://thenas.org.uk/Cardboard-Allotment-Safety" target="_blank" rel="noopener">National Allotment Society: using cardboard</a></p></details>
     </div>
+      </details>
+    </div>
   </section>
 
   <section id="soil">
     <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow">Under your feet</p>
-        <h2>Soil life</h2>
-        <p class="lede">A fruit tree feeds the soil as much as the soil feeds it. Roots leak sugars that feed bacteria and fungi; fungi reach far beyond the roots and trade water and phosphorus for those sugars; tiny predators eat the microbes and release nitrogen right where the roots are. Hover or tap the cross-section to meet them.</p>
-      </div>
+      <details class="sec" data-sec="soil">
+      <summary class="sec-sum"><span class="eyebrow">Under your feet</span><h2>Soil life</h2><span class="tagline">The life under your feet and what current research says.</span></summary>
+      <div class="sec-body">
+      <div class="sec-intro"><p class="lede">A fruit tree feeds the soil as much as the soil feeds it. Roots leak sugars that feed bacteria and fungi; fungi reach far beyond the roots and trade water and phosphorus for those sugars; tiny predators eat the microbes and release nitrogen right where the roots are. Hover or tap the cross-section to meet them.</p></div>
       <div class="soil-grid">
         <figure class="soil-fig">
           <svg id="soilSvg" viewBox="0 0 720 420" role="group" aria-label="Cross-section of soil under a guild"></svg>
@@ -916,14 +934,16 @@ footer p + p { margin-top: .4rem; }
         <div><h3>Go easy on fertiliser</h3><p>Plants supplied with soluble nutrients send less sugar to their fungal partners. Comfrey, nitrogen fixers and compost feed the soil without cutting the fungi out.</p></div>
       </div>
     </div>
+      </details>
+    </div>
   </section>
 
   <section id="notes">
     <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow">Before you dig</p>
-        <h2>UK growing notes</h2>
-      </div>
+      <details class="sec" data-sec="notes">
+      <summary class="sec-sum"><span class="eyebrow">Before you dig</span><h2>UK growing notes</h2><span class="tagline">Planting, pruning, frost and pollination basics.</span></summary>
+      <div class="sec-body">
+      
       <div class="notes">
         <details class="note"><summary><h3>Plant bare-root in winter</h3></summary><p>Bare-root trees and bushes are cheaper and establish better. Plant from November to March when the ground isn't frozen or waterlogged. Pot-grown plants can go in any time but need watering through their first summer.</p></details>
         <details class="note"><summary><h3>Prune stone fruit in summer</h3></summary><p>Plums, damsons and cherries get silver leaf and bacterial canker through winter cuts. Prune them on a dry day between June and August. Apples, pears, quince and medlar are pruned in winter while dormant.</p></details>
@@ -933,14 +953,15 @@ footer p + p { margin-top: .4rem; }
         <details class="note"><summary><h3>Plan for shade to arrive</h3></summary><p>In years one to four the guild is sunny and the understory produces most of the food. As the canopy closes, swap sun-lovers like strawberries and lavender for shade-tolerant currants, wild garlic and sweet cicely.</p></details>
       </div>
     </div>
+      </details>
+    </div>
   </section>
   <section id="sources">
     <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow">Further reading</p>
-        <h2>Sources</h2>
-        <p class="lede">The best places to go deeper, starting with the UK forest gardening pioneers and the Royal Horticultural Society's fruit guides.</p>
-      </div>
+      <details class="sec" data-sec="sources">
+      <summary class="sec-sum"><span class="eyebrow">Further reading</span><h2>Sources</h2><span class="tagline">The books, studies and guides behind this page.</span></summary>
+      <div class="sec-body">
+      <div class="sec-intro"><p class="lede">The best places to go deeper, starting with the UK forest gardening pioneers and the Royal Horticultural Society's fruit guides.</p></div>
       <div class="sources">
         <details class="src-group"><summary><h3>Forest gardening</h3><span>5</span></summary>
           <ul>
@@ -1008,6 +1029,8 @@ footer p + p { margin-top: .4rem; }
         <summary>About the figures on this page</summary>
         <p>Tree sizes, pruning times and pollination advice follow the RHS pages above. There is no authoritative UK table of yields per tree by rootstock, so the yield ranges are estimates from typical nursery figures and should be read as a rough guide. Planting densities are typical spacings for each plant, not from a single source.</p>
         <p>The UK forest garden studies above suggest forest gardens give less food per square metre than an intensive kitchen garden, but for much less work, and that yields keep rising as the trees mature.</p>
+      </details>
+    </div>
       </details>
     </div>
   </section>
@@ -1746,7 +1769,7 @@ $('#guildPanel').addEventListener('click', e => {
     state = { tree: t.id, rs: atlasRs[t.id], items: t.guild.map(g => ({ p: g.p, n: g.n })) };
     closeSavePanel(); $('#bSaved').hidden = true;
     renderBuilder(true); save();
-    document.getElementById('builder').scrollIntoView();
+    goTo('builder');
   }
 });
 
@@ -3042,7 +3065,7 @@ $('#mineBody').addEventListener('click', e => {
   if (b.hasAttribute('data-newguild')) {
     const last = mineSel !== 'all' && store.get(mineSel);
     startNewGuild(last ? last.tree : undefined);
-    document.getElementById('builder').scrollIntoView();
+    goTo('builder');
     return;
   }
   if (b.id === 'mineExample') {
@@ -3050,7 +3073,7 @@ $('#mineBody').addEventListener('click', e => {
     const g = cleanGuild({ id: 'g' + Date.now().toString(36), name: 'Example apple guild', planted: CUR_Y - 2, notes: 'An example to show how this works. Delete it whenever you like.', tree: 'apple', rs: t.rs, items: t.guild.map(x => ({ p: x.p, n: x.n })), done: {}, created: Date.now() });
     store.save(g); mineSel = g.id; renderMine(); return;
   }
-  if (b.dataset.sel) { mineSel = b.dataset.sel; pendingDelete = null; if (b.classList.contains('ov-card')) document.getElementById('mine').scrollIntoView(); try { localStorage.setItem(LS_SEL, mineSel); } catch (err) { /* ignore */ } renderMine(); const t = document.querySelector(`[data-sel="${mineSel}"]`); if (t) t.focus(); return; }
+  if (b.dataset.sel) { mineSel = b.dataset.sel; pendingDelete = null; if (b.classList.contains('ov-card')) goTo('mine'); try { localStorage.setItem(LS_SEL, mineSel); } catch (err) { /* ignore */ } renderMine(); const t = document.querySelector(`[data-sel="${mineSel}"]`); if (t) t.focus(); return; }
   if (b.dataset.del) { pendingDelete = b.dataset.del; renderMine(); const y = document.querySelector('[data-delno]'); if (y) y.focus(); return; }
   if (b.hasAttribute('data-delno')) { pendingDelete = null; renderMine(); return; }
   if (b.dataset.delyes) { store.remove(b.dataset.delyes); pendingDelete = null; if (state.editId === b.dataset.delyes) { delete state.editId; save(); updateSaveButton(); } renderMine(); return; }
@@ -3058,7 +3081,7 @@ $('#mineBody').addEventListener('click', e => {
     const g = store.get(b.dataset.edit); if (!g) return;
     state = { tree: g.tree, rs: g.rs, items: clone(g.items), editId: g.id };
     save(); closeSavePanel(); renderBuilder(true);
-    document.getElementById('builder').scrollIntoView();
+    goTo('builder');
   }
 });
 
@@ -3234,6 +3257,37 @@ $('#resFilter').addEventListener('click', e => {
   $('#resFilter').querySelectorAll('[data-c]').forEach(x => x.setAttribute('aria-pressed', x === b));
   document.querySelectorAll('#research .finding').forEach(f => { f.hidden = c !== 'all' && f.dataset.c !== c; });
 });
+
+/* ---------- Main sections as drop-downs ---------- */
+const LS_SECS = 'open-sections';
+const secOpen = (() => { try { return JSON.parse(localStorage.getItem(LS_SECS)) || {}; } catch (e) { return {}; } })();
+function saveSecs() { try { localStorage.setItem(LS_SECS, JSON.stringify(secOpen)); } catch (e) { /* ignore */ } }
+document.querySelectorAll('details.sec').forEach(d => { if (secOpen[d.dataset.sec]) d.open = true; });
+function sectionAround(el) { return el && el.closest('details.sec'); }
+function goTo(id) {
+  const el = document.getElementById(id); if (!el) return;
+  const d = el.matches('section') ? el.querySelector('details.sec') : sectionAround(el);
+  if (d && !d.open) d.open = true;
+  el.scrollIntoView();
+}
+document.addEventListener('toggle', e => {
+  const d = e.target;
+  if (!(d.matches && d.matches('details.sec'))) return;
+  secOpen[d.dataset.sec] = d.open; saveSecs();
+  if (d.open) {
+    if (d.dataset.sec === 'mine' && $('#siteSvg')) renderSite();
+    if (d.dataset.sec === 'builder' && viewPref('builder') === '3d') view3d.show();
+  }
+}, true);
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[href^="#"]'); if (!a) return;
+  const id = a.getAttribute('href').slice(1); if (!id || id === 'top') return;
+  const el = document.getElementById(id); if (!el) return;
+  e.preventDefault(); goTo(id);
+});
+$('#openAll').addEventListener('click', () => document.querySelectorAll('details.sec').forEach(d => { d.open = true; }));
+$('#closeAll').addEventListener('click', () => document.querySelectorAll('details.sec').forEach(d => { d.open = false; }));
+if (location.hash && /^#[\w.~-]+$/.test(location.hash)) setTimeout(() => goTo(location.hash.slice(1)), 0);
 
 /* ---------- Boot ---------- */
 drawProfile();

@@ -6,6 +6,8 @@ Open `index.html` in a browser. It is a single self-contained page with no build
 
 ## What's in it
 
+Each main section opens and closes like a drop-down, so the page starts as a short list of headings. Nav links open the section they point to, "Open all sections" and "Close all" sit under the intro, and your choice is remembered.
+
 - **Seven layers**: a cross-section of a mature apple guild. Hover or tap a layer to see what grows there.
 - **Guild atlas**: an example guild for each of nine UK fruit trees (apple, pear, plum, sweet cherry, damson, quince, medlar, black mulberry, fig). Each has:
   - a plan or 3D view of the example guild, with every companion plant hoverable for details and why it's there, and a button to copy it into the builder
