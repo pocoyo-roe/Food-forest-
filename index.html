@@ -457,7 +457,7 @@ details > summary:focus-visible { outline: 2px solid var(--accent); outline-offs
 .site-tools { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: .6rem 1rem; align-items: end; }
 .site-tools label { display: grid; gap: .2rem; font-size: var(--step--1); color: var(--muted); }
 .site-tools input[type="number"] { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: .35rem .5rem; width: 5.5rem; }
-.site-stage { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; touch-action: none; }
+.site-stage { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
 .site-stage svg { display: block; width: 100%; height: auto; max-height: 640px; user-select: none; -webkit-user-select: none; }
 .site-stage [data-guild], .site-stage [data-feat], .site-stage [data-corner], .site-stage [data-resize] { cursor: grab; }
 .site-stage .dragging { cursor: grabbing; }
@@ -483,7 +483,9 @@ details > summary:focus-visible { outline: 2px solid var(--accent); outline-offs
 svg.editing .mk[data-drag] { cursor: grab; }
 svg.editing .mk[data-drag] circle.dot { stroke: var(--ink); stroke-dasharray: 3 2; }
 svg.editing.dragging, svg.editing.dragging .mk { cursor: grabbing; }
-svg.editing .mk.moving circle.dot { stroke: var(--accent); stroke-width: 3; stroke-dasharray: none; }
+svg.editing .mk.moving circle.dot, svg.editing .mk.selected circle.dot { stroke: var(--accent); stroke-width: 4; stroke-dasharray: none; }
+svg.editing .mk.selected circle.dot { filter: drop-shadow(0 0 4px var(--accent)); }
+svg.editing.has-sel { cursor: crosshair; }
 
 /* Notes */
 .notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 1rem 2rem; }
@@ -1615,8 +1617,9 @@ function planSVG(tree, rsIndex, items, ctx) {
       const link = `${ctx}-${it.p}`;
       const tipKey = ctx === 'atlas' ? `gp:${it.p}:${tree.id}` : `p:${it.p}`;
       const drag = ctx === 'b' && layoutEditing ? ` data-drag="${it.p}"` : '';
-      marks += `<g class="mk" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"${drag} ${ctx === 'ov' ? '' : `data-tip="${tipKey}" data-link="${link}" tabindex="0" role="button" aria-label="${esc(p.name)}${drag ? ', drag or use arrow keys to move' : ''}"`}>
-        <circle class="dot" r="14" style="fill:var(--l-${p.layer})"/>
+      const selCls = drag && layoutSel === it.p ? ' selected' : '';
+      marks += `<g class="mk${selCls}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"${drag} ${ctx === 'ov' ? '' : `data-tip="${tipKey}" data-link="${link}" tabindex="0" role="button" aria-label="${esc(p.name)}${drag ? ', drag or use arrow keys to move' : ''}"`}>
+        ${drag ? '<circle r="26" style="fill:transparent"/>' : ''}<circle class="dot" r="14" style="fill:var(--l-${p.layer})"/>
         <text text-anchor="middle" dy="4" font-size="10" style="fill:var(--on-layer);font-family:var(--f-data)">${p.ab}</text>
         ${it.n > 1 ? `<g transform="translate(12 -11)"><circle r="8.5" style="fill:var(--ink)"/><text text-anchor="middle" dy="3.2" font-size="8.5" style="fill:var(--bg);font-family:var(--f-data)">${it.n > 99 ? '99' : it.n}</text></g>` : ''}
       </g>`;
@@ -1624,7 +1627,7 @@ function planSVG(tree, rsIndex, items, ctx) {
   const editing = ctx === 'b' && layoutEditing;
   const mPer = (rs.spread / 2) / 110;
   const rings = editing ? Array.from({ length: Math.floor(206 * mPer) }, (_, i) => (i + 1) / mPer).map(r => `<circle r="${r.toFixed(1)}" style="fill:none;stroke:var(--line)" stroke-width="1"/>`).join('') : '';
-  return `<svg viewBox="-212 -226 424 440" role="img" aria-label="Plan view of the ${esc(tree.name)} guild"${ctx === 'ov' ? ' aria-hidden="true"' : ''}${editing ? ' class="editing"' : ''}>
+  return `<svg viewBox="-212 -226 424 440" role="img" aria-label="Plan view of the ${esc(tree.name)} guild"${ctx === 'ov' ? ' aria-hidden="true"' : ''}${editing ? ` class="editing${layoutSel ? ' has-sel' : ''}"` : ''}>
     <circle r="206" style="fill:var(--surface-2)"/>${rings}
     <circle r="110" style="fill:var(--l-canopy);opacity:.16"/>
     <circle r="110" style="fill:none;stroke:var(--l-canopy)" stroke-dasharray="5 5" stroke-width="1.5"/>
@@ -2403,10 +2406,10 @@ function updateLayoutUI(msg) {
   btn.textContent = layoutEditing ? 'Done editing' : 'Edit layout';
   reset.hidden = !(layoutEditing && state.items.some(i => i.pos));
   hint.hidden = !layoutEditing;
-  if (layoutEditing) hint.innerHTML = msg || 'Drag a plant to move it, or select it and use the arrow keys. Rings are 1 m apart. Taller plants usually go on the north side so they don\'t shade the rest.';
+  if (layoutEditing) hint.innerHTML = msg || 'Tap a plant, then tap where you want it. You can also drag plants, or select one and use the arrow keys. Rings are 1 m apart; taller plants usually go on the north side so they don\'t shade the rest.';
 }
 $('#bEditLayout').addEventListener('click', () => {
-  layoutEditing = !layoutEditing;
+  layoutEditing = !layoutEditing; layoutSel = null;
   if (layoutEditing && viewPref('builder') === '3d') setBuilderView('plan');
   hideTip(); renderResults(); updateLayoutUI();
 });
@@ -2415,31 +2418,65 @@ $('#bResetLayout').addEventListener('click', () => {
 });
 function planPoint(svg, e) { const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; const p = pt.matrixTransform(svg.getScreenCTM().inverse()); return [p.x, p.y]; }
 function clampPlan(x, y) { const r = Math.hypot(x, y), max = 196; return r > max ? [x * max / r, y * max / r] : [x, y]; }
+let layoutSel = null;          // plant picked by a tap, waiting for a tap on its new spot
+const TAP_PX = 8;              // finger movement allowed before a tap counts as a drag
+function selectLayout(id) {
+  layoutSel = id;
+  renderResults();
+  if (id) { const it = state.items.find(i => i.p === id); updateLayoutUI(`${describePos(it)} <b>Tap where you want it to go</b>, or drag it. Tap it again to deselect.`); }
+  else updateLayoutUI();
+}
 $('#bPlan').addEventListener('pointerdown', e => {
   if (!layoutEditing) return;
-  const mk = e.target.closest('.mk[data-drag]'); if (!mk) return;
-  const svg = mk.ownerSVGElement, it = state.items.find(i => i.p === mk.dataset.drag); if (!it) return;
-  e.preventDefault(); hideTip();
+  const svg = e.target.closest('svg'); if (!svg) return;
+  const mk = e.target.closest('.mk[data-drag]');
+  hideTip();
+  if (!mk) {   // a tap on empty ground places the selected plant there
+    if (layoutSel) layoutDrag = { svg, tap: true, sx: e.clientX, sy: e.clientY };
+    return;
+  }
+  e.preventDefault();
+  const it = state.items.find(i => i.p === mk.dataset.drag); if (!it) return;
   const cur = layoutGuild(state.items).find(x => x.it === it), [px, py] = planPoint(svg, e);
-  layoutDrag = { svg, mk, it, ox: cur.x - px, oy: cur.y - py, moved: false };
-  svg.setPointerCapture(e.pointerId); svg.classList.add('dragging'); mk.classList.add('moving');
+  layoutDrag = { svg, mk, it, ox: cur.x - px, oy: cur.y - py, sx: e.clientX, sy: e.clientY, moved: false, wasSel: layoutSel === it.p };
+  try { svg.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
 });
 $('#bPlan').addEventListener('pointermove', e => {
-  if (!layoutDrag) return;
-  const d = layoutDrag, [px, py] = planPoint(d.svg, e), [x, y] = clampPlan(px + d.ox, py + d.oy);
-  d.it.pos = { x: Math.round(x), y: Math.round(y) }; d.moved = true;
+  const d = layoutDrag; if (!d || d.tap) return;
+  if (!d.moved && Math.hypot(e.clientX - d.sx, e.clientY - d.sy) < TAP_PX) return;
+  if (!d.moved) { d.moved = true; d.svg.classList.add('dragging'); d.mk.classList.add('moving'); }
+  const [px, py] = planPoint(d.svg, e), [x, y] = clampPlan(px + d.ox, py + d.oy);
+  d.it.pos = { x: Math.round(x), y: Math.round(y) };
   d.mk.setAttribute('transform', `translate(${d.it.pos.x} ${d.it.pos.y})`);
-  hideTip(); updateLayoutUI(describePos(d.it));
+  updateLayoutUI(describePos(d.it));
 });
-function endLayoutDrag() {
-  if (!layoutDrag) return;
-  const d = layoutDrag; layoutDrag = null;
+function endLayoutDrag(e) {
+  const d = layoutDrag; if (!d) return;
+  layoutDrag = null;
   d.svg.classList.remove('dragging');
-  if (d.moved) { save(); renderResults(); updateLayoutUI(describePos(d.it)); const again = $(`#bPlan .mk[data-drag="${d.it.p}"]`); if (again) again.focus(); }
-  else d.mk.classList.remove('moving');
+  if (e && e.type === 'pointercancel') { renderResults(); updateLayoutUI(); return; }
+  if (d.tap) {
+    if (Math.hypot(e.clientX - d.sx, e.clientY - d.sy) >= TAP_PX) return;   // it was a scroll
+    const it = state.items.find(i => i.p === layoutSel); if (!it) return;
+    const [px, py] = planPoint(d.svg, e), [x, y] = clampPlan(px, py);
+    it.pos = { x: Math.round(x), y: Math.round(y) }; save(); renderResults();
+    updateLayoutUI(`${describePos(it)} Tap somewhere else to move it again, or tap it to deselect.`);
+    return;
+  }
+  if (d.moved) { save(); layoutSel = d.it.p; renderResults(); updateLayoutUI(describePos(d.it)); }
+  else selectLayout(d.wasSel ? null : d.it.p);
+  const again = $(`#bPlan .mk[data-drag="${d.it.p}"]`); if (again && document.activeElement !== again && e && e.pointerType === 'mouse') again.focus();
 }
 $('#bPlan').addEventListener('pointerup', endLayoutDrag);
 $('#bPlan').addEventListener('pointercancel', endLayoutDrag);
+// Stop the page scrolling when a finger lands on something draggable (needed on iOS and Android).
+// pointerdown runs first and may redraw the plan, so it also sets a lock this handler can read.
+let dragLock = false;
+document.addEventListener('pointerdown', e => {
+  dragLock = !!(e.target.closest && e.target.closest('#bPlan svg.editing .mk[data-drag], #siteSvg [data-guild], #siteSvg [data-feat], #siteSvg [data-corner], #siteSvg [data-resize]'));
+}, true);
+document.addEventListener('touchstart', e => { if (dragLock) e.preventDefault(); }, { passive: false });
+document.addEventListener('touchend', () => { dragLock = false; });
 $('#bPlan').addEventListener('keydown', e => {
   if (!layoutEditing) return;
   const mk = e.target.closest('.mk[data-drag]'); if (!mk) return;
@@ -2997,7 +3034,7 @@ function renderSitePanel() {
   const s = siteSel;
   if (s && s.type === 'guild' && store.get(s.id)) {
     const g = store.get(s.id);
-    panel.innerHTML = `<h4>${esc(g.name)}</h4><p>${esc(TREE[g.tree].name)} · canopy ${kg(canopyR(g) * 2)} m across when mature · planting reaches ${kg(footprintR(g) * 2)} m across.</p>
+    panel.innerHTML = `<h4>${esc(g.name)}</h4><p><b>Tap anywhere on the plan to move it there.</b></p><p>${esc(TREE[g.tree].name)} · canopy ${kg(canopyR(g) * 2)} m across when mature · planting reaches ${kg(footprintR(g) * 2)} m across.</p>
       <p>Trunk ${kg(g.pos.x - Math.min(...xs))} m from the left edge and ${kg(g.pos.z - Math.min(...zs))} m from the top edge.</p>
       <div class="add-row"><button type="button" class="btn" data-sel="${g.id}">Open this guild</button></div>`;
   } else if (s && s.type === 'feat' && site.features.find(f => f.id === s.id)) {
@@ -3009,12 +3046,12 @@ function renderSitePanel() {
         <label for="featD">${round ? 'Other way' : 'Depth'} (m)<input id="featD" type="number" min="0.3" step="0.1" value="${kg(f.d)}"></label>
         ${SITE_KINDS[f.kind].h ? `<label for="featH">Height (m)<input id="featH" type="number" min="0.5" step="0.5" value="${kg(f.h)}"></label>` : ''}
       </div>
-      <p>Drag to move. Drag the small square to resize.</p>
+      <p>Drag to move, or tap anywhere on the plan to move it there. Drag the small square to resize.</p>
       <div class="add-row"><button type="button" class="btn" data-site="delfeat">Remove</button></div>`;
   } else if (s && s.type === 'corner') {
-    panel.innerHTML = `<h4>Plot corner ${s.id + 1}</h4><p>Drag it to match your boundary. Add corners for an L-shaped or irregular plot.</p><div class="add-row">${site.poly.length > 3 ? '<button type="button" class="btn" data-site="delcorner">Remove this corner</button>' : ''}</div>`;
+    panel.innerHTML = `<h4>Plot corner ${s.id + 1}</h4><p>Drag it, or tap where the corner should be, to match your boundary. Add corners for an L-shaped or irregular plot.</p><div class="add-row">${site.poly.length > 3 ? '<button type="button" class="btn" data-site="delcorner">Remove this corner</button>' : ''}</div>`;
   } else {
-    panel.innerHTML = `<h4>Your plot</h4><p>${kg(area(site.poly))} m² · ${site.poly.length} corners. Drag guilds and features to place them, and drag the round corner handles to match your boundary. Click anything to see its details; arrow keys nudge it.</p><p>The solid green circle is each tree's mature canopy; the dashed circle is how far its guild planting reaches.</p>`;
+    panel.innerHTML = `<h4>Your plot</h4><p>${kg(area(site.poly))} m² · ${site.poly.length} corners. Drag guilds and features to place them, or tap one and then tap where it should go. Drag the round corner handles to match your boundary. Tap a selected item again to deselect it; arrow keys nudge it.</p><p>The solid green circle is each tree's mature canopy; the dashed circle is how far its guild planting reaches.</p>`;
   }
   const w = siteWarnings();
   $('#siteWarn').innerHTML = w.length ? w.map(x => `<li>${esc(x)}</li>`).join('') : '<li class="ok">No overlaps, overhangs or deep building shade.</li>';
@@ -3024,34 +3061,48 @@ const snap = v => Math.round(v * 4) / 4;
 document.addEventListener('pointerdown', e => {
   const svg = e.target.closest('#siteSvg'); if (!svg) return;
   const t = e.target.closest('[data-resize],[data-corner],[data-feat],[data-guild]');
-  if (!t) { siteSel = null; renderSite(); return; }
+  if (!t) { siteDrag = { kind: 'tap', sx: e.clientX, sy: e.clientY }; return; }
   e.preventDefault();
   const [px, pz] = svgPoint(svg, e), site = store.site;
+  const wasSel = siteSel && ((t.dataset.guild && siteSel.type === 'guild' && siteSel.id === t.dataset.guild) || (t.dataset.feat && siteSel.type === 'feat' && siteSel.id === t.dataset.feat) || (t.dataset.corner && siteSel.type === 'corner' && siteSel.id === +t.dataset.corner));
   if (t.dataset.resize) { const f = site.features.find(f => f.id === t.dataset.resize); siteDrag = { kind: 'resize', f, px, pz, w: f.w, d: f.d }; }
   else if (t.dataset.corner) { const i = +t.dataset.corner; siteSel = { type: 'corner', id: i }; siteDrag = { kind: 'corner', i, px, pz, x: site.poly[i][0], z: site.poly[i][1] }; }
   else if (t.dataset.feat) { const f = site.features.find(f => f.id === t.dataset.feat); siteSel = { type: 'feat', id: f.id }; siteDrag = { kind: 'feat', f, px, pz, x: f.x, z: f.z }; }
   else { const g = store.get(t.dataset.guild); siteSel = { type: 'guild', id: g.id }; siteDrag = { kind: 'guild', g, px, pz, x: g.pos.x, z: g.pos.z }; }
-  siteDrag.moved = false;
-  svg.setPointerCapture(e.pointerId); svg.classList.add('dragging');
-  renderSite(); renderSitePanelLight();
+  siteDrag.moved = false; siteDrag.sx = e.clientX; siteDrag.sy = e.clientY; siteDrag.wasSel = wasSel;
+  try { svg.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+  svg.classList.add('dragging');
+  // Redraw on the next frame: replacing the touched shape now would stop the browser cancelling the page scroll.
+  requestAnimationFrame(() => { if (siteDrag && !siteDrag.moved) { renderSite(); renderSitePanelLight(); } });
 });
 function renderSitePanelLight() { const pnl = $('#sitePanel'); if (pnl && siteDrag && !siteDrag.moved) { const d = siteDrag; siteDrag = null; renderSitePanel(); siteDrag = d; } }
 document.addEventListener('pointermove', e => {
-  if (!siteDrag) return;
+  if (!siteDrag || siteDrag.kind === 'tap') return;
   const svg = $('#siteSvg'); if (!svg) return;
   const [px, pz] = svgPoint(svg, e), dx = px - siteDrag.px, dz = pz - siteDrag.pz, d = siteDrag;
-  if (Math.abs(dx) + Math.abs(dz) > 0.05) d.moved = true;
+  if (!d.moved && Math.hypot(e.clientX - d.sx, e.clientY - d.sy) < 8) return;
+  d.moved = true;
   if (d.kind === 'guild') d.g.pos = { x: snap(d.x + dx), z: snap(d.z + dz) };
   else if (d.kind === 'feat') { d.f.x = snap(d.x + dx); d.f.z = snap(d.z + dz); }
   else if (d.kind === 'corner') store.site.poly[d.i] = [snap(d.x + dx), snap(d.z + dz)];
   else if (d.kind === 'resize') { d.f.w = Math.max(0.5, snap(d.w + dx * 2)); d.f.d = Math.max(0.5, snap(d.d + dz * 2)); }
   renderSite();
 });
-function endSiteDrag() {
+function endSiteDrag(e) {
   if (!siteDrag) return;
   const d = siteDrag; siteDrag = null;
   const svg = $('#siteSvg'); if (svg) svg.classList.remove('dragging');
+  if (d.kind === 'tap') {
+    if (!svg || !e || e.type === 'pointercancel' || Math.hypot(e.clientX - d.sx, e.clientY - d.sy) >= 8) return;   // a scroll, not a tap
+    if (!siteSel) return;
+    const [x, z] = svgPoint(svg, e).map(snap), site = store.site;
+    if (siteSel.type === 'guild') { const g = store.get(siteSel.id); if (g) { g.pos = { x, z }; store.save(g); } }
+    else if (siteSel.type === 'feat') { const f = site.features.find(f => f.id === siteSel.id); if (f) { f.x = x; f.z = z; store.saveSite(site); } }
+    else if (siteSel.type === 'corner') { site.poly[siteSel.id] = [x, z]; store.saveSite(site); }
+    renderSite(); return;
+  }
   if (d.moved) { if (d.kind === 'guild') store.save(d.g); else store.saveSite(store.site); }
+  else if (d.wasSel && d.kind !== 'resize') siteSel = null;   // tapping the selected item again deselects it
   renderSite();
 }
 document.addEventListener('pointerup', endSiteDrag);
