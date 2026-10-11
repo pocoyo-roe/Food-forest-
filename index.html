@@ -475,6 +475,16 @@ details > summary:focus-visible { outline: 2px solid var(--accent); outline-offs
 .site-warn li { padding: .45rem .6rem; border-radius: 8px; background: var(--accent-soft); }
 .site-warn li.ok { background: color-mix(in srgb, var(--l-ground) 18%, transparent); }
 
+/* Editable guild layout */
+.view-row { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+#bEditLayout[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.layout-hint { font-size: .9rem; color: var(--muted); padding: .5rem .7rem; border-radius: 8px; background: var(--accent-soft); }
+.layout-hint b { color: var(--ink); }
+svg.editing .mk[data-drag] { cursor: grab; }
+svg.editing .mk[data-drag] circle.dot { stroke: var(--ink); stroke-dasharray: 3 2; }
+svg.editing.dragging, svg.editing.dragging .mk { cursor: grabbing; }
+svg.editing .mk.moving circle.dot { stroke: var(--accent); stroke-width: 3; stroke-dasharray: none; }
+
 /* Notes */
 .notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 1rem 2rem; }
 .note h3 { font-size: 1.1rem; margin-bottom: .35rem; }
@@ -647,10 +657,15 @@ footer p + p { margin-top: .4rem; }
         </div>
         <div class="b-results">
           <div class="plan-wrap">
-            <div class="viewtabs" role="group" aria-label="Guild view" id="bViewTabs">
-              <button type="button" data-view="plan" aria-pressed="true">Plan</button>
-              <button type="button" data-view="3d" aria-pressed="false">3D</button>
+            <div class="view-row">
+              <div class="viewtabs" role="group" aria-label="Guild view" id="bViewTabs">
+                <button type="button" data-view="plan" aria-pressed="true">Plan</button>
+                <button type="button" data-view="3d" aria-pressed="false">3D</button>
+              </div>
+              <button type="button" class="btn" id="bEditLayout" aria-pressed="false">Edit layout</button>
+              <button type="button" class="btn" id="bResetLayout" hidden>Reset to automatic layout</button>
             </div>
+            <p class="layout-hint" id="bLayoutHint" hidden></p>
             <div class="plan" id="bPlan"></div>
             <div id="b3dHost" hidden></div>
           </div>
@@ -1470,6 +1485,7 @@ function tipHTML(key) {
 }
 function showTip(el) {
   const key = el.getAttribute('data-tip'); if (!key) return;
+  if (el.closest('svg.editing')) return;   // layout editing shows its own hint instead
   tipAnchor = el;
   placeTip(key, el.getBoundingClientRect());
   linkHighlight(el, true);
@@ -1586,7 +1602,8 @@ function layoutGuild(items) {
       const p = PLANT[it.p];
       const ang = (list.length === 1 && !isFull ? (SINGLE[layer] ?? (a0 + a1) / 2) : a0 + step * i) * Math.PI / 180;
       const rr = R + (crowded ? (i % 2 ? 9 : -9) : 0);
-      out.push({ it, p, x: Math.cos(ang) * rr, y: Math.sin(ang) * rr });
+      const custom = it.pos && isFinite(it.pos.x) && isFinite(it.pos.y);
+      out.push({ it, p, x: custom ? it.pos.x : Math.cos(ang) * rr, y: custom ? it.pos.y : Math.sin(ang) * rr });
     });
   });
   return out;
@@ -1597,14 +1614,18 @@ function planSVG(tree, rsIndex, items, ctx) {
   layoutGuild(items).forEach(({ it, p, x, y }) => {
       const link = `${ctx}-${it.p}`;
       const tipKey = ctx === 'atlas' ? `gp:${it.p}:${tree.id}` : `p:${it.p}`;
-      marks += `<g class="mk" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})" ${ctx === 'ov' ? '' : `data-tip="${tipKey}" data-link="${link}" tabindex="0" role="button" aria-label="${esc(p.name)}"`}>
+      const drag = ctx === 'b' && layoutEditing ? ` data-drag="${it.p}"` : '';
+      marks += `<g class="mk" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"${drag} ${ctx === 'ov' ? '' : `data-tip="${tipKey}" data-link="${link}" tabindex="0" role="button" aria-label="${esc(p.name)}${drag ? ', drag or use arrow keys to move' : ''}"`}>
         <circle class="dot" r="14" style="fill:var(--l-${p.layer})"/>
         <text text-anchor="middle" dy="4" font-size="10" style="fill:var(--on-layer);font-family:var(--f-data)">${p.ab}</text>
         ${it.n > 1 ? `<g transform="translate(12 -11)"><circle r="8.5" style="fill:var(--ink)"/><text text-anchor="middle" dy="3.2" font-size="8.5" style="fill:var(--bg);font-family:var(--f-data)">${it.n > 99 ? '99' : it.n}</text></g>` : ''}
       </g>`;
   });
-  return `<svg viewBox="-212 -226 424 440" role="img" aria-label="Plan view of the ${esc(tree.name)} guild"${ctx === 'ov' ? ' aria-hidden="true"' : ''}>
-    <circle r="206" style="fill:var(--surface-2)"/>
+  const editing = ctx === 'b' && layoutEditing;
+  const mPer = (rs.spread / 2) / 110;
+  const rings = editing ? Array.from({ length: Math.floor(206 * mPer) }, (_, i) => (i + 1) / mPer).map(r => `<circle r="${r.toFixed(1)}" style="fill:none;stroke:var(--line)" stroke-width="1"/>`).join('') : '';
+  return `<svg viewBox="-212 -226 424 440" role="img" aria-label="Plan view of the ${esc(tree.name)} guild"${ctx === 'ov' ? ' aria-hidden="true"' : ''}${editing ? ' class="editing"' : ''}>
+    <circle r="206" style="fill:var(--surface-2)"/>${rings}
     <circle r="110" style="fill:var(--l-canopy);opacity:.16"/>
     <circle r="110" style="fill:none;stroke:var(--l-canopy)" stroke-dasharray="5 5" stroke-width="1.5"/>
     <text x="0" y="124" text-anchor="middle" font-size="9" style="fill:var(--muted);font-family:var(--f-data)">drip line · ${rs.spread} m</text>
@@ -1833,7 +1854,7 @@ function renderResults() {
   $('#bCal').innerHTML = cal.html;
   $('#bMonths').textContent = `${cal.months} of 12 months`;
 }
-function renderBuilder(controls) { if (controls) renderBuilderControls(); renderPick(); renderResults(); updateSaveButton(); }
+function renderBuilder(controls) { if (controls) renderBuilderControls(); renderPick(); renderResults(); updateSaveButton(); if (typeof updateLayoutUI === 'function') updateLayoutUI(); }
 function changeCount(id, d) {
   const it = state.items.find(i => i.p === id);
   if (it) { it.n += d; if (it.n <= 0) state.items = state.items.filter(i => i !== it); }
@@ -2366,12 +2387,78 @@ function mount3D(viewer, slot) {
 
 const view3d = make3D('b', () => ({ guilds: [{ tree: TREE[state.tree], rs: state.rs, items: state.items }], frameKey: 'b' }));
 $('#b3dHost').appendChild(view3d.el);
+/* Editable layout in the builder plan */
+let layoutEditing = false, layoutDrag = null;
+const DIRS = ['north', 'north-east', 'east', 'south-east', 'south', 'south-west', 'west', 'north-west'];
+function describePos(it) {
+  const rs = TREE[state.tree].rootstocks[state.rs], mPer = (rs.spread / 2) / 110;
+  const pt = layoutGuild(state.items).find(e => e.it === it); if (!pt) return '';
+  const d = Math.hypot(pt.x, pt.y) * mPer, ang = (Math.atan2(pt.x, -pt.y) * 180 / Math.PI + 360) % 360;
+  const where = d < 0.3 ? 'right by the trunk' : `${kg(d)} m ${DIRS[Math.round(ang / 45) % 8]} of the trunk${d > rs.spread / 2 ? ', outside the drip line' : ''}`;
+  return `<b>${esc(PLANT[it.p].name)}</b>: ${where}.`;
+}
+function updateLayoutUI(msg) {
+  const btn = $('#bEditLayout'), reset = $('#bResetLayout'), hint = $('#bLayoutHint');
+  btn.setAttribute('aria-pressed', layoutEditing);
+  btn.textContent = layoutEditing ? 'Done editing' : 'Edit layout';
+  reset.hidden = !(layoutEditing && state.items.some(i => i.pos));
+  hint.hidden = !layoutEditing;
+  if (layoutEditing) hint.innerHTML = msg || 'Drag a plant to move it, or select it and use the arrow keys. Rings are 1 m apart. Taller plants usually go on the north side so they don\'t shade the rest.';
+}
+$('#bEditLayout').addEventListener('click', () => {
+  layoutEditing = !layoutEditing;
+  if (layoutEditing && viewPref('builder') === '3d') setBuilderView('plan');
+  hideTip(); renderResults(); updateLayoutUI();
+});
+$('#bResetLayout').addEventListener('click', () => {
+  state.items.forEach(i => { delete i.pos; }); save(); renderResults(); updateLayoutUI('Back to the automatic layout.');
+});
+function planPoint(svg, e) { const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; const p = pt.matrixTransform(svg.getScreenCTM().inverse()); return [p.x, p.y]; }
+function clampPlan(x, y) { const r = Math.hypot(x, y), max = 196; return r > max ? [x * max / r, y * max / r] : [x, y]; }
+$('#bPlan').addEventListener('pointerdown', e => {
+  if (!layoutEditing) return;
+  const mk = e.target.closest('.mk[data-drag]'); if (!mk) return;
+  const svg = mk.ownerSVGElement, it = state.items.find(i => i.p === mk.dataset.drag); if (!it) return;
+  e.preventDefault(); hideTip();
+  const cur = layoutGuild(state.items).find(x => x.it === it), [px, py] = planPoint(svg, e);
+  layoutDrag = { svg, mk, it, ox: cur.x - px, oy: cur.y - py, moved: false };
+  svg.setPointerCapture(e.pointerId); svg.classList.add('dragging'); mk.classList.add('moving');
+});
+$('#bPlan').addEventListener('pointermove', e => {
+  if (!layoutDrag) return;
+  const d = layoutDrag, [px, py] = planPoint(d.svg, e), [x, y] = clampPlan(px + d.ox, py + d.oy);
+  d.it.pos = { x: Math.round(x), y: Math.round(y) }; d.moved = true;
+  d.mk.setAttribute('transform', `translate(${d.it.pos.x} ${d.it.pos.y})`);
+  hideTip(); updateLayoutUI(describePos(d.it));
+});
+function endLayoutDrag() {
+  if (!layoutDrag) return;
+  const d = layoutDrag; layoutDrag = null;
+  d.svg.classList.remove('dragging');
+  if (d.moved) { save(); renderResults(); updateLayoutUI(describePos(d.it)); const again = $(`#bPlan .mk[data-drag="${d.it.p}"]`); if (again) again.focus(); }
+  else d.mk.classList.remove('moving');
+}
+$('#bPlan').addEventListener('pointerup', endLayoutDrag);
+$('#bPlan').addEventListener('pointercancel', endLayoutDrag);
+$('#bPlan').addEventListener('keydown', e => {
+  if (!layoutEditing) return;
+  const mk = e.target.closest('.mk[data-drag]'); if (!mk) return;
+  const step = e.shiftKey ? 20 : 5, mv = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[e.key];
+  if (!mv) return;
+  e.preventDefault();
+  const it = state.items.find(i => i.p === mk.dataset.drag), cur = layoutGuild(state.items).find(x => x.it === it);
+  const [x, y] = clampPlan(cur.x + mv[0], cur.y + mv[1]);
+  it.pos = { x: Math.round(x), y: Math.round(y) }; save(); renderResults(); updateLayoutUI(describePos(it));
+  const again = $(`#bPlan .mk[data-drag="${it.p}"]`); if (again) again.focus();
+});
+
 function setBuilderView(v) {
   setViewPref('builder', v);
   $('#bViewTabs').querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', b.dataset.view === v));
   $('#bPlan').hidden = v !== 'plan';
   $('#b3dHost').hidden = v !== '3d';
-  if (v === '3d') view3d.show(); else view3d.hide();
+  if (v === '3d') { if (layoutEditing) { layoutEditing = false; renderResults(); } view3d.show(); } else view3d.hide();
+  updateLayoutUI();
 }
 $('#bViewTabs').addEventListener('click', e => { const b = e.target.closest('[data-view]'); if (b) setBuilderView(b.dataset.view); });
 const builderView = viewPref('builder', (() => { try { return localStorage.getItem('builder-view') || 'plan'; } catch (e) { return 'plan'; } })());
@@ -2390,6 +2477,7 @@ function cleanGuild(g) {
   if (!g || typeof g.id !== 'string' || !TREE[g.tree] || !Array.isArray(g.items)) return null;
   const c = clone(g);
   c.items = c.items.filter(i => i && PLANT[i.p] && i.n > 0);
+  c.items.forEach(i => { if (!(i.pos && isFinite(i.pos.x) && isFinite(i.pos.y))) delete i.pos; });
   c.rs = Math.min(Math.max(c.rs | 0, 0), TREE[c.tree].rootstocks.length - 1);
   c.name = String(c.name || 'Untitled guild').slice(0, 60);
   c.notes = String(c.notes || '').slice(0, 500);
